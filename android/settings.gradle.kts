@@ -36,3 +36,37 @@ dependencyResolutionManagement {
 
 rootProject.name = "cardlink-sdk-demos-android"
 include(":app")
+
+// ── Dev-mode SDK substitution ─────────────────────────────────────────────
+//
+// When any requested task name contains "Dev" (case-insensitive), we wire up
+// sibling SDK repos as composite builds and substitute their Maven coordinates
+// with the local project dependencies. The app's build.gradle.kts is unchanged
+// — Gradle does the swap transparently.
+//
+// Sibling repos that don't exist on disk are silently skipped (graceful
+// degradation: dev mode works even if only some SDKs are checked out).
+
+val isDevBuild = startParameter.taskNames.any { it.contains("Dev", ignoreCase = true) }
+
+if (isDevBuild) {
+    val siblings = listOf(
+        Triple("../../cardlink-sdk",       "de.scoopsoftware.cardlink:shared-android", ":packages:sdk:shared"),
+        Triple("../../scoop-nfc-sdk",      "de.scoopsoftware.nfc:shared-android",      ":packages:sdk:shared"),
+        Triple("../../scoop-popp-module",  "de.scoopsoftware.popp:shared-android",     ":packages:sdk:shared"),
+    )
+
+    siblings.forEach { (relativePath, moduleCoord, projectPath) ->
+        val siblingRoot = file(relativePath)
+        if (siblingRoot.exists() && siblingRoot.resolve("settings.gradle.kts").exists()) {
+            logger.lifecycle("Dev mode: including build $relativePath, substituting $moduleCoord")
+            includeBuild(relativePath) {
+                dependencySubstitution {
+                    substitute(module(moduleCoord)).using(project(projectPath))
+                }
+            }
+        } else {
+            logger.lifecycle("Dev mode: skipping $relativePath (not present on disk)")
+        }
+    }
+}
