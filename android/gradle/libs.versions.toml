@@ -8,7 +8,7 @@ kotlinx-coroutines = "1.10.2"
 # Verify against latest published versions in Step 2 before committing.
 cardlink-sdk = "1.38.1"
 nfc-sdk = "1.16.2"
-popp-module = "0.15.0"
+popp-module = "0.16.0"
 
 [libraries]
 # AndroidX core

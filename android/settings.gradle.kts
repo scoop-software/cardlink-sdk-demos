@@ -11,21 +11,26 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/scoop-software/cardlink-sdk")
-            credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                    ?: providers.gradleProperty("gpr.user").orNull
-                    ?: ""
-                password = System.getenv("GITHUB_TOKEN")
-                    ?: providers.gradleProperty("gpr.key").orNull
-                    ?: ""
+        // GitHub Packages namespaces by repo (not by group), so each SDK needs its own URL.
+        // Credentials are shared — a single GITHUB_TOKEN with read:packages scope works for all three.
+        listOf(
+            "GitHubPackagesCardlink" to "https://maven.pkg.github.com/scoop-software/cardlink-sdk",
+            "GitHubPackagesNfc"      to "https://maven.pkg.github.com/scoop-software/nfc-sdk",
+            "GitHubPackagesPopp"     to "https://maven.pkg.github.com/scoop-software/scoop-popp-module",
+        ).forEach { (repoName, repoUrl) ->
+            maven {
+                name = repoName
+                url = uri(repoUrl)
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR")
+                        ?: providers.gradleProperty("gpr.user").orNull
+                        ?: ""
+                    password = System.getenv("GITHUB_TOKEN")
+                        ?: providers.gradleProperty("gpr.key").orNull
+                        ?: ""
+                }
             }
         }
-        // TODO: add maven for NFC and PoPP packages if they're served from different URLs.
-        // For now we assume GitHub Packages can resolve all three via the same URL
-        // (it usually can — GH Packages namespaces by repo, not group). Task 8 will catch if not.
     }
 }
 
