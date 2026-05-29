@@ -127,24 +127,6 @@ android {
     }
 }
 
-// SDKs publish both release and debug Android variants via publishLibraryVariants("release", "debug").
-// The KMP/AGP-published metadata pulls in both, causing duplicate-class errors when the consumer
-// is itself a Debug-typed Android app. Exclude the debug variants — the demo only ever consumes
-// the release variant of the SDKs, regardless of the demo's own build type.
-// TODO: drop "debug" from publishLibraryVariants in the SDKs themselves; then remove these excludes.
-configurations.all {
-    // Override transitive PoPP version. Cardlink 1.38.1 was published with a hard dep on
-    // de.scoopsoftware.popp:shared:0.15.0 (PoPP's prior version), which was never uploaded.
-    // Current published PoPP is 0.16.0; the override is safe (0.15→0.16 is a backward-compatible
-    // minor bump). TODO: remove once Cardlink is republished with PoPP 0.16.0 transitively.
-    resolutionStrategy {
-        force("de.scoopsoftware.popp:shared:0.16.0")
-    }
-    exclude(group = "de.scoopsoftware.cardlink", module = "shared-android-debug")
-    exclude(group = "de.scoopsoftware.nfc",      module = "shared-android-debug")
-    exclude(group = "de.scoopsoftware.popp",     module = "shared-android-debug")
-}
-
 dependencies {
     // Scoop SDKs (Maven coordinates resolved via GitHub Packages in settings.gradle.kts)
     implementation(libs.cardlink.shared.android)
