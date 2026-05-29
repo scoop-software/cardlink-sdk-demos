@@ -1,0 +1,116 @@
+#!/bin/bash
+# post-commit — Auto-bump per-platform demo versions from conventional commits.
+#
+# Adapted from cardlink-sdk's post-commit hook. Differences:
+#   - No SDK package versioning (this repo has no SDK).
+#   - Only per-platform demo bumps based on changed paths.
+#   - Tag scheme: <platform>/<version>, e.g. android/v1.0.1.
+
+set -euo pipefail
+
+# ── Guard: prevent infinite recursion from amend ──
+if [ "${VERSION_BUMP_RUNNING:-}" = "1" ]; then
+    exit 0
+fi
+GIT_DIR="$(git rev-parse --git-dir)"
+LOCK_FILE="$GIT_DIR/.version-bump-lock"
+if [ -f "$LOCK_FILE" ]; then
+    exit 0
+fi
+
+# ── Guard: skip during rebase/merge/cherry-pick ──
+if [ -f "$GIT_DIR/rebase-merge/interactive" ] || \
+   [ -d "$GIT_DIR/rebase-apply" ] || \
+   [ -f "$GIT_DIR/MERGE_HEAD" ] || \
+   [ -f "$GIT_DIR/CHERRY_PICK_HEAD" ]; then
+    exit 0
+fi
+
+# ── Read the commit message ──
+COMMIT_MSG="$(git log -1 --format='%B' HEAD)"
+FIRST_LINE="$(echo "$COMMIT_MSG" | head -1)"
+
+# ── Determine bump type from conventional commit ──
+BUMP_TYPE=""
+if echo "$COMMIT_MSG" | grep -qE '^BREAKING[ -]CHANGE:'; then
+    BUMP_TYPE="major"
+elif echo "$FIRST_LINE" | grep -qE '^[a-z]+!(\(.+\))?:'; then
+    BUMP_TYPE="major"
+elif echo "$FIRST_LINE" | grep -qE '^feat(\(.+\))?:'; then
+    BUMP_TYPE="minor"
+elif echo "$FIRST_LINE" | grep -qE '^(fix|perf)(\(.+\))?:'; then
+    BUMP_TYPE="patch"
+fi
+
+if [ -z "$BUMP_TYPE" ]; then
+    exit 0
+fi
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+changed_files() {
+    git diff-tree --no-commit-id --name-only -r HEAD
+}
+
+has_changes_in() {
+    local path="$1"
+    changed_files | grep "^${path}/" | grep -v "version.properties" > /dev/null 2>&1
+}
+
+bump_version() {
+    local version="$1"
+    local type="$2"
+    local major minor patch
+    IFS='.' read -r major minor patch <<< "$version"
+    case "$type" in
+        major) major=$((major + 1)); minor=0; patch=0 ;;
+        minor) minor=$((minor + 1)); patch=0 ;;
+        patch) patch=$((patch + 1)) ;;
+    esac
+    echo "${major}.${minor}.${patch}"
+}
+
+update_version_file() {
+    local version_file="$1"
+    local type="$2"
+    if [ ! -f "$version_file" ]; then
+        return 1
+    fi
+    local current_version
+    current_version=$(grep "^version=" "$version_file" | cut -d'=' -f2)
+    if [ -z "$current_version" ]; then
+        return 1
+    fi
+    local new_version
+    new_version=$(bump_version "$current_version" "$type")
+    sed -i '' "s/^version=.*/version=${new_version}/" "$version_file"
+    git add "$version_file"
+    echo "  $version_file: $current_version → $new_version ($type)"
+}
+
+# ── Main: bump versions for changed platforms ──
+export VERSION_BUMP_RUNNING=1
+touch "$LOCK_FILE"
+trap 'rm -f "$LOCK_FILE"' EXIT
+updated=0
+tags=()
+
+if has_changes_in "android"; then
+    echo "Detected changes in android/"
+    update_version_file "android/version.properties" "$BUMP_TYPE"
+    tags+=("android/v$(grep '^version=' android/version.properties | cut -d= -f2)")
+    updated=1
+fi
+
+# iOS, Flutter, flutter-flow sections added in their respective phases.
+
+if [ $updated -eq 1 ] && ! git diff --cached --quiet; then
+    git commit --amend --no-edit --no-verify
+    echo "post-commit: version bump applied [${BUMP_TYPE}]"
+fi
+
+for tag in "${tags[@]}"; do
+    git tag -f "$tag"
+    echo "post-commit: tagged $tag"
+done
