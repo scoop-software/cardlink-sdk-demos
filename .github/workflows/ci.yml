@@ -30,14 +30,20 @@ jobs:
         working-directory: android
         env:
           GITHUB_ACTOR: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # The default workflow GITHUB_TOKEN is scoped to this repo only and can't read
+          # packages from the sibling SDK repos. MAVEN_READ_TOKEN is a PAT (or fine-grained
+          # token) with read:packages scope on the scoop-software org.
+          GITHUB_TOKEN: ${{ secrets.MAVEN_READ_TOKEN }}
         run: ./gradlew assembleDebug --no-daemon --info
 
       - name: Verify SDK was resolved from Maven (not local source)
         working-directory: android
         env:
           GITHUB_ACTOR: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # The default workflow GITHUB_TOKEN is scoped to this repo only and can't read
+          # packages from the sibling SDK repos. MAVEN_READ_TOKEN is a PAT (or fine-grained
+          # token) with read:packages scope on the scoop-software org.
+          GITHUB_TOKEN: ${{ secrets.MAVEN_READ_TOKEN }}
         run: |
           ./gradlew :app:dependencies --configuration debugRuntimeClasspath --no-daemon > /tmp/deps.txt
           if grep -q "project :" /tmp/deps.txt; then
