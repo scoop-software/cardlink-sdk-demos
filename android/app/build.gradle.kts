@@ -1,11 +1,18 @@
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Properties
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+    }
 }
 
 // Load keystore properties. Order of precedence:
@@ -108,10 +115,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
     buildFeatures {
         compose = true
         buildConfig = true
@@ -122,6 +125,24 @@ android {
             excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
         }
     }
+}
+
+// SDKs publish both release and debug Android variants via publishLibraryVariants("release", "debug").
+// The KMP/AGP-published metadata pulls in both, causing duplicate-class errors when the consumer
+// is itself a Debug-typed Android app. Exclude the debug variants — the demo only ever consumes
+// the release variant of the SDKs, regardless of the demo's own build type.
+// TODO: drop "debug" from publishLibraryVariants in the SDKs themselves; then remove these excludes.
+configurations.all {
+    // Override transitive PoPP version. Cardlink 1.38.1 was published with a hard dep on
+    // de.scoopsoftware.popp:shared:0.15.0 (PoPP's prior version), which was never uploaded.
+    // Current published PoPP is 0.16.0; the override is safe (0.15→0.16 is a backward-compatible
+    // minor bump). TODO: remove once Cardlink is republished with PoPP 0.16.0 transitively.
+    resolutionStrategy {
+        force("de.scoopsoftware.popp:shared:0.16.0")
+    }
+    exclude(group = "de.scoopsoftware.cardlink", module = "shared-android-debug")
+    exclude(group = "de.scoopsoftware.nfc",      module = "shared-android-debug")
+    exclude(group = "de.scoopsoftware.popp",     module = "shared-android-debug")
 }
 
 dependencies {
@@ -174,12 +195,14 @@ dependencies {
 
 // Output filenames for release builds: {id}_{version}.{timestamp}.{ext}
 androidComponents {
-    onVariants(selector().withBuildType("release").or(selector().withBuildType("releaseOptimized"))) { variant ->
-        val timestamp = SimpleDateFormat("yyyyMMddHHmm").format(Date())
-        val baseName = "${variant.applicationId.get()}_${appVersionName}.${timestamp}"
-        variant.outputs.forEach { output ->
-            if (output is com.android.build.api.variant.impl.VariantOutputImpl) {
-                output.outputFileName.set("$baseName.apk")
+    onVariants { variant ->
+        if (variant.buildType in setOf("release", "releaseOptimized")) {
+            val timestamp = SimpleDateFormat("yyyyMMddHHmm").format(Date())
+            val baseName = "${variant.applicationId.get()}_${appVersionName}.${timestamp}"
+            variant.outputs.forEach { output ->
+                if (output is com.android.build.api.variant.impl.VariantOutputImpl) {
+                    output.outputFileName.set("$baseName.apk")
+                }
             }
         }
     }
