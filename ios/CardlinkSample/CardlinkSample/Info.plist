@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Cardlink Demo</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>CardlinkSample</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NFCReaderUsageDescription</key>
+	<string>This app needs NFC to read health cards</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app uses the camera to scan the CAN (Card Access Number) from your health card</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Fonts/open_sans_regular.ttf</string>
+		<string>Fonts/open_sans_medium.ttf</string>
+		<string>Fonts/open_sans_semibold.ttf</string>
+		<string>Fonts/open_sans_bold.ttf</string>
+		<string>Fonts/poppins_regular.ttf</string>
+		<string>Fonts/poppins_medium.ttf</string>
+		<string>Fonts/poppins_semibold.ttf</string>
+		<string>Fonts/poppins_bold.ttf</string>
+		<string>Fonts/raleway_regular.ttf</string>
+		<string>Fonts/raleway_medium.ttf</string>
+		<string>Fonts/raleway_semibold.ttf</string>
+		<string>Fonts/raleway_bold.ttf</string>
+		<string>Fonts/roboto_medium.ttf</string>
+		<string>Fonts/redcare_accessible_regular.otf</string>
+		<string>Fonts/redcare_accessible_medium.otf</string>
+		<string>Fonts/redcare_accessible_bold.otf</string>
+	</array>
+	<key>UILaunchScreen</key>
+	<dict/>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+		<string>nfc</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>com.apple.developer.nfc.readersession.iso7816.select-identifiers</key>
+	<array>
+		<string>D2760001448000</string>
+		<string>A000000167455349474E</string>
+	</array>
+</dict>
+</plist>

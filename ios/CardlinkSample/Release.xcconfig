@@ -1,0 +1,6 @@
+// Release configuration
+// Production bundle ID for App Store / TestFlight
+
+PRODUCT_BUNDLE_IDENTIFIER = de.scoopsoftware.cardlink.demo.ios
+PRODUCT_NAME = Cardlink Demo
+ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon

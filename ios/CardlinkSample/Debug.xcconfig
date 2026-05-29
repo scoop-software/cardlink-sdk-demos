@@ -1,0 +1,6 @@
+// Debug configuration
+// Allows side-by-side installation with Release/TestFlight builds
+
+PRODUCT_BUNDLE_IDENTIFIER = de.scoopsoftware.cardlink.demo.ios.dev
+PRODUCT_NAME = Cardlink Dev
+ASSETCATALOG_COMPILER_APPICON_NAME = AppIconDebug
