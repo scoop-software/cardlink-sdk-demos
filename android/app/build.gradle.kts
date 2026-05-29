@@ -175,6 +175,20 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 }
 
+// Custom dev-mode tasks. These don't change anything about the build —
+// they delegate to the standard tasks. The actual SDK source substitution
+// happens in settings.gradle.kts based on "Dev" in the task name.
+tasks.register("assembleDevDebug") {
+    dependsOn("assembleDebug")
+    group = "build"
+    description = "Assemble Debug variant against local SDK source (Dev mode)"
+}
+tasks.register("installDevDebug") {
+    dependsOn("installDebug")
+    group = "install"
+    description = "Install Debug variant against local SDK source (Dev mode)"
+}
+
 // Output filenames for release builds: {id}_{version}.{timestamp}.{ext}
 androidComponents {
     onVariants { variant ->
