@@ -1,0 +1,25 @@
+# Build outputs
+**/build/
+**/.gradle/
+
+# Per-developer Gradle config
+**/local.properties
+
+# Flutter dev-mode override (transient, added in later phase)
+**/pubspec_overrides.yaml
+
+# Xcode (added in later phase)
+**/DerivedData/
+**/xcuserdata/
+**/*.xcworkspace/xcuserdata/
+
+# iOS pods (added in later phase)
+**/Pods/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.iml
