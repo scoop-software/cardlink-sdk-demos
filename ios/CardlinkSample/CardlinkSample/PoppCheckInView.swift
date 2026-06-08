@@ -1,6 +1,7 @@
 import SwiftUI
 import Lottie
 import ScoopCardlink
+import ScoopNfcUI
 
 private let TELEMATIK_ID = "3-SMC-B-Testkarte--883110000153556"
 

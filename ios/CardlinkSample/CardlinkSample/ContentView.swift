@@ -5,6 +5,7 @@ import UIKit
 import Security
 import CommonCrypto
 import Charts
+import ScoopNfcUI
 
 /// Wrapper to hold certificate data for sheet presentation.
 struct CertificateItem: Identifiable {

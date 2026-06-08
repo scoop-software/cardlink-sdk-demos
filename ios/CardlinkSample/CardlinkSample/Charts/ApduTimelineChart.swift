@@ -1,6 +1,7 @@
 import SwiftUI
 import Charts
 import ScoopCardlink
+import ScoopNfcUI
 
 /// Represents a single APDU exchange for charting.
 private struct ApduChartItem: Identifiable {
@@ -259,6 +260,12 @@ struct ApduSummaryView: View {
 
 // MARK: - ApduColor Extension for SwiftUI
 
+// Note: ScoopNfcUI ships an equivalent extension on ScoopNfc.ApduColor,
+// but Cardlink and NFC's XCFrameworks each compile their own Kotlin type
+// bindings, so ScoopCardlink.ApduColor (used here via Cardlink's typealias
+// re-export) is a different Swift type. Until Cardlink consumes NFC as a
+// binary dependency rather than re-compiling its types, this extension
+// stays demo-local.
 extension ApduColor {
     func toSwiftUIColor() -> Color {
         switch self {

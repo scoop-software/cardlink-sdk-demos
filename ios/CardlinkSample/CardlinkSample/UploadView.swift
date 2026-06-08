@@ -1,6 +1,7 @@
 import SwiftUI
 import CoreNFC
 import Combine
+import ScoopNfcUI
 @preconcurrency import ScoopCardlink
 
 // MARK: - Upload View Model

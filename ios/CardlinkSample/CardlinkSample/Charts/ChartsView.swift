@@ -1,6 +1,7 @@
 import SwiftUI
 import Charts
 import ScoopCardlink
+import ScoopNfcUI
 
 /// Main charts view showing performance history and statistics.
 struct ChartsView: View {

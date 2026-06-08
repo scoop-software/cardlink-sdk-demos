@@ -1,6 +1,7 @@
 import SwiftUI
 import ScoopCardlink
 import CommonCrypto
+import ScoopNfcUI
 
 /// Settings view with Device & SDK info and Secure Storage sections.
 /// Matches the functionality of the Android demo Settings screen.

@@ -1,6 +1,7 @@
 import SwiftUI
 import Charts
 import ScoopCardlink
+import ScoopNfcUI
 
 /// Line chart showing total scan time over multiple scans.
 struct ScanTimeChart: View {

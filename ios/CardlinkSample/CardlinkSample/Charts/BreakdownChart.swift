@@ -1,6 +1,7 @@
 import SwiftUI
 import Charts
 import ScoopCardlink
+import ScoopNfcUI
 
 /// Helper to compute time breakdown from a ScanRecord's APDU exchanges.
 private struct TimeBreakdown {
