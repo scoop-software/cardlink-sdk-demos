@@ -9,7 +9,7 @@ These demos are intended for 3rd-party developers as ready-to-build examples of 
 | Platform | Status |
 |---|---|
 | Android (Kotlin) | ✓ available — see [android/](android/) |
-| iOS (Swift) | planned |
+| iOS (Swift) | ✓ available — see [ios/](ios/) |
 | Flutter | planned |
 
 ## Android — Quick start
@@ -27,6 +27,20 @@ The build pulls the Cardlink SDK from [GitHub Packages Maven](https://github.com
 gpr.user=<your-github-username>
 gpr.key=<your-github-PAT>
 ```
+
+## iOS — Quick start
+
+Requirements: Xcode 15+, an Apple developer account for signing.
+
+```bash
+open ios/CardlinkDemo.xcodeproj
+```
+
+The project pulls `ScoopCardlink` from
+[cardlink-sdk-spm](https://github.com/scoop-software/cardlink-sdk-spm) and
+`ScoopNfc` + `ScoopNfcUI` from
+[nfc-sdk-spm](https://github.com/scoop-software/nfc-sdk-spm) automatically on
+first build. Xcode handles the SPM resolution.
 
 ## SDK Developer Mode
 

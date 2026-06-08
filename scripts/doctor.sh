@@ -53,7 +53,14 @@ check_cmd() {
 
 check_cmd "java"          java       "-version"
 check_cmd "gradle"        "$REPO_ROOT/android/gradlew"   "--version"
-# Xcode / Flutter checks added in later phases.
+check_cmd "xcodebuild"    xcodebuild "-version"
+check_cmd "ruby"          ruby       "--version"
+if command -v ruby >/dev/null 2>&1 && ruby -rxcodeproj -e '1' 2>/dev/null; then
+    printf "  %-25s ✓ xcodeproj gem installed\n" "ruby-xcodeproj"
+else
+    printf "  %-25s ✗ xcodeproj gem missing — run 'gem install xcodeproj'\n" "ruby-xcodeproj"
+fi
+# Flutter checks added in later phases.
 
 print_section "Android dev-mode readiness"
 
@@ -71,6 +78,37 @@ if [ -d "$SIBLINGS_ROOT/scoop-popp-module" ]; then
     echo "  installDevDebug will substitute PoPP with local source."
 else
     echo "  installDevDebug will fall through to published PoPP artifact."
+fi
+
+print_section "iOS dev-mode readiness"
+
+CARDLINK_DEV_SPM="$SIBLINGS_ROOT/cardlink-sdk/tools/cardlink-dev-spm/Package.swift"
+NFC_DEV_SPM="$SIBLINGS_ROOT/scoop-nfc-sdk/tools/nfc-dev-spm/Package.swift"
+CARDLINK_XCF="$SIBLINGS_ROOT/cardlink-sdk/packages/sdk/shared/build/XCFrameworks/ScoopCardlink.xcframework"
+NFC_XCF="$SIBLINGS_ROOT/scoop-nfc-sdk/packages/sdk/shared/build/XCFrameworks/ScoopNfc.xcframework"
+NFC_UI_XCF="$SIBLINGS_ROOT/scoop-nfc-sdk/packages/sdk/shared/build/XCFrameworks/ScoopNfcUI.xcframework"
+
+if [ -f "$CARDLINK_DEV_SPM" ]; then
+    echo "  ✓ cardlink-dev-spm Package.swift present"
+else
+    echo "  ✗ cardlink-dev-spm Package.swift missing — Dev iOS project won't resolve ScoopCardlink"
+fi
+if [ -f "$NFC_DEV_SPM" ]; then
+    echo "  ✓ nfc-dev-spm Package.swift present"
+else
+    echo "  ✗ nfc-dev-spm Package.swift missing — Dev iOS project won't resolve ScoopNfc/ScoopNfcUI"
+fi
+if [ -d "$CARDLINK_XCF" ]; then
+    echo "  ✓ ScoopCardlink.xcframework built"
+else
+    echo "  ✗ ScoopCardlink.xcframework missing — run:"
+    echo "      cd ~/projects/cardlink-sdk && ./gradlew :packages:sdk:shared:buildXCFrameworkDevice"
+fi
+if [ -d "$NFC_XCF" ] && [ -d "$NFC_UI_XCF" ]; then
+    echo "  ✓ ScoopNfc + ScoopNfcUI XCFrameworks built"
+else
+    echo "  ✗ ScoopNfc and/or ScoopNfcUI XCFramework missing — run:"
+    echo "      cd ~/projects/scoop-nfc-sdk && ./gradlew :packages:sdk:shared:buildXCFrameworkDevice"
 fi
 
 print_section "Maven credentials"

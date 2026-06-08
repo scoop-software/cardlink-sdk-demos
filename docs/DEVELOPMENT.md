@@ -30,11 +30,11 @@ This document is for developers of the Cardlink SDK who want to iterate on the d
 
 The demos default to consuming published SDK artifacts. To consume your local SDK source instead, use the `Dev`-suffixed task variants:
 
-| Platform | Published (default for customers)       | Dev (local SDK source)                        |
-|----------|-----------------------------------------|-----------------------------------------------|
-| Android  | `./gradlew installDebug`                | `./gradlew installDevDebug`                   |
-| iOS      | (coming in later phase)                 | (coming in later phase)                       |
-| Flutter  | (coming in later phase)                 | (coming in later phase)                       |
+| Platform | Published (default for customers)               | Dev (local SDK source)                                                           |
+|----------|-------------------------------------------------|----------------------------------------------------------------------------------|
+| Android  | `./gradlew installDebug`                        | `./gradlew installDevDebug`                                                      |
+| iOS      | `open ios/CardlinkDemo.xcodeproj` (Xcode → Run) | `open ios/CardlinkDemoDev.xcodeproj` (Xcode → Run; rebuild SDK XCFramework first)|
+| Flutter  | (coming in later phase)                         | (coming in later phase)                                                          |
 
 The Android `Dev` task triggers `settings.gradle.kts` to detect "Dev" in the requested task name. When detected, the script registers sibling SDK repos as composite builds and substitutes the Maven coordinates with local project dependencies. The `build.gradle.kts` is unchanged between modes.
 
@@ -57,6 +57,35 @@ To inspect the resolved dependency tree under dev mode:
 Look for `-> project :cardlink-sdk:packages:sdk:shared` arrows in the output — those confirm Gradle is using the local source.
 
 If you see only `Dev mode: skipping` lines (or no Dev mode lines at all), check your sibling layout via `./scripts/doctor.sh`.
+
+### iOS Dev-mode workflow
+
+1. Edit Kotlin source in `~/projects/cardlink-sdk/packages/sdk/shared/...` (or `~/projects/scoop-nfc-sdk/packages/sdk/shared/...` for NFC, including `ScoopNfcUI` SwiftUI views).
+2. Rebuild the XCFramework(s):
+
+   ```
+   # Cardlink SDK changes:
+   cd ~/projects/cardlink-sdk
+   ./gradlew :packages:sdk:shared:buildXCFrameworkDevice
+
+   # NFC SDK / ScoopNfcUI changes:
+   cd ~/projects/scoop-nfc-sdk
+   ./gradlew :packages:sdk:shared:buildXCFrameworkDevice
+   ```
+
+   (~1 minute on first build, cached on subsequent runs unless source changes.)
+
+3. Open `cardlink-sdk-demos/ios/CardlinkDemoDev.xcodeproj` and build. The local `Package.swift` manifests at `cardlink-sdk/tools/cardlink-dev-spm/Package.swift` and `scoop-nfc-sdk/tools/nfc-dev-spm/Package.swift` reference the freshly-built XCFrameworks directly.
+
+The Dev project installs side-by-side with the customer-facing Debug build (bundle ID `de.scoopsoftware.cardlink.demo.ios.devsdk`, name "Cardlink DevSDK").
+
+If Xcode caches the old XCFramework, delete the project's DerivedData and rebuild:
+
+```
+rm -rf ~/Library/Developer/Xcode/DerivedData/CardlinkDemoDev-*
+```
+
+**Known issue:** SPM's path-based binary-target consumption of SKIE-generated `.swiftinterface` files currently doesn't expose extension methods (`onEnum`, `report`, `delete`) the way URL-based binary targets do. The Customer project (consuming v1.39.0 from `cardlink-sdk-spm`) builds fine; the Dev project hits these errors. Tracked as a Phase 2 follow-up.
 
 ## Authentication for the published Maven repos
 
