@@ -65,3 +65,55 @@ jobs:
           name: android-debug-apk
           path: android/app/build/outputs/apk/debug/*.apk
           retention-days: 14
+
+  ios-published:
+    name: iOS (published)
+    runs-on: macos-14
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve SPM packages
+        working-directory: ios
+        run: xcodebuild -resolvePackageDependencies -project CardlinkDemo.xcodeproj
+
+      - name: Build CardlinkDemo for iOS Simulator
+        working-directory: ios
+        run: |
+          xcodebuild -project CardlinkDemo.xcodeproj \
+            -scheme CardlinkDemo \
+            -destination "generic/platform=iOS Simulator" \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            clean build
+
+      - name: Verify ScoopCardlink + ScoopNfc resolved from public SPM mirrors
+        working-directory: ios
+        run: |
+          RESOLVED=CardlinkDemo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+          for pkg in cardlink-sdk-spm nfc-sdk-spm; do
+            if ! grep -q "$pkg" "$RESOLVED"; then
+              echo "ERROR: $pkg not found in Package.resolved"
+              cat "$RESOLVED" || true
+              exit 1
+            fi
+          done
+          echo "OK: SPM resolution verified."
+
+  ios-projects-in-sync:
+    name: iOS projects in sync
+    runs-on: macos-14
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+
+      - name: Install xcodeproj gem
+        run: gem install xcodeproj
+
+      - name: Check CardlinkDemo and CardlinkDemoDev are in sync
+        run: ruby scripts/sync-ios-projects.rb --check
