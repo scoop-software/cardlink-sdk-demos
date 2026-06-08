@@ -1,0 +1,11 @@
+// Debug-Dev configuration — used by CardlinkDemoDev.xcodeproj for side-by-side
+// install alongside the customer-facing CardlinkDemo Debug build.
+//
+// The Dev project consumes the SDK XCFrameworks from cardlink-sdk's and
+// scoop-nfc-sdk's tools/dev-spm/ local Swift packages (path-based binary
+// targets), so SDK source edits propagate after a single
+// `./gradlew :packages:sdk:shared:buildXCFrameworkDevice` in either SDK repo.
+
+PRODUCT_BUNDLE_IDENTIFIER = de.scoopsoftware.cardlink.demo.ios.devsdk
+PRODUCT_NAME = Cardlink DevSDK
+ASSETCATALOG_COMPILER_APPICON_NAME = AppIconDebug

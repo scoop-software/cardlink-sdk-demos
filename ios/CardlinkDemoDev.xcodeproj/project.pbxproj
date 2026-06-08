@@ -62,6 +62,7 @@
 /* Begin PBXFileReference section */
 		10495C8C8D3DE4201B237CAC /* CardlinkDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CardlinkDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1244201D2F18463E005983B8 /* CardlinkSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CardlinkSample.entitlements; sourceTree = "<group>"; };
+		246F8D93D9697499CA079C7C /* Debug-Dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Debug-Dev.xcconfig"; path = "Debug-Dev.xcconfig"; sourceTree = "<group>"; };
 		2A338EB28ACA0394A5E55F41 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		4BDE8D2B8150C7EB07D62C8D /* ScanHistory.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ScanHistory.swift; sourceTree = "<group>"; };
 		89C746ABF408AB3B4C2AA72A /* ScanRecord.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ScanRecord.swift; sourceTree = "<group>"; };
@@ -131,6 +132,7 @@
 				AA1000000000000000000007 /* Debug.xcconfig */,
 				AA1000000000000000000008 /* Release.xcconfig */,
 				AA6000000000000000000005 /* CardlinkSample */,
+				246F8D93D9697499CA079C7C /* Debug-Dev.xcconfig */,
 			);
 			path = CardlinkSample;
 			sourceTree = "<group>";
@@ -273,7 +275,7 @@
 					};
 				};
 			};
-			buildConfigurationList = AAB000000000000000000001 /* Build configuration list for PBXProject "CardlinkDemo" */;
+			buildConfigurationList = AAB000000000000000000001 /* Build configuration list for PBXProject "CardlinkDemoDev" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -284,8 +286,8 @@
 			mainGroup = AA6000000000000000000001;
 			packageReferences = (
 				CC0000000000000000000001 /* XCRemoteSwiftPackageReference "lottie-ios" */,
-				5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "cardlink-sdk-spm" */,
-				D1D451E286102F64133721BE /* XCRemoteSwiftPackageReference "nfc-sdk-spm" */,
+				22D9EB4F68FECA4BFC78624D /* XCLocalSwiftPackageReference "cardlink-dev-spm" */,
+				9397D00F8892FC7355CB75D1 /* XCLocalSwiftPackageReference "nfc-dev-spm" */,
 			);
 			productRefGroup = AA6000000000000000000004 /* Products */;
 			projectDirPath = "";
@@ -477,7 +479,7 @@
 		};
 		AAC000000000000000000003 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AA1000000000000000000007 /* Debug.xcconfig */;
+			baseConfigurationReference = 246F8D93D9697499CA079C7C /* Debug-Dev.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = CardlinkSample/CardlinkSample.entitlements;
@@ -594,7 +596,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AAB000000000000000000001 /* Build configuration list for PBXProject "CardlinkDemo" */ = {
+		AAB000000000000000000001 /* Build configuration list for PBXProject "CardlinkDemoDev" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AAC000000000000000000001 /* Debug */,
@@ -614,15 +616,18 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "cardlink-sdk-spm" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/scoop-software/cardlink-sdk-spm.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.39.0;
-			};
+/* Begin XCLocalSwiftPackageReference section */
+		22D9EB4F68FECA4BFC78624D /* XCLocalSwiftPackageReference "cardlink-dev-spm" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../cardlink-sdk/tools/cardlink-dev-spm";
 		};
+		9397D00F8892FC7355CB75D1 /* XCLocalSwiftPackageReference "nfc-dev-spm" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../scoop-nfc-sdk/tools/nfc-dev-spm";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
 		CC0000000000000000000001 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
@@ -631,25 +636,17 @@
 				minimumVersion = 4.4.0;
 			};
 		};
-		D1D451E286102F64133721BE /* XCRemoteSwiftPackageReference "nfc-sdk-spm" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/scoop-software/nfc-sdk-spm.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.20.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		32E41B719C31C21D826ADD57 /* ScoopCardlink */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "cardlink-sdk-spm" */;
+			package = 22D9EB4F68FECA4BFC78624D /* XCLocalSwiftPackageReference "cardlink-dev-spm" */;
 			productName = ScoopCardlink;
 		};
 		8BC2B12514CE5C13BAE20C0F /* ScoopNfcUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D1D451E286102F64133721BE /* XCRemoteSwiftPackageReference "nfc-sdk-spm" */;
+			package = 9397D00F8892FC7355CB75D1 /* XCLocalSwiftPackageReference "nfc-dev-spm" */;
 			productName = ScoopNfcUI;
 		};
 		CC0000000000000000000003 /* Lottie */ = {
@@ -659,7 +656,7 @@
 		};
 		DD95475E8EB3DDEC0729F1E8 /* ScoopNfc */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D1D451E286102F64133721BE /* XCRemoteSwiftPackageReference "nfc-sdk-spm" */;
+			package = 9397D00F8892FC7355CB75D1 /* XCLocalSwiftPackageReference "nfc-dev-spm" */;
 			productName = ScoopNfc;
 		};
 /* End XCSwiftPackageProductDependency section */

@@ -127,7 +127,18 @@ def wire_package(project, target, package, mode, local_path)
   end
 
   package[:target_product_names].each do |product_name|
-    next if target.package_product_dependencies.any? { |d| d.product_name == product_name }
+    existing_dep = target.package_product_dependencies.find { |d| d.product_name == product_name }
+    if existing_dep
+      # Re-point the dep at the (possibly new) package ref. This handles the
+      # mode-switch case (duplicating CardlinkDemo → CardlinkDemoDev and then
+      # re-running with --local): the product dep already exists but still
+      # references the removed remote package; we need to rebind it.
+      if existing_dep.package != package_ref
+        existing_dep.package = package_ref
+        puts "  rebound #{product_name} product to current package ref"
+      end
+      next
+    end
     product_dep = project.new(Xcodeproj::Project::Object::XCSwiftPackageProductDependency)
     product_dep.package = package_ref
     product_dep.product_name = product_name
