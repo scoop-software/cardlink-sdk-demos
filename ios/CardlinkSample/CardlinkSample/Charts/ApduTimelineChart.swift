@@ -2,8 +2,6 @@ import SwiftUI
 import Charts
 import ScoopCardlink
 
-import ScoopNfcUI
-
 /// Represents a single APDU exchange for charting.
 private struct ApduChartItem: Identifiable {
     let id: Int
@@ -79,7 +77,7 @@ struct ApduTimelineChart: View {
                 xEnd: .value("End", animatedStart + animatedDuration),
                 y: .value("APDU", item.id)
             )
-            .foregroundStyle(MetricsFormatting.shared.colorForApduLabel(label: item.label).swiftUIColor)
+            .foregroundStyle(MetricsFormatting.shared.colorForApduLabel(label: item.label).toSwiftUIColor())
             .annotation(position: .trailing, spacing: 4) {
                 HStack(spacing: 4) {
                     Text(item.label)
@@ -174,7 +172,7 @@ struct ApduAggregatedChart: View {
                 x: .value("Duration", Double(item.avgMs) * animationProgress),
                 y: .value("Command", item.label)
             )
-            .foregroundStyle(MetricsFormatting.shared.colorForApduLabel(label: item.label).swiftUIColor)
+            .foregroundStyle(MetricsFormatting.shared.colorForApduLabel(label: item.label).toSwiftUIColor())
             .annotation(position: .trailing, spacing: 4) {
                 Text("\(item.avgMs)ms avg (\(item.count)x)")
                     .font(.system(size: 8))
@@ -237,7 +235,7 @@ struct ApduSummaryView: View {
             ForEach(groupedStats, id: \.description) { stat in
                 HStack {
                     Circle()
-                        .fill(MetricsFormatting.shared.colorForApduLabel(label: stat.description).swiftUIColor)
+                        .fill(MetricsFormatting.shared.colorForApduLabel(label: stat.description).toSwiftUIColor())
                         .frame(width: 8, height: 8)
                     Text(stat.description)
                         .font(.caption)
@@ -259,8 +257,21 @@ struct ApduSummaryView: View {
     }
 }
 
-// ApduColor → SwiftUI.Color mapping ships with the SDK in ScoopCardlinkUI as
-// `extension ApduColor { var swiftUIColor: Color }`. Don't redefine it here.
+// MARK: - ApduColor Extension for SwiftUI
+
+extension ApduColor {
+    func toSwiftUIColor() -> Color {
+        switch self {
+        case .blue: return .blue
+        case .green: return .green
+        case .orange: return .orange
+        case .gray: return .gray
+        case .purple: return .purple
+        case .cyan: return .cyan
+        default: return .gray
+        }
+    }
+}
 
 #if DEBUG
 #Preview {

@@ -1,6 +1,5 @@
 import SwiftUI
-import ScoopCardlink
-
+@preconcurrency import ScoopCardlink
 
 // MARK: - Per-row status
 
@@ -78,7 +77,7 @@ final class PrescriptionDeleteViewModel: ObservableObject {
     private func performDelete(key: String, taskId: String, accessCode: String, preferredEnv: String) async {
         let shortId = String(taskId.prefix(12))
         do {
-            let result = try await deleteErezept(client: client, taskId: taskId, accessCode: accessCode, preferredEnv: preferredEnv)
+            let result = try await client.delete(taskId: taskId, accessCode: accessCode, preferredEnv: preferredEnv)
             statuses[key] = mapResult(result, shortId: shortId)
             if case .deleted(let env) = statuses[key] {
                 lastGoodEnv = env
@@ -90,22 +89,22 @@ final class PrescriptionDeleteViewModel: ObservableObject {
     }
 
     private func mapResult(_ result: ErezeptDeleteClient.DeleteResult, shortId: String) -> DeleteStatus {
-        switch classifyDeleteResult(result) {
-        case .success(let envUsed):
-            onTrace("Deleted \(shortId)… on \(envUsed)")
-            return .deleted(env: envUsed)
-        case .notFoundInAnyEnv(let triedEnvs):
-            onTrace("Not found in \(triedEnvs.joined(separator: "+")) for \(shortId)…")
+        switch onEnum(of: result) {
+        case .success(let s):
+            onTrace("Deleted \(shortId)… on \(s.envUsed)")
+            return .deleted(env: s.envUsed)
+        case .notFoundInAnyEnv(let n):
+            onTrace("Not found in \(n.triedEnvs.joined(separator: "+")) for \(shortId)…")
             return .failed(message: "Not found in DEV or RU")
-        case .httpError(let statusCode, let envUsed, let body):
-            onTrace("HTTP \(statusCode) on \(envUsed): \(body.prefix(160))")
-            return .failed(message: "HTTP \(statusCode) (\(envUsed))")
-        case .networkError(let envUsed, let message):
-            onTrace("Network error on \(envUsed): \(message)")
-            return .failed(message: "Network: \(String(message.prefix(80)))")
-        case .authFailed(let message):
-            onTrace("Auth failed: \(message)")
-            return .failed(message: "Auth: \(String(message.prefix(80)))")
+        case .httpError(let h):
+            onTrace("HTTP \(h.statusCode) on \(h.envUsed): \(h.body.prefix(160))")
+            return .failed(message: "HTTP \(h.statusCode) (\(h.envUsed))")
+        case .networkError(let n):
+            onTrace("Network error on \(n.envUsed): \(n.message)")
+            return .failed(message: "Network: \(String(n.message.prefix(80)))")
+        case .authFailed(let a):
+            onTrace("Auth failed: \(a.message)")
+            return .failed(message: "Auth: \(String(a.message.prefix(80)))")
         }
     }
 }
