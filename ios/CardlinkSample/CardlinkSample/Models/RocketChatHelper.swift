@@ -1,6 +1,7 @@
 import Foundation
 import ScoopCardlink
 
+
 /// Reads RocketChat settings from UserDefaults and posts scan results.
 /// Silently fails on any error — never interrupts the app flow.
 enum RocketChatHelper {
@@ -18,7 +19,7 @@ enum RocketChatHelper {
         guard !serverUrl.isEmpty, !username.isEmpty else { return }
 
         Task {
-            try? await RocketChatReporter.shared.report(
+            try? await reportToRocketChat(
                 serverUrl: serverUrl,
                 username: username,
                 password: password,
