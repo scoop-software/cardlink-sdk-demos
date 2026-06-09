@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/scoop-software/cardlink-sdk-spm.git",
       "state" : {
-        "revision" : "ef925a747f15740b49a01da14cde1f82141160ed",
-        "version" : "1.39.0"
+        "revision" : "75b055b6405f43444d79c5c0f1b6976146a5e03e",
+        "version" : "2.1.1"
       }
     },
     {
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/scoop-software/nfc-sdk-spm.git",
       "state" : {
-        "revision" : "373e2b489e594d84534e48e8995f9d230ee9c1ec",
-        "version" : "1.20.0"
+        "revision" : "7a5c707548da1285bfdad8da2247b83f58fa627d",
+        "version" : "2.0.1"
       }
     }
   ],
