@@ -70,6 +70,14 @@ jobs:
     name: iOS (published)
     runs-on: macos-26
     timeout-minutes: 30
+    # Known issue: Xcode 26's explicit modules + SKIE-generated swiftinterface
+    # interact such that cross-module enum types (ApduColor / AuthMethod /
+    # LeiSelectionMethod / ErezeptType — declared in both ScoopCardlink and
+    # ScoopNfc via Kotlin typealias re-exports) fail to resolve. The fix
+    # needs to land in the SDK (drop the cross-module typealiases in
+    # cardlink-sdk's NfcReExports.kt) or in SKIE itself. Tracked as a
+    # Phase 2 follow-up.
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 

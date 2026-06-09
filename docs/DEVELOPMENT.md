@@ -85,7 +85,30 @@ If Xcode caches the old XCFramework, delete the project's DerivedData and rebuil
 rm -rf ~/Library/Developer/Xcode/DerivedData/CardlinkDemoDev-*
 ```
 
-**Known issue:** SPM's path-based binary-target consumption of SKIE-generated `.swiftinterface` files currently doesn't expose extension methods (`onEnum`, `report`, `delete`) the way URL-based binary targets do. The Customer project (consuming v1.39.0 from `cardlink-sdk-spm`) builds fine; the Dev project hits these errors. Tracked as a Phase 2 follow-up.
+**Known issue (Phase 2 follow-up):** Xcode 26 + SPM + SKIE swiftinterface
+combine to produce two related failure modes:
+
+1. **Cross-module enum ambiguity (affects both Customer and Dev projects):**
+   `ApduColor`, `AuthMethod`, `LeiSelectionMethod`, `ErezeptType` are declared
+   in both `ScoopCardlink` (via Kotlin typealias re-exports in
+   `NfcReExports.kt`) and the originating modules (`ScoopNfc`,
+   `ScoopPopp`). When the demo imports both, Xcode 26's explicit module
+   precompilation fails to resolve the cross-module typealiases. Build error
+   surfaces as `cannot find type 'ApduColor' in scope` on `extension
+   ApduColor` etc.
+
+   **Fix path:** drop the cross-module typealiases in cardlink-sdk's
+   `NfcReExports.kt` and switch the demo to use the originating types
+   directly (e.g. `extension ScoopNfc.ApduColor`).
+
+2. **SKIE extension methods on obj-c-imported classes (Dev project only):**
+   SPM's path-based binary-target consumption of `.swiftinterface` files
+   strips SKIE-generated extension methods (`onEnum`, `RocketChatReporter.report`,
+   `ErezeptDeleteClient.delete`). URL-based binary targets are not affected.
+
+The iOS CI jobs are marked `continue-on-error: true` until these are
+resolved. The demo still builds and runs locally (with a warm Xcode SPM
+cache) and on physical iPhones once the project is opened in Xcode IDE.
 
 ## Authentication for the published Maven repos
 
