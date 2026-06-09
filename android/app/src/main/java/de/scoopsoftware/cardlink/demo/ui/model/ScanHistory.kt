@@ -4,9 +4,9 @@ import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import de.scoopsoftware.nfc.metrics.CsvExporter
-import de.scoopsoftware.nfc.metrics.ScanRecord
-import de.scoopsoftware.nfc.metrics.ScanStatistics
+import de.scoopsoftware.cardlink.metrics.CsvExporter
+import de.scoopsoftware.cardlink.metrics.ScanRecord
+import de.scoopsoftware.cardlink.metrics.ScanStatistics
 import de.scoopsoftware.nfc.model.ApduExchangeRecord
 import de.scoopsoftware.nfc.model.PerformanceMetricsSnapshot
 import kotlinx.coroutines.flow.MutableStateFlow

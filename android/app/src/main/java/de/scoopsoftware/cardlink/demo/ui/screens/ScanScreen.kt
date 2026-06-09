@@ -76,7 +76,7 @@ import de.scoopsoftware.cardlink.flow.CardlinkFlowConfig
 import de.scoopsoftware.cardlink.flow.CardlinkFlowError
 import de.scoopsoftware.cardlink.flow.CardlinkFlowState
 import de.scoopsoftware.cardlink.flow.RecoveryAction
-import de.scoopsoftware.nfc.metrics.ScanRecord
+import de.scoopsoftware.cardlink.metrics.ScanRecord
 import de.scoopsoftware.cardlink.serverdriven.ServerDrivenFlow
 import de.scoopsoftware.nfc.vsd.InsuredPersonData
 import de.scoopsoftware.cardlink.websocket.CardlinkEnvironment

@@ -73,7 +73,7 @@ import de.scoopsoftware.cardlink.fhir.PrescriptionMetadataParser
 import de.scoopsoftware.cardlink.websocket.CardlinkEnvironment
 import de.scoopsoftware.nfc.EgkReader
 import de.scoopsoftware.nfc.cache.FileCacheProvider
-import de.scoopsoftware.nfc.metrics.ScanRecord
+import de.scoopsoftware.cardlink.metrics.ScanRecord
 import de.scoopsoftware.nfc.cache.KnownCard
 import de.scoopsoftware.nfc.cache.getKnownCards
 import de.scoopsoftware.popp.module.*

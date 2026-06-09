@@ -41,7 +41,7 @@ import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.FloatEntry
 import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
-import de.scoopsoftware.nfc.metrics.ScanRecord
+import de.scoopsoftware.cardlink.metrics.ScanRecord
 import de.scoopsoftware.cardlink.demo.ui.theme.ChartColors
 
 /**
@@ -377,4 +377,4 @@ private fun rememberChartStyle(colors: List<Color>) = com.patrykandpatrick.vico.
     elevationOverlayColor = MaterialTheme.colorScheme.primary
 )
 
-private fun formatMs(ms: Long): String = de.scoopsoftware.nfc.metrics.MetricsFormatting.formatMs(ms)
+private fun formatMs(ms: Long): String = de.scoopsoftware.cardlink.metrics.MetricsFormatting.formatMs(ms)

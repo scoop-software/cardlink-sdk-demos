@@ -58,8 +58,8 @@ import de.scoopsoftware.cardlink.demo.ui.components.ApduTimelineChart
 import de.scoopsoftware.cardlink.demo.ui.components.BreakdownChart
 import de.scoopsoftware.cardlink.demo.ui.components.ScanTimeChart
 import de.scoopsoftware.cardlink.demo.ui.model.ScanHistory
-import de.scoopsoftware.nfc.metrics.MetricsFormatting
-import de.scoopsoftware.nfc.metrics.ScanRecord
+import de.scoopsoftware.cardlink.metrics.MetricsFormatting
+import de.scoopsoftware.cardlink.metrics.ScanRecord
 import de.scoopsoftware.cardlink.demo.ui.theme.ChartColors
 import java.io.File
 
