@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/scoop-software/cardlink-sdk-spm.git",
       "state" : {
-        "revision" : "75b055b6405f43444d79c5c0f1b6976146a5e03e",
-        "version" : "2.1.1"
+        "revision" : "b6fe94436ff03a8b7f5f73578ffd8e1d3d135e8e",
+        "version" : "2.1.2"
       }
     },
     {
