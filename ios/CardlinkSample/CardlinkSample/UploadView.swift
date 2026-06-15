@@ -16,7 +16,6 @@ class UploadViewModel: ObservableObject {
     @Published var selectedCardLabel: String?
 
     private var flow: ErezeptUploadFlow?
-    private var nfcSessionManager: NfcSessionManager?
     private var flowTask: Task<Void, Never>?
     private var stateTask: Task<Void, Never>?
     private var traceTask: Task<Void, Never>?
@@ -49,15 +48,9 @@ class UploadViewModel: ObservableObject {
             uploadTargetEnv: "dev"
         )
 
+        // Turnkey: the SDK provider owns the NFCTagReaderSession and drives the
+        // system NFC sheet from flow state — no app-side session management.
         let nfcProvider = IosNfcTransceiverProvider()
-        let nfcSession = NfcSessionManager(provider: nfcProvider)
-        self.nfcSessionManager = nfcSession
-
-        nfcProvider.onReadyForSession = { [weak nfcSession] in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                nfcSession?.startSession()
-            }
-        }
 
         let uploadFlow = ErezeptUploadFlow(config: config, nfcProvider: nfcProvider)
         self.flow = uploadFlow
@@ -72,22 +65,6 @@ class UploadViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     self?.flowState = state
                     self?.updateSelections(from: state)
-
-                    // Manage NFC session hints
-                    if let mgr = self?.nfcSessionManager {
-                        let hint = state.nfcSessionHint
-                        switch hint.action {
-                        case .updateMessage:
-                            mgr.updateAlertMessage(hint.message)
-                        case .invalidate:
-                            mgr.updateAlertMessage(hint.message)
-                            mgr.invalidateSession()
-                        case .invalidateWithError:
-                            mgr.invalidateSession(errorMessage: hint.message)
-                        default:
-                            break
-                        }
-                    }
                 }
             }
         }
@@ -125,7 +102,6 @@ class UploadViewModel: ObservableObject {
         stateTask?.cancel()
         traceTask?.cancel()
         flow = nil
-        nfcSessionManager = nil
         flowTask = nil
         stateTask = nil
         traceTask = nil

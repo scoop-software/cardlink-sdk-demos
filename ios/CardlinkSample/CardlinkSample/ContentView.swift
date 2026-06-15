@@ -177,82 +177,6 @@ private class FlowHandle {
     func startNewCardTap() async throws { try await _startNewCardTap() }
 }
 
-// MARK: - NFC Session Manager
-
-/// Manages NFCTagReaderSession lifecycle for CardlinkFlow/ServerDrivenFlow.
-class NfcSessionManager: NSObject, NFCTagReaderSessionDelegate {
-    private var session: NFCTagReaderSession?
-    private let provider: IosNfcTransceiverProvider
-    private var tagConnected = false
-
-    init(provider: IosNfcTransceiverProvider) {
-        self.provider = provider
-    }
-
-    func startSession() {
-        guard session == nil else { return }
-        tagConnected = false
-        let newSession = NFCTagReaderSession(pollingOption: .iso14443, delegate: self)
-        session = newSession
-        newSession?.alertMessage = "Hold your eGK near the iPhone"
-        newSession?.begin()
-    }
-
-    func updateAlertMessage(_ message: String) {
-        session?.alertMessage = message
-    }
-
-    func invalidateSession(errorMessage: String? = nil) {
-        if let msg = errorMessage {
-            session?.invalidate(errorMessage: msg)
-        } else {
-            session?.invalidate()
-        }
-        session = nil
-        tagConnected = false
-    }
-
-    func tagReaderSessionDidBecomeActive(_ session: NFCTagReaderSession) {}
-
-    func tagReaderSession(_ session: NFCTagReaderSession, didInvalidateWithError error: Error) {
-        guard session === self.session else { return }
-        guard !tagConnected else {
-            self.session = nil
-            return
-        }
-        let nsError = error as NSError
-        if nsError.code == NFCReaderError.readerSessionInvalidationErrorUserCanceled.rawValue {
-            provider.onSessionInvalidated(message: "User cancelled NFC")
-        } else if nsError.code != NFCReaderError.readerSessionInvalidationErrorFirstNDEFTagRead.rawValue {
-            provider.onSessionInvalidated(message: error.localizedDescription)
-        }
-        self.session = nil
-    }
-
-    func tagReaderSession(_ session: NFCTagReaderSession, didDetect tags: [NFCTag]) {
-        guard session === self.session else { return }
-        guard let tag = tags.first else {
-            session.invalidate(errorMessage: "No tag found")
-            return
-        }
-        guard case .iso7816(let iso7816Tag) = tag else {
-            session.invalidate(errorMessage: "Unsupported tag type")
-            return
-        }
-        session.connect(to: tag) { [weak self] error in
-            guard let self = self else { return }
-            if let error = error {
-                session.invalidate(errorMessage: "Connection failed")
-                self.provider.onSessionInvalidated(message: error.localizedDescription)
-                return
-            }
-            self.tagConnected = true
-            session.alertMessage = "Reading card data..."
-            self.provider.onTagConnected(tag: iso7816Tag)
-        }
-    }
-}
-
 // MARK: - Flow View Model
 
 /// ObservableObject that bridges CardlinkFlow/ServerDrivenFlow state to SwiftUI.
@@ -262,7 +186,6 @@ class FlowViewModel: ObservableObject {
     @Published var started = false
 
     private var flow: FlowHandle?
-    private var nfcSessionManager: NfcSessionManager?
     private var flowTask: Task<Void, Never>?
     private var stateTask: Task<Void, Never>?
     private var traceTask: Task<Void, Never>?
@@ -307,15 +230,9 @@ class FlowViewModel: ObservableObject {
             uploadTargetEnv: "dev"
         )
 
+        // Turnkey: the SDK provider owns the NFCTagReaderSession and drives the
+        // system NFC sheet from flow state — no app-side session management.
         let nfcProvider = IosNfcTransceiverProvider()
-        let nfcSession = NfcSessionManager(provider: nfcProvider)
-        self.nfcSessionManager = nfcSession
-
-        nfcProvider.onReadyForSession = { [weak nfcSession] in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                nfcSession?.startSession()
-            }
-        }
 
         let handle: FlowHandle
         if useServerFlow {
@@ -337,22 +254,6 @@ class FlowViewModel: ObservableObject {
         stateTask = handle.collectStates { [weak self] state in
             DispatchQueue.main.async {
                 self?.flowState = state
-
-                // Manage NFC session hints
-                if let mgr = self?.nfcSessionManager {
-                    let hint = state.nfcSessionHint
-                    switch hint.action {
-                    case .updateMessage:
-                        mgr.updateAlertMessage(hint.message)
-                    case .invalidate:
-                        mgr.updateAlertMessage(hint.message)
-                        mgr.invalidateSession()
-                    case .invalidateWithError:
-                        mgr.invalidateSession(errorMessage: hint.message)
-                    default:
-                        break
-                    }
-                }
             }
         }
 
@@ -388,7 +289,6 @@ class FlowViewModel: ObservableObject {
         stateTask?.cancel()
         traceTask?.cancel()
         flow = nil
-        nfcSessionManager = nil
         flowTask = nil
         stateTask = nil
         traceTask = nil

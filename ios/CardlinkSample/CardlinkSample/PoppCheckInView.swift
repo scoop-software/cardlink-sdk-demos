@@ -926,7 +926,6 @@ class PoppViewModel: ObservableObject {
 
     private var poppFlow: PoppFlow?
     private var poppClient: MockVzdRealPoppClient?
-    private var nfcSessionManager: NfcSessionManager?
     private var stateTask: Task<Void, Never>?
     private var traceTask: Task<Void, Never>?
 
@@ -946,15 +945,9 @@ class PoppViewModel: ObservableObject {
     func startCheckIn(username: String, password: String, telematikId: String? = TELEMATIK_ID, themeColor: UIColor? = nil) {
         traceLog.removeAll()
 
+        // Turnkey: the SDK provider owns the NFCTagReaderSession and drives the
+        // system NFC sheet from PoPP progress — no app-side session management.
         let nfcProvider = IosNfcTransceiverProvider()
-        let nfcSession = NfcSessionManager(provider: nfcProvider)
-        self.nfcSessionManager = nfcSession
-
-        nfcProvider.onReadyForSession = { [weak nfcSession] in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                nfcSession?.startSession()
-            }
-        }
 
         let config = PoppFlowConfig(
             zetaClient: { [weak self] () -> MockVzdRealPoppClient in
@@ -973,16 +966,11 @@ class PoppViewModel: ObservableObject {
             nfcProvider: nfcProvider,
             knownCards: knownCards,
             cacheProvider: useFileCache ? cacheProvider : nil,
-            onNfcDone: { [weak self] in
-                DispatchQueue.main.async {
-                    self?.nfcSessionManager?.invalidateSession()
-                }
-            },
-            onNfcMessage: { [weak nfcSession] message in
-                DispatchQueue.main.async {
-                    nfcSession?.updateAlertMessage(message)
-                }
-            },
+            // Turnkey: the SDK provider drives the system NFC sheet, so the app needs
+            // no onNfcMessage/onNfcDone session wiring. (Passed explicitly because
+            // these optional params aren't bridged with Kotlin defaults via SKIE.)
+            onNfcDone: nil,
+            onNfcMessage: nil,
             onTrace: { [weak self] message in
                 DispatchQueue.main.async {
                     self?.traceLog.append(message)
@@ -1238,10 +1226,9 @@ class PoppViewModel: ObservableObject {
     func cancel() {
         stateTask?.cancel()
         traceTask?.cancel()
-        nfcSessionManager?.invalidateSession()
+        // poppFlow.cancel() closes the NFC session via the SDK provider (turnkey).
         poppFlow?.cancel()
         poppFlow = nil
-        nfcSessionManager = nil
         hasPrescriptions = false
         showConfetti = false
         state = .idle
