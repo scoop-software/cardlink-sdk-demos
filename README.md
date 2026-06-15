@@ -4,6 +4,9 @@ Reference demo applications for the [Cardlink SDK](https://github.com/scoop-soft
 
 These demos are intended for 3rd-party developers as ready-to-build examples of how to consume the SDK. Each platform is a standalone project — clone this repository, change into the platform directory, and build with the platform's native toolchain.
 
+> 📖 **[API Reference → docs/API.md](docs/API.md)** — the consumer API for every flow
+> (CardLink, PoPP, eRezept, card reading, metrics) with Kotlin/Swift usage snippets.
+
 ## Platforms
 
 | Platform | Status |
