@@ -9,6 +9,12 @@ consumer API reference. For a runnable end‑to‑end example, see the demo apps
 > The NFC primitives and the PoPP module are **bundled into this SDK** — on iOS they ship
 > inside `ScoopCardlink`; on Android they resolve transitively. You normally depend on
 > Cardlink only.
+>
+> **The SDK does all eGK card reading for you** — NFC discovery, PACE authentication,
+> Secure Messaging, file reads. You never touch APDUs; you only plug in a ready-made
+> platform NFC provider (`AndroidNfcTransceiverProvider(activity)`, or
+> `IosNfcTransceiverProvider()` with a small standard CoreNFC bridge). See
+> [CardLink Flow](#cardlink-flow).
 
 ## Platforms
 
@@ -75,27 +81,33 @@ Task { try await flow.start() }
 ```kotlin
 import de.scoopsoftware.cardlink.flow.CardlinkFlow
 import de.scoopsoftware.cardlink.flow.CardlinkFlowConfig
-import de.scoopsoftware.cardlink.flow.NfcTransceiverProvider
+import de.scoopsoftware.cardlink.flow.AndroidNfcTransceiverProvider   // SDK-provided (Android)
 import de.scoopsoftware.cardlink.websocket.CardlinkEnvironment
 
 val flow = CardlinkFlow(
     config = CardlinkFlowConfig(
-        environment = CardlinkEnvironment.Default,   // or CardlinkEnvironment.Custom(...)
+        environment = CardlinkEnvironment.Default,   // dev/demo; use Custom(...) for your backend
         username = "my-client",                       // OAuth ROPC credentials
         password = "s3cr3t",
         credentialStorage = myCredentialStorage,      // optional — enables session persistence
     ),
-    nfcProvider = NfcTransceiverProvider {
-        // platform code: start NFC discovery, wait for a card, return the connected transceiver
-        myPlatformNfc.awaitTransceiver()
-    }
+    nfcProvider = AndroidNfcTransceiverProvider(activity)   // SDK-provided — just pass your Activity
 )
 ```
+
+> **You do not implement NFC or card reading.** The SDK reads the eGK end-to-end — NFC
+> discovery, PACE authentication, Secure Messaging, eGK file reads; you never touch APDUs.
+> You only hand the flow a ready-made `NfcTransceiverProvider`:
+> - **Android:** `AndroidNfcTransceiverProvider(activity)` — the SDK owns NFC reader mode. That's the entire NFC integration.
+> - **iOS:** `IosNfcTransceiverProvider()` — Apple requires the **app** to own the
+>   `NFCTagReaderSession`, so you attach a small, standard CoreNFC delegate that forwards the
+>   connected ISO 7816 tag via `provider.onTagConnected(tag:)` / `provider.onSessionInvalidated(message:)`.
+>   Copy the demo's `NfcSessionManager` (`ios/CardlinkSample/CardlinkSample/ContentView.swift`) verbatim — ~60 lines, no card logic.
 
 `CardlinkFlow(config, nfcProvider)` takes two arguments:
 
 - **`config: CardlinkFlowConfig`** — environment + OAuth credentials and tuning knobs (see below).
-- **`nfcProvider: NfcTransceiverProvider`** — a `fun interface` with one suspend method, `suspend fun awaitTransceiver(): NfcTransceiver`. The platform layer (Android reader mode / iOS tag session) implements this to wait for a card and return a connected transceiver. It may be called more than once per flow (wrong CAN, card removed).
+- **`nfcProvider: NfcTransceiverProvider`** — pass the SDK's `AndroidNfcTransceiverProvider(activity)` or `IosNfcTransceiverProvider()`. (It *is* a `fun interface` — `suspend fun awaitTransceiver(): NfcTransceiver` — so you can supply your own, but you normally don't.) The SDK invokes it whenever it needs the card; it may be called more than once per flow (wrong CAN, card removed).
 
 ### CardlinkFlowConfig
 
@@ -270,7 +282,7 @@ val flow = PoppFlow(
             vzdBaseUrl = "https://vzd.ru.example",
             clientId = "my-client-id",
         ),
-        nfcProvider = myNfcProvider,      // optional: enables eGK auth. Null = GesundheitsID only
+        nfcProvider = AndroidNfcTransceiverProvider(activity),  // SDK-provided; optional — enables eGK auth (null = GesundheitsID only)
         knownCards = previouslyReadCards, // optional: KnownCards with cached CAN for quick pick
         cacheProvider = myCache,          // optional: caches immutable eGK files by ICCSN
         appUserAgent = "de.scoopsoftware.app/1.0",
@@ -420,7 +432,7 @@ Public surface:
 | `fun cancel()` | Abort; closes channels, OAuth helper, HTTP client. |
 | `val failedBundles: List<String>` / `fun exportFailedBundles(): String` | Bundle IDs that failed to upload this session (newline-joined for export). |
 
-`config` supplies OAuth ROPC `username`/`password`, the `environment`, an optional `cacheProvider` (enables the known-card picker and file caching), and `uploadTargetEnv` (`"dev"` or `"ru"`, the gematik target). `nfcProvider` is the platform `NfcTransceiverProvider` (`suspend fun awaitTransceiver(): NfcTransceiver`) that starts NFC discovery and returns a connected transceiver. During upload the flow personalizes the bundle XML with the card's `InsuredPersonData`, and if the first KBV profile version fails it automatically retries with an alternate version of the same medication when one exists.
+`config` supplies OAuth ROPC `username`/`password`, the `environment`, an optional `cacheProvider` (enables the known-card picker and file caching), and `uploadTargetEnv` (`"dev"` or `"ru"`, the gematik target). `nfcProvider` is the SDK-provided `AndroidNfcTransceiverProvider(activity)` / `IosNfcTransceiverProvider()` (same as [CardLink Flow](#cardlink-flow) — you don't implement NFC; the SDK reads the card). During upload the flow personalizes the bundle XML with the card's `InsuredPersonData`, and if the first KBV profile version fails it automatically retries with an alternate version of the same medication when one exists.
 
 #### `ErezeptUploadState`
 
