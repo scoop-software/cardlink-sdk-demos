@@ -20,8 +20,8 @@ consumer API reference. For a runnable end‑to‑end example, see the demo apps
 
 | Platform | Import / coordinate | Requirements |
 | --- | --- | --- |
-| **Android** | `de.scoopsoftware.cardlink:shared-android:2.1.2` (Maven via GitHub Packages — needs a `read:packages` token) | `minSdk 26`, Java 17 |
-| **iOS** | `import ScoopCardlink` (SPM: [`cardlink-sdk-spm`](https://github.com/scoop-software/cardlink-sdk-spm), `from: "2.1.2"`) | iOS 14+, **Xcode 26** with `SWIFT_ENABLE_EXPLICIT_MODULES = NO` |
+| **Android** | `de.scoopsoftware.cardlink:shared-android:2.2.0` (public Maven, no token — `https://scoop-software.github.io/cardlink-packages/maven`) | `minSdk 26`, Java 17 |
+| **iOS** | `import ScoopCardlink` (SPM: [`cardlink-packages`](https://github.com/scoop-software/cardlink-packages), `from: "2.2.0"`) | iOS 14+, **Xcode 26** with `SWIFT_ENABLE_EXPLICIT_MODULES = NO` |
 
 > ⚠️ **The `Default` environment targets dev/demo backends**, and the eRezept
 > upload/delete endpoints are demo hosts. Use `CardlinkEnvironment.Custom(...)` for your
@@ -920,7 +920,7 @@ RocketChatReporter.report(
 ## See also
 
 - **Demo apps** — `ios/` and `android/` in this repository exercise every flow above.
-- **iOS (SPM):** [`cardlink-sdk-spm`](https://github.com/scoop-software/cardlink-sdk-spm) ·
+- **iOS (SPM):** [`cardlink-packages`](https://github.com/scoop-software/cardlink-packages) ·
   [`nfc-sdk-spm`](https://github.com/scoop-software/nfc-sdk-spm) ·
   [`scoop-popp-module-spm`](https://github.com/scoop-software/scoop-popp-module-spm) — each README covers install + the required Xcode 26 build settings.
 - **API docs in‑IDE:** on iOS, ⌥‑click any symbol for inline Quick Help (the KDoc ships in

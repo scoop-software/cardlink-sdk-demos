@@ -6,7 +6,7 @@ kotlinx-coroutines = "1.10.2"
 
 # SDK pins — bumped by the SDK's release pipeline via scripts/update-sdk-pin.sh (later phase).
 # Verify against latest published versions in Step 2 before committing.
-cardlink-sdk = "2.1.2"
+cardlink-sdk = "2.2.0"
 nfc-sdk = "2.0.1"
 popp-module = "0.18.0"
 

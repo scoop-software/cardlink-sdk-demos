@@ -112,7 +112,7 @@ cache) and on physical iPhones once the project is opened in Xcode IDE.
 
 ## Authentication for the published Maven repos
 
-Customer (and CI) builds resolve `de.scoopsoftware.*` artifacts from three GitHub Packages Maven repos. Authentication is required even though Gradle's error message can be misleading. Any of the following work:
+Customer (and CI) builds resolve the NFC + PoPP `de.scoopsoftware.*` artifacts from two GitHub Packages Maven repos, which require authentication (the Cardlink SDK is now on a public Maven repo and needs none). Gradle's auth error message can be misleading. Any of the following work:
 
 - Environment variables: `GITHUB_ACTOR` and `GITHUB_TOKEN` (the token needs `read:packages` scope on the `scoop-software` org).
 - Gradle properties in `~/.gradle/gradle.properties`:

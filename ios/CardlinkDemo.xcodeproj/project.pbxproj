@@ -287,7 +287,7 @@
 			mainGroup = AA6000000000000000000001;
 			packageReferences = (
 				CC0000000000000000000001 /* XCRemoteSwiftPackageReference "lottie-ios" */,
-				5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "cardlink-sdk-spm" */,
+				5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "cardlink-packages" */,
 				D1D451E286102F64133721BE /* XCRemoteSwiftPackageReference "nfc-sdk-spm" */,
 			);
 			productRefGroup = AA6000000000000000000004 /* Products */;
@@ -623,12 +623,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "cardlink-sdk-spm" */ = {
+		5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "cardlink-packages" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/scoop-software/cardlink-sdk-spm.git";
+			repositoryURL = "https://github.com/scoop-software/cardlink-packages.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.1.2;
+				minimumVersion = 2.2.0;
 			};
 		};
 		CC0000000000000000000001 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
@@ -652,7 +652,7 @@
 /* Begin XCSwiftPackageProductDependency section */
 		32E41B719C31C21D826ADD57 /* ScoopCardlink */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "cardlink-sdk-spm" */;
+			package = 5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "cardlink-packages" */;
 			productName = ScoopCardlink;
 		};
 		8BC2B12514CE5C13BAE20C0F /* ScoopNfcUI */ = {

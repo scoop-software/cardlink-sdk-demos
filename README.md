@@ -24,7 +24,7 @@ cd android
 ./gradlew installDebug   # build and install on a connected device or running emulator
 ```
 
-The build pulls the Cardlink SDK from [GitHub Packages Maven](https://github.com/scoop-software/cardlink-sdk/packages). You need a GitHub personal access token with `read:packages` scope. Place it in `~/.gradle/gradle.properties`:
+The Cardlink SDK is pulled from a public Maven repo (`https://scoop-software.github.io/cardlink-packages/maven`) — no credentials needed. The **NFC** and **PoPP** SDKs are still on GitHub Packages, which needs a GitHub personal access token with `read:packages` scope. Place it in `~/.gradle/gradle.properties`:
 
 ```
 gpr.user=<your-github-username>
@@ -40,7 +40,7 @@ open ios/CardlinkDemo.xcodeproj
 ```
 
 The project pulls `ScoopCardlink` from
-[cardlink-sdk-spm](https://github.com/scoop-software/cardlink-sdk-spm) and
+[cardlink-packages](https://github.com/scoop-software/cardlink-packages) and
 `ScoopNfc` + `ScoopNfcUI` from
 [nfc-sdk-spm](https://github.com/scoop-software/nfc-sdk-spm) automatically on
 first build. Xcode handles the SPM resolution.

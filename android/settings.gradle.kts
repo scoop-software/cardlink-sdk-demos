@@ -11,12 +11,14 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        // GitHub Packages namespaces by repo (not by group), so each SDK needs its own URL.
-        // Credentials are shared — a single GITHUB_TOKEN with read:packages scope works for all three.
+        // Cardlink SDK — public, credential-free static Maven repo (served on GitHub Pages).
+        maven { url = uri("https://scoop-software.github.io/cardlink-packages/maven") }
+        // NFC + PoPP SDKs are still on GitHub Packages, which requires auth even for reads.
+        // GitHub Packages namespaces by repo (not by group), so each needs its own URL.
+        // A single GITHUB_TOKEN with read:packages scope works for both.
         listOf(
-            "GitHubPackagesCardlink" to "https://maven.pkg.github.com/scoop-software/cardlink-sdk",
-            "GitHubPackagesNfc"      to "https://maven.pkg.github.com/scoop-software/nfc-sdk",
-            "GitHubPackagesPopp"     to "https://maven.pkg.github.com/scoop-software/scoop-popp-module",
+            "GitHubPackagesNfc"  to "https://maven.pkg.github.com/scoop-software/nfc-sdk",
+            "GitHubPackagesPopp" to "https://maven.pkg.github.com/scoop-software/scoop-popp-module",
         ).forEach { (repoName, repoUrl) ->
             maven {
                 name = repoName

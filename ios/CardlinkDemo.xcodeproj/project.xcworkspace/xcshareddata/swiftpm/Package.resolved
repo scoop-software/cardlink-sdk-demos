@@ -2,12 +2,12 @@
   "originHash" : "81dec2fe488f424e6e2d407e4207f7b9df889aa652c2416abc7fe456f4f33ddf",
   "pins" : [
     {
-      "identity" : "cardlink-sdk-spm",
+      "identity" : "cardlink-packages",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/scoop-software/cardlink-sdk-spm.git",
+      "location" : "https://github.com/scoop-software/cardlink-packages.git",
       "state" : {
-        "revision" : "b6fe94436ff03a8b7f5f73578ffd8e1d3d135e8e",
-        "version" : "2.1.2"
+        "revision" : "28a4cd99872c530f4619cfbb6173aab8a1d534a9",
+        "version" : "2.2.0"
       }
     },
     {
