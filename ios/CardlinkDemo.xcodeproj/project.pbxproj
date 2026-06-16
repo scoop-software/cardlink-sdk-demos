@@ -288,7 +288,6 @@
 			packageReferences = (
 				CC0000000000000000000001 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "cardlink-packages" */,
-				D1D451E286102F64133721BE /* XCRemoteSwiftPackageReference "nfc-sdk-spm" */,
 			);
 			productRefGroup = AA6000000000000000000004 /* Products */;
 			projectDirPath = "";
@@ -639,13 +638,6 @@
 				minimumVersion = 4.4.0;
 			};
 		};
-		D1D451E286102F64133721BE /* XCRemoteSwiftPackageReference "nfc-sdk-spm" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/scoop-software/nfc-sdk-spm.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.1;
-			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
@@ -657,7 +649,7 @@
 		};
 		8BC2B12514CE5C13BAE20C0F /* ScoopNfcUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D1D451E286102F64133721BE /* XCRemoteSwiftPackageReference "nfc-sdk-spm" */;
+			package = 5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "cardlink-packages" */;
 			productName = ScoopNfcUI;
 		};
 		CC0000000000000000000003 /* Lottie */ = {
@@ -667,7 +659,7 @@
 		};
 		DD95475E8EB3DDEC0729F1E8 /* ScoopNfc */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D1D451E286102F64133721BE /* XCRemoteSwiftPackageReference "nfc-sdk-spm" */;
+			package = 5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "cardlink-packages" */;
 			productName = ScoopNfc;
 		};
 /* End XCSwiftPackageProductDependency section */

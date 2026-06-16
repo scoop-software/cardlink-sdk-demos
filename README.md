@@ -39,11 +39,9 @@ Requirements: Xcode 15+, an Apple developer account for signing.
 open ios/CardlinkDemo.xcodeproj
 ```
 
-The project pulls `ScoopCardlink` from
-[cardlink-packages](https://github.com/scoop-software/cardlink-packages) and
-`ScoopNfc` + `ScoopNfcUI` from
-[nfc-sdk-spm](https://github.com/scoop-software/nfc-sdk-spm) automatically on
-first build. Xcode handles the SPM resolution.
+The project pulls `ScoopCardlink`, `ScoopNfc`, and `ScoopNfcUI` from the single
+[cardlink-packages](https://github.com/scoop-software/cardlink-packages) Swift package
+automatically on first build. Xcode handles the SPM resolution.
 
 ## SDK Developer Mode
 

@@ -5,7 +5,7 @@
 #   ruby scripts/wire_spm.rb <project.xcodeproj> --remote
 #   ruby scripts/wire_spm.rb <project.xcodeproj> --local <cardlink-dev-spm-path> [<nfc-dev-spm-path>]
 #
-# In --remote mode, both cardlink-sdk-spm and nfc-sdk-spm are wired as
+# In --remote mode, both Cardlink and NFC products are wired from cardlink-packages as
 # XCRemoteSwiftPackageReference. In --local mode, cardlink is wired as a
 # local path-based package; nfc is also wired locally if a second path is
 # supplied, otherwise it falls back to the remote mirror.
@@ -23,14 +23,14 @@ abort "--local needs a cardlink path" if mode == '--local' && cardlink_local_pat
 PACKAGES = [
   {
     target_product_names: ['ScoopCardlink'],
-    remote_repo_url:      'https://github.com/scoop-software/cardlink-sdk-spm.git',
-    remote_min_version:   '1.39.0',
+    remote_repo_url:      'https://github.com/scoop-software/cardlink-packages.git',
+    remote_min_version:   '2.2.0',
     local_path_marker:    'cardlink-sdk',
   },
   {
     target_product_names: ['ScoopNfc', 'ScoopNfcUI'],
-    remote_repo_url:      'https://github.com/scoop-software/nfc-sdk-spm.git',
-    remote_min_version:   '1.19.0',
+    remote_repo_url:      'https://github.com/scoop-software/cardlink-packages.git',
+    remote_min_version:   '2.2.0',
     local_path_marker:    'scoop-nfc-sdk',
   },
 ].freeze

@@ -11,28 +11,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        // Cardlink SDK — public, credential-free static Maven repo (served on GitHub Pages).
+        // All Scoop SDKs (Cardlink + NFC + PoPP) resolve from one public, credential-free
+        // static Maven repo served on GitHub Pages. No GitHub token required.
         maven { url = uri("https://scoop-software.github.io/cardlink-packages/maven") }
-        // NFC + PoPP SDKs are still on GitHub Packages, which requires auth even for reads.
-        // GitHub Packages namespaces by repo (not by group), so each needs its own URL.
-        // A single GITHUB_TOKEN with read:packages scope works for both.
-        listOf(
-            "GitHubPackagesNfc"  to "https://maven.pkg.github.com/scoop-software/nfc-sdk",
-            "GitHubPackagesPopp" to "https://maven.pkg.github.com/scoop-software/scoop-popp-module",
-        ).forEach { (repoName, repoUrl) ->
-            maven {
-                name = repoName
-                url = uri(repoUrl)
-                credentials {
-                    username = System.getenv("GITHUB_ACTOR")
-                        ?: providers.gradleProperty("gpr.user").orNull
-                        ?: ""
-                    password = System.getenv("GITHUB_TOKEN")
-                        ?: providers.gradleProperty("gpr.key").orNull
-                        ?: ""
-                }
-            }
-        }
     }
 }
 

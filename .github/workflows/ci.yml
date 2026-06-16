@@ -95,11 +95,11 @@ jobs:
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
             clean build
 
-      - name: Verify ScoopCardlink + ScoopNfc resolved from public SPM mirrors
+      - name: Verify ScoopCardlink + ScoopNfc resolved from cardlink-packages
         working-directory: ios
         run: |
           RESOLVED=CardlinkDemo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
-          for pkg in cardlink-sdk-spm nfc-sdk-spm; do
+          for pkg in cardlink-packages; do
             if ! grep -q "$pkg" "$RESOLVED"; then
               echo "ERROR: $pkg not found in Package.resolved"
               cat "$RESOLVED" || true
