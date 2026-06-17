@@ -268,6 +268,8 @@ The PoPP check-in flow lets a patient prove their physical presence at a Leistun
 
 On iOS (`import ScoopCardlink`) the same `PoppFlow` class and types are available with Swift-idiomatic names.
 
+> 📊 See **[popp-flow.md](popp-flow.md)** for the full state-machine diagram (states, transitions, and the async-PACE / APDU-caching design notes).
+
 ### Construction and start
 
 `PoppFlow` is constructed with a `PoppFlowConfig`, then started via `startCheckIn(...)`:
