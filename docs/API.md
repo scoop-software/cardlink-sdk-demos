@@ -12,8 +12,8 @@ consumer API reference. For a runnable end‑to‑end example, see the demo apps
 >
 > **The SDK does all eGK card reading for you** — NFC discovery, PACE authentication,
 > Secure Messaging, file reads. You never touch APDUs; you only plug in a ready-made
-> platform NFC provider (`AndroidNfcTransceiverProvider(activity)`, or
-> `IosNfcTransceiverProvider()` with a small standard CoreNFC bridge). See
+> platform NFC provider (`AndroidNfcTransceiverProvider(activity)` or the turnkey
+> `IosNfcTransceiverProvider()` — no CoreNFC code on either platform). See
 > [CardLink Flow](#cardlink-flow).
 
 ## Platforms
@@ -99,10 +99,12 @@ val flow = CardlinkFlow(
 > discovery, PACE authentication, Secure Messaging, eGK file reads; you never touch APDUs.
 > You only hand the flow a ready-made `NfcTransceiverProvider`:
 > - **Android:** `AndroidNfcTransceiverProvider(activity)` — the SDK owns NFC reader mode. That's the entire NFC integration.
-> - **iOS:** `IosNfcTransceiverProvider()` — Apple requires the **app** to own the
->   `NFCTagReaderSession`, so you attach a small, standard CoreNFC delegate that forwards the
->   connected ISO 7816 tag via `provider.onTagConnected(tag:)` / `provider.onSessionInvalidated(message:)`.
->   Copy the demo's `NfcSessionManager` (`ios/CardlinkSample/CardlinkSample/ContentView.swift`) verbatim — ~60 lines, no card logic.
+> - **iOS:** `IosNfcTransceiverProvider()` — **turnkey**: the provider owns the entire
+>   `NFCTagReaderSession` (presents the system NFC sheet, discovers + connects the eGK,
+>   updates the sheet as the flow progresses, dismisses it). You write **no** CoreNFC code.
+>   The app only needs the NFC entitlement + `NFCReaderUsageDescription` / ISO 7816
+>   select-identifier `Info.plist` keys (a framework can't declare those). To customise the
+>   sheet prompt, pass it: `IosNfcTransceiverProvider("Hold your eGK to the top of your iPhone.")`.
 
 `CardlinkFlow(config, nfcProvider)` takes two arguments:
 
