@@ -70,7 +70,6 @@ import de.scoopsoftware.nfc.cache.getKnownCards
 import de.scoopsoftware.cardlink.demo.auth.CredentialManagerHelper
 import de.scoopsoftware.cardlink.demo.auth.CredentialResult
 import de.scoopsoftware.cardlink.demo.ui.model.ScanHistory
-import de.scoopsoftware.cardlink.flow.AndroidNfcTransceiverProvider
 import de.scoopsoftware.cardlink.flow.CardlinkFlow
 import de.scoopsoftware.cardlink.flow.CardlinkFlowConfig
 import de.scoopsoftware.cardlink.flow.CardlinkFlowError
@@ -223,7 +222,6 @@ fun ScanScreen(
 
     fun startFlow(knownCardCan: String? = null, knownCardIccsn: String? = null) {
         if (activity == null) return
-        val nfcProvider = AndroidNfcTransceiverProvider(activity)
         val credentialStorage = CredentialStorageFactory.create(context)
         val cacheProvider = if (enableCache) FileCacheProvider() else null
 
@@ -242,7 +240,7 @@ fun ScanScreen(
         val needsSave = username.trim() != savedUsername || password.trim() != savedPassword
 
         if (useServerFlow) {
-            val sf = ServerDrivenFlow(config, nfcProvider)
+            val sf = ServerDrivenFlow(config, activity)
             // Pre-set known card CAN+ICCSN so the flow skips the CAN dialog
             if (knownCardCan != null && knownCardIccsn != null) {
                 sf.submitKnownCard(knownCardCan, knownCardIccsn)
@@ -259,7 +257,7 @@ fun ScanScreen(
                 sf.start()
             }
         } else {
-            val cf = CardlinkFlow(config, nfcProvider)
+            val cf = CardlinkFlow(config, activity)
             flow = cf
             serverFlow = null
             started = true

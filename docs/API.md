@@ -11,10 +11,10 @@ consumer API reference. For a runnable end‑to‑end example, see the demo apps
 > Cardlink only.
 >
 > **The SDK does all eGK card reading for you** — NFC discovery, PACE authentication,
-> Secure Messaging, file reads. You never touch APDUs; you only plug in a ready-made
-> platform NFC provider (`AndroidNfcTransceiverProvider(activity)` or the turnkey
-> `IosNfcTransceiverProvider()` — no CoreNFC code on either platform). See
-> [CardLink Flow](#cardlink-flow).
+> Secure Messaging, file reads. You never touch APDUs. The platform NFC provider is
+> built in: on iOS it's automatic (`CardlinkFlow(config)`); on Android pass the
+> Activity (`CardlinkFlow(config, activity)`). No CoreNFC code on either platform.
+> See [CardLink Flow](#cardlink-flow).
 
 ## Platforms
 
@@ -78,10 +78,11 @@ Task { try await flow.start() }
 
 ### Constructing the flow
 
+**Android** — pass the Activity, the SDK wires up NFC reader mode for you:
+
 ```kotlin
 import de.scoopsoftware.cardlink.flow.CardlinkFlow
 import de.scoopsoftware.cardlink.flow.CardlinkFlowConfig
-import de.scoopsoftware.cardlink.flow.AndroidNfcTransceiverProvider   // SDK-provided (Android)
 import de.scoopsoftware.cardlink.websocket.CardlinkEnvironment
 
 val flow = CardlinkFlow(
@@ -91,25 +92,36 @@ val flow = CardlinkFlow(
         password = "s3cr3t",
         credentialStorage = myCredentialStorage,      // optional — enables session persistence
     ),
-    nfcProvider = AndroidNfcTransceiverProvider(activity)   // SDK-provided — just pass your Activity
+    activity = this,                                  // SDK builds AndroidNfcTransceiverProvider internally
 )
+```
+
+**iOS** — even simpler; the NFC sheet has no parent view, so no platform handle is needed:
+
+```swift
+import ScoopCardlink
+
+let flow = CardlinkFlow(config: CardlinkFlowConfig(
+    environment: CardlinkEnvironment.Default(),
+    username: "my-client",
+    password: "s3cr3t"
+))
+// To override the system NFC sheet prompt: CardlinkFlow(config: ..., nfcProvider: IosNfcTransceiverProvider("Hold your eGK to the top of your iPhone."))
 ```
 
 > **You do not implement NFC or card reading.** The SDK reads the eGK end-to-end — NFC
 > discovery, PACE authentication, Secure Messaging, eGK file reads; you never touch APDUs.
-> You only hand the flow a ready-made `NfcTransceiverProvider`:
-> - **Android:** `AndroidNfcTransceiverProvider(activity)` — the SDK owns NFC reader mode. That's the entire NFC integration.
-> - **iOS:** `IosNfcTransceiverProvider()` — **turnkey**: the provider owns the entire
->   `NFCTagReaderSession` (presents the system NFC sheet, discovers + connects the eGK,
->   updates the sheet as the flow progresses, dismisses it). You write **no** CoreNFC code.
->   The app only needs the NFC entitlement + `NFCReaderUsageDescription` / ISO 7816
->   select-identifier `Info.plist` keys (a framework can't declare those). To customise the
->   sheet prompt, pass it: `IosNfcTransceiverProvider("Hold your eGK to the top of your iPhone.")`.
+> - **Android:** the SDK owns NFC reader mode against your Activity. That's the entire NFC integration.
+> - **iOS:** the SDK owns the entire `NFCTagReaderSession` — presents the system NFC sheet,
+>   discovers + connects the eGK, updates the sheet as the flow progresses, dismisses it. You
+>   write **no** CoreNFC code. The app only needs the NFC entitlement + `NFCReaderUsageDescription`
+>   / ISO 7816 select-identifier `Info.plist` keys (a framework can't declare those).
 
-`CardlinkFlow(config, nfcProvider)` takes two arguments:
+`CardlinkFlow` accepts one of three constructor shapes:
 
-- **`config: CardlinkFlowConfig`** — environment + OAuth credentials and tuning knobs (see below).
-- **`nfcProvider: NfcTransceiverProvider`** — pass the SDK's `AndroidNfcTransceiverProvider(activity)` or `IosNfcTransceiverProvider()`. (It *is* a `fun interface` — `suspend fun awaitTransceiver(): NfcTransceiver` — so you can supply your own, but you normally don't.) The SDK invokes it whenever it needs the card; it may be called more than once per flow (wrong CAN, card removed).
+- **`CardlinkFlow(config)`** (iOS) — `nfcProvider` defaults to a turnkey `IosNfcTransceiverProvider`. **Throws on Android** if used without an activity.
+- **`CardlinkFlow(config, activity)`** (Android, `androidMain` factory) — wraps the Activity in an `AndroidNfcTransceiverProvider` automatically, using `config.nfcTimeoutMs` for the IsoDep timeout.
+- **`CardlinkFlow(config, nfcProvider)`** (any platform) — pass your own `NfcTransceiverProvider`. The interface is `fun interface NfcTransceiverProvider { suspend fun awaitTransceiver(): NfcTransceiver }`, so test fixtures and alternative readers can plug in cleanly. The SDK invokes the provider whenever it needs the card; it may be called more than once per flow (wrong CAN, card removed).
 
 ### CardlinkFlowConfig
 
@@ -220,7 +232,7 @@ When `credentialStorage` is supplied, the flow persists OAuth tokens and the ver
 ### Full usage snippet
 
 ```kotlin
-val flow = CardlinkFlow(config, nfcProvider)
+val flow = CardlinkFlow(config, activity)   // Android — iOS: CardlinkFlow(config)
 
 // Observe state for UI navigation
 scope.launch {
