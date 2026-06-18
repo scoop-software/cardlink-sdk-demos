@@ -1,6 +1,6 @@
 # Cardlink SDK Demos
 
-Reference demo applications for the [Cardlink SDK](https://github.com/scoop-software/cardlink-sdk).
+Reference demo applications for the [Cardlink SDK](https://github.com/scoop-software/cardlink-packages).
 
 These demos are intended for 3rd-party developers as ready-to-build examples of how to consume the SDK. Each platform is a standalone project — clone this repository, change into the platform directory, and build with the platform's native toolchain.
 
