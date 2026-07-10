@@ -78,7 +78,7 @@ import androidx.security.crypto.MasterKey
 import de.scoopsoftware.cardlink.auth.JwtDecoder
 import de.scoopsoftware.cardlink.demo.auth.CredentialHelper
 import de.scoopsoftware.cardlink.demo.auth.CredentialManagerHelper
-import de.scoopsoftware.cardlink.reporting.RocketChatReporter
+import de.scoopsoftware.cardlink.demo.reporting.RocketChatReporter
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date

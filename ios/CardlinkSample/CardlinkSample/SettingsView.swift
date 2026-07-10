@@ -808,7 +808,7 @@ struct RocketChatSettingsSection: View {
                     .textFieldStyle(.roundedBorder)
                     .onChange(of: username) { _ in
                         RocketChatKeychain.save(key: "rcUsername", value: username)
-                        RocketChatReporter.shared.clearAuth()
+                        RocketChatReporter.clearAuth()
                     }
 
                 SecureField("Password", text: $password)
@@ -816,7 +816,7 @@ struct RocketChatSettingsSection: View {
                     .textFieldStyle(.roundedBorder)
                     .onChange(of: password) { _ in
                         RocketChatKeychain.save(key: "rcPassword", value: password)
-                        RocketChatReporter.shared.clearAuth()
+                        RocketChatReporter.clearAuth()
                     }
 
                 TextField("Channel", text: $channel)
@@ -829,7 +829,7 @@ struct RocketChatSettingsSection: View {
                     testResult = nil
                     Task {
                         do {
-                            let error = try await RocketChatReporter.shared.testConnection(
+                            let error = try await RocketChatReporter.testConnection(
                                 serverUrl: serverUrl,
                                 username: username,
                                 password: password
@@ -878,7 +878,7 @@ struct RocketChatSettingsSection: View {
                 defaults.removeObject(forKey: "rcPassword")
             }
         }
-        .onChange(of: serverUrl) { _ in RocketChatReporter.shared.clearAuth() }
+        .onChange(of: serverUrl) { _ in RocketChatReporter.clearAuth() }
     }
 }
 

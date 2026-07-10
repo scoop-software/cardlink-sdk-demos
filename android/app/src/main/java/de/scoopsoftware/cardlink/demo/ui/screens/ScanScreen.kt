@@ -2,7 +2,7 @@ package de.scoopsoftware.cardlink.demo.ui.screens
 
 import android.app.Activity
 import android.content.Context
-import de.scoopsoftware.cardlink.reporting.RocketChatReporter
+import de.scoopsoftware.cardlink.demo.reporting.RocketChatReporter
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

@@ -206,7 +206,7 @@ fun PoppScreen(
                     // Post to RocketChat (fire-and-forget)
                     val rcPrefs = context.getSharedPreferences("rocketchat_settings", android.content.Context.MODE_PRIVATE)
                     if (rcPrefs.getBoolean("enabled", false)) {
-                        val serverUrl = (rcPrefs.getString("serverUrl", "") ?: "").ifBlank { de.scoopsoftware.cardlink.reporting.RocketChatReporter.DEFAULT_SERVER_URL }
+                        val serverUrl = (rcPrefs.getString("serverUrl", "") ?: "").ifBlank { de.scoopsoftware.cardlink.demo.reporting.RocketChatReporter.DEFAULT_SERVER_URL }
                         val rcSecure = run {
                             val mk = androidx.security.crypto.MasterKey.Builder(context)
                                 .setKeyScheme(androidx.security.crypto.MasterKey.KeyScheme.AES256_GCM)
@@ -224,7 +224,7 @@ fun PoppScreen(
                             val success = state is PoppFlowState.Completed
                             val log = traceLog.toList()
                             launch {
-                                de.scoopsoftware.cardlink.reporting.RocketChatReporter.report(serverUrl, rcUser, rcPass, rcChannel, record, success, log)
+                                de.scoopsoftware.cardlink.demo.reporting.RocketChatReporter.report(serverUrl, rcUser, rcPass, rcChannel, record, success, log)
                             }
                         }
                     }
