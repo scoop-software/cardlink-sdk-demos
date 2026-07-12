@@ -331,7 +331,10 @@ struct ScanView: View {
     // Flow input
     @AppStorage("lastPhone") private var phone = ""
     @State private var smsCode = ""
-    @AppStorage("lastCan") private var can = ""
+    // The CAN is a card secret, so it is NOT stored in UserDefaults/@AppStorage.
+    // The SDK's CanInputView never persists it — the host owns storage. Here we
+    // seed the binding from the Keychain on appear and save it back on change.
+    @State private var can = ""
 
     // UI state
     @State private var showTraceLog = false
@@ -627,6 +630,8 @@ struct ScanView: View {
             }
 
             CanInputView(can: $can)
+                .onAppear { if can.isEmpty { can = CanKeychain.load() ?? "" } }
+                .onChange(of: can) { if $0.count == 6 { CanKeychain.save($0) } }
 
             Button("Submit") { viewModel.submitCan(can.trimmingCharacters(in: .whitespaces)) }
                 .buttonStyle(.borderedProminent)
@@ -1404,4 +1409,40 @@ final class KeychainHelper {
 
 #Preview {
     ContentView()
+}
+
+/// Keychain-backed store for the CAN — the recommended host pattern for a
+/// "remember CAN" experience. The CAN is a card secret, so it lives in the
+/// Keychain (encrypted, device-only) rather than UserDefaults. The SDK's
+/// CanInputView never persists the CAN itself; the host seeds and saves it.
+enum CanKeychain {
+    private static let service = "de.scoopsoftware.cardlink.can"
+    private static let account = "lastCan"
+
+    static func save(_ can: String) {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: account
+        ]
+        SecItemDelete(query as CFDictionary)
+        var attributes = query
+        attributes[kSecValueData as String] = Data(can.utf8)
+        attributes[kSecAttrAccessible as String] = kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+        SecItemAdd(attributes as CFDictionary, nil)
+    }
+
+    static func load() -> String? {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: account,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+        var result: AnyObject?
+        guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess,
+              let data = result as? Data else { return nil }
+        return String(data: data, encoding: .utf8)
+    }
 }
