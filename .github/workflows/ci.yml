@@ -93,6 +93,7 @@ jobs:
             -destination "generic/platform=iOS Simulator" \
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=YES \
             clean build
 
       - name: Verify ScoopCardlink + ScoopNfc resolved from cardlink-packages
