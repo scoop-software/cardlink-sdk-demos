@@ -94,22 +94,15 @@ that a static binary avoids newer Swift runtime symbols.
 
 ## Authentication for the published Maven repos
 
-Customer (and CI) builds resolve the NFC + PoPP `de.scoopsoftware.*` artifacts from two GitHub Packages Maven repos, which require authentication (the Cardlink SDK is now on a public Maven repo and needs none). Gradle's auth error message can be misleading. Any of the following work:
-
-- Environment variables: `GITHUB_ACTOR` and `GITHUB_TOKEN` (the token needs `read:packages` scope on the `scoop-software` org).
-- Gradle properties in `~/.gradle/gradle.properties`:
-
-  ```
-  gpr.user=<your-github-username>
-  gpr.key=<your-github-PAT>
-  ```
-
-- For local development, you can bridge the `gh` CLI's authentication into Gradle:
+Customer and CI builds resolve CardLink, NFC and PoPP from authenticated Gitea
+Maven registries. Use environment variables `GITEA_USERNAME`, `GITEA_TOKEN`
+and optionally `GITEA_URL`, or Gradle properties in
+`~/.gradle/gradle.properties`:
 
   ```
-  export GITHUB_ACTOR=$(gh api user --jq .login)
-  export GITHUB_TOKEN=$(gh auth token)
-  ./gradlew installDebug
+  giteaPackageUser=<customer-user>
+  giteaPackageToken=<read-package-token>
+  giteaPackageUrl=https://ti-gitea.scoop-gmbh.de
   ```
 
 ## Versioning
