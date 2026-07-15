@@ -86,10 +86,11 @@ rm -rf ~/Library/Developer/Xcode/DerivedData/CardlinkDemoDev-*
 ```
 
 Published XCFrameworks use module-stable interfaces with Explicit Modules
-enabled. Releases are compiled and cold-cache consumer-tested with Xcode 26.0,
-the oldest Xcode supported by the maintained build host. Importing a textual
-interface does not by itself guarantee that a static binary avoids newer Swift
-runtime symbols.
+enabled. Releases are currently compiled with Xcode 26.5 and consumer-tested
+with Xcode 26.1 and 26.5 (interfaces are emitted with `-swift-version 5`).
+Building releases with the oldest supported Xcode is planned once CI pins its
+toolchain. Note: importing a textual interface does not by itself guarantee
+that a static binary avoids newer Swift runtime symbols.
 
 ## Authentication for the published Maven repos
 
