@@ -1,0 +1,14 @@
+{
+  "authentication" : {},
+  "registries" : {
+    "ti-cardlink" : {
+      "supportsAvailability" : false,
+      "url" : "https://ti-gitea.scoop-gmbh.de/api/packages/ti-cardlink/swift"
+    },
+    "ti-common" : {
+      "supportsAvailability" : false,
+      "url" : "https://ti-gitea.scoop-gmbh.de/api/packages/ti-common/swift"
+    }
+  },
+  "version" : 1
+}

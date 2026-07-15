@@ -287,7 +287,8 @@
 			mainGroup = AA6000000000000000000001;
 			packageReferences = (
 				CC0000000000000000000001 /* XCRemoteSwiftPackageReference "lottie-ios" */,
-				5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "cardlink-packages" */,
+				5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "ti-cardlink.cardlink" */,
+				5B5AD2334F3A07E28DFC070D /* XCRemoteSwiftPackageReference "ti-common.nfc" */,
 			);
 			productRefGroup = AA6000000000000000000004 /* Products */;
 			projectDirPath = "";
@@ -620,12 +621,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "cardlink-packages" */ = {
+		5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "ti-cardlink.cardlink" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/scoop-software/cardlink-packages.git";
+			repositoryURL = "ti-cardlink.cardlink";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.6.0;
+				kind = exactVersion;
+				version = 2.6.2;
+			};
+		};
+		5B5AD2334F3A07E28DFC070D /* XCRemoteSwiftPackageReference "ti-common.nfc" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "ti-common.nfc";
+			requirement = {
+				kind = exactVersion;
+				version = 2.3.2;
 			};
 		};
 		CC0000000000000000000001 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
@@ -641,12 +650,12 @@
 /* Begin XCSwiftPackageProductDependency section */
 		32E41B719C31C21D826ADD57 /* ScoopCardlink */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "cardlink-packages" */;
+			package = 5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "ti-cardlink.cardlink" */;
 			productName = ScoopCardlink;
 		};
 		8BC2B12514CE5C13BAE20C0F /* ScoopNfcUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "cardlink-packages" */;
+			package = 5B5AD2334F3A07E28DFC070D /* XCRemoteSwiftPackageReference "ti-common.nfc" */;
 			productName = ScoopNfcUI;
 		};
 		CC0000000000000000000003 /* Lottie */ = {
@@ -656,7 +665,7 @@
 		};
 		DD95475E8EB3DDEC0729F1E8 /* ScoopNfc */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "cardlink-packages" */;
+			package = 5B5AD2334F3A07E28DFC070D /* XCRemoteSwiftPackageReference "ti-common.nfc" */;
 			productName = ScoopNfc;
 		};
 /* End XCSwiftPackageProductDependency section */
