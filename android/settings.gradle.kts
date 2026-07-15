@@ -11,9 +11,31 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        // All Scoop SDKs (Cardlink + NFC + PoPP) resolve from one public, credential-free
-        // static Maven repo served on GitHub Pages. No GitHub token required.
-        maven { url = uri("https://scoop-software.github.io/cardlink-packages/maven") }
+
+        val giteaUrl = providers.gradleProperty("giteaPackageUrl")
+            .orElse(providers.environmentVariable("GITEA_URL"))
+            .getOrElse("https://ti-gitea.scoop-gmbh.de")
+            .trimEnd('/')
+        val giteaUser = providers.gradleProperty("giteaPackageUser")
+            .orElse(providers.environmentVariable("GITEA_USERNAME"))
+        val giteaToken = providers.gradleProperty("giteaPackageToken")
+            .orElse(providers.environmentVariable("GITEA_TOKEN"))
+
+        fun scoopRegistry(owner: String, group: String) = maven {
+            name = "scoop-$owner"
+            url = uri("$giteaUrl/api/packages/$owner/maven")
+            credentials {
+                username = giteaUser.orNull.orEmpty()
+                password = giteaToken.orNull.orEmpty()
+            }
+            content {
+                includeGroup(group)
+            }
+        }
+
+        scoopRegistry("ti-cardlink", "de.scoopsoftware.cardlink")
+        scoopRegistry("ti-common", "de.scoopsoftware.nfc")
+        scoopRegistry("ti-popp", "de.scoopsoftware.popp")
     }
 }
 
