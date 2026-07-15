@@ -59,49 +59,14 @@ private struct TimeBreakdown {
 struct BreakdownChart: View {
     let records: [ScanRecord]
 
-    var body: some View {
-        let hasPoppScans = records.contains { TimeBreakdown(record: $0).hasPoppData }
+    private var hasPoppScans: Bool {
+        records.contains { TimeBreakdown(record: $0).hasPoppData }
+    }
 
+    var body: some View {
         Chart {
             ForEach(Array(records.enumerated()), id: \.element.id) { index, record in
-                let bd = TimeBreakdown(record: record)
-
-                if bd.hasPoppData || hasPoppScans {
-                    // Detailed breakdown with PACE + PoPP split
-                    if bd.paceMs > 0 {
-                        BarMark(x: .value("Scan", index + 1), y: .value("Time", bd.paceMs))
-                            .foregroundStyle(by: .value("Category", "PACE"))
-                    }
-                    if bd.poppApduMs > 0 {
-                        BarMark(x: .value("Scan", index + 1), y: .value("Time", bd.poppApduMs))
-                            .foregroundStyle(by: .value("Category", "PoPP APDU"))
-                    }
-                    if bd.otherNfcMs > 0 {
-                        BarMark(x: .value("Scan", index + 1), y: .value("Time", bd.otherNfcMs))
-                            .foregroundStyle(by: .value("Category", "NFC (other)"))
-                    }
-                } else {
-                    // Legacy: single NFC bar
-                    BarMark(x: .value("Scan", index + 1), y: .value("Time", record.nfcTimeMs))
-                        .foregroundStyle(by: .value("Category", "NFC"))
-                }
-
-                if bd.networkMs > 0 {
-                    BarMark(x: .value("Scan", index + 1), y: .value("Time", bd.networkMs))
-                        .foregroundStyle(by: .value("Category", "Network"))
-                }
-                if bd.cryptoMs > 0 {
-                    BarMark(x: .value("Scan", index + 1), y: .value("Time", bd.cryptoMs))
-                        .foregroundStyle(by: .value("Category", "Crypto"))
-                }
-                if bd.gzipMs > 0 {
-                    BarMark(x: .value("Scan", index + 1), y: .value("Time", bd.gzipMs))
-                        .foregroundStyle(by: .value("Category", "Gzip"))
-                }
-                if bd.otherMs > 0 {
-                    BarMark(x: .value("Scan", index + 1), y: .value("Time", bd.otherMs))
-                        .foregroundStyle(by: .value("Category", "Other"))
-                }
+                marks(index: index, record: record)
             }
         }
         .chartForegroundStyleScale([
@@ -134,6 +99,47 @@ struct BreakdownChart: View {
                     }
                 }
             }
+        }
+    }
+
+    @ChartContentBuilder
+    private func marks(index: Int, record: ScanRecord) -> some ChartContent {
+        let breakdown = TimeBreakdown(record: record)
+        let scan = index + 1
+
+        if breakdown.hasPoppData || hasPoppScans {
+            if breakdown.paceMs > 0 {
+                BarMark(x: .value("Scan", scan), y: .value("Time", breakdown.paceMs))
+                    .foregroundStyle(by: .value("Category", "PACE"))
+            }
+            if breakdown.poppApduMs > 0 {
+                BarMark(x: .value("Scan", scan), y: .value("Time", breakdown.poppApduMs))
+                    .foregroundStyle(by: .value("Category", "PoPP APDU"))
+            }
+            if breakdown.otherNfcMs > 0 {
+                BarMark(x: .value("Scan", scan), y: .value("Time", breakdown.otherNfcMs))
+                    .foregroundStyle(by: .value("Category", "NFC (other)"))
+            }
+        } else {
+            BarMark(x: .value("Scan", scan), y: .value("Time", record.nfcTimeMs))
+                .foregroundStyle(by: .value("Category", "NFC"))
+        }
+
+        if breakdown.networkMs > 0 {
+            BarMark(x: .value("Scan", scan), y: .value("Time", breakdown.networkMs))
+                .foregroundStyle(by: .value("Category", "Network"))
+        }
+        if breakdown.cryptoMs > 0 {
+            BarMark(x: .value("Scan", scan), y: .value("Time", breakdown.cryptoMs))
+                .foregroundStyle(by: .value("Category", "Crypto"))
+        }
+        if breakdown.gzipMs > 0 {
+            BarMark(x: .value("Scan", scan), y: .value("Time", breakdown.gzipMs))
+                .foregroundStyle(by: .value("Category", "Gzip"))
+        }
+        if breakdown.otherMs > 0 {
+            BarMark(x: .value("Scan", scan), y: .value("Time", breakdown.otherMs))
+                .foregroundStyle(by: .value("Category", "Other"))
         }
     }
 }
