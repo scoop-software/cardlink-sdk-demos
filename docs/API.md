@@ -20,8 +20,8 @@ consumer API reference. For a runnable end‑to‑end example, see the demo apps
 
 | Platform | Import / coordinate | Requirements |
 | --- | --- | --- |
-| **Android** | `de.scoopsoftware.cardlink:shared-android:2.2.0` (public Maven, no token — `https://scoop-software.github.io/cardlink-packages/maven`) | `minSdk 26`, Java 17 |
-| **iOS** | `import ScoopCardlink` (SPM: [`cardlink-packages`](https://github.com/scoop-software/cardlink-packages), `from: "2.2.0"`) | iOS 14+, **Xcode 26** with `SWIFT_ENABLE_EXPLICIT_MODULES = NO` |
+| **Android** | `de.scoopsoftware.cardlink:shared-android:2.6.2` from the authenticated `ti-cardlink` Maven registry | `minSdk 26`, Java 17 |
+| **iOS** | `import ScoopCardlink` from registry package `ti-cardlink.cardlink` 2.6.2 | iOS 15+, Xcode 26.0 tested, Explicit Modules supported |
 
 > ⚠️ **The `Default` environment targets dev/demo backends**, and the eRezept
 > upload/delete endpoints are demo hosts. Use `CardlinkEnvironment.Custom(...)` for your
@@ -936,11 +936,11 @@ RocketChatReporter.report(
 ## See also
 
 - **Demo apps** — `ios/` and `android/` in this repository exercise every flow above.
-- **iOS (SPM):** [`cardlink-packages`](https://github.com/scoop-software/cardlink-packages) — one package providing `ScoopCardlink`, `ScoopNfc`, `ScoopNfcUI`, and `ScoopPopp`; see its README for install + the required Xcode 26 build settings.
+- **iOS (SPM):** private packages `ti-cardlink.cardlink` and `ti-common.nfc` in the Gitea Swift registries.
 - **API docs in‑IDE:** on iOS, ⌥‑click any symbol for inline Quick Help (the KDoc ships in
   the XCFramework headers). This page is the cross‑platform written reference.
 
 ---
 
-© Scoop Software GmbH. Proprietary. Generated for SDK **2.1.2** (nfc 2.0.1, popp 0.18.0) —
+© Scoop Software GmbH. Proprietary. Generated for SDK **2.6.2** (nfc 2.3.2, popp 0.20.2) —
 keep in sync with the published artifacts.
