@@ -4,8 +4,8 @@ set -euo pipefail
 # ---------------------------------------------------------------------------
 # update-sdk-pin.sh — single source of truth for bumping demo SDK pins.
 #
-# Called by cardlink-sdk/scripts/release-packages.sh after a successful
-# publish (or manually). Edits the pin files in-place; the caller decides
+# Called after a successful Gitea release (or manually). Edits the pin files
+# in-place; the caller decides
 # whether to commit. Idempotent — running with the current value is a no-op.
 #
 # Usage:
@@ -22,12 +22,9 @@ set -euo pipefail
 #       nfc      → key 'nfc-sdk'
 #       popp     → key 'popp-module'
 #
-#   iOS (only when sdk == cardlink)
+#   iOS (when sdk == cardlink or nfc)
 #     ios/CardlinkDemo.xcodeproj/project.pbxproj
-#       The cardlink-packages SPM tag tracks the cardlink SDK version, and
-#       all four products (ScoopCardlink/ScoopNfc/ScoopNfcUI/ScoopPopp) ship
-#       from the same tag — so the only iOS pin to bump is the
-#       cardlink-packages minimumVersion.
+#       Cardlink and NFC use independent Gitea registry package versions.
 #       Edited via the `xcodeproj` Ruby gem (proper tooling — the previous
 #       awk-based edit left a stray `};` in the file that took xcodebuild
 #       down for two days).
@@ -73,8 +70,8 @@ else
     echo "  ✓ android $SDK $current → $VER"
 fi
 
-# ── iOS: pbxproj via the xcodeproj Ruby gem (only when sdk == cardlink) ──
-if [[ "$SDK" == "cardlink" ]]; then
+# ── iOS: pbxproj via the xcodeproj Ruby gem ──
+if [[ "$SDK" == "cardlink" || "$SDK" == "nfc" ]]; then
     PBX_DIR="$REPO_ROOT/ios/CardlinkDemo.xcodeproj"
     if [[ ! -d "$PBX_DIR" ]]; then
         echo "  ⚠️ $PBX_DIR not found — skipping iOS bump"
@@ -105,25 +102,29 @@ if [[ "$SDK" == "cardlink" ]]; then
         exit 1
     fi
 
-    "$RUBY" - "$PBX_DIR" "$VER" <<'RUBY'
+    "$RUBY" - "$PBX_DIR" "$SDK" "$VER" <<'RUBY'
 require 'xcodeproj'
 
-project_path, ver = ARGV
+project_path, sdk, ver = ARGV
 project = Xcodeproj::Project.open(project_path)
+identity = sdk == 'cardlink' ? 'ti-cardlink.cardlink' : 'ti-common.nfc'
 
+found = false
 updated = false
 project.root_object.package_references.each do |ref|
-  next unless ref.respond_to?(:repositoryURL) && ref.repositoryURL.to_s.include?('cardlink-packages')
-  current = ref.requirement.is_a?(Hash) ? ref.requirement['minimumVersion'] : nil
+  next unless ref.respond_to?(:repositoryURL) && ref.repositoryURL.to_s == identity
+  found = true
+  current = ref.requirement.is_a?(Hash) ? ref.requirement['version'] : nil
   if current == ver
-    puts "  ↪ ios CardlinkDemo.xcodeproj minimumVersion already at #{ver}"
+    puts "  ios #{identity} already at #{ver}"
   else
-    ref.requirement = { 'kind' => 'upToNextMajorVersion', 'minimumVersion' => ver }
-    puts "  ✓ ios CardlinkDemo.xcodeproj minimumVersion #{current || '?'} → #{ver}"
+    ref.requirement = { 'kind' => 'exactVersion', 'version' => ver }
+    puts "  ios #{identity} #{current || '?'} -> #{ver}"
     updated = true
   end
 end
 
+abort "registry package not found in CardlinkDemo.xcodeproj: #{identity}" unless found
 project.save if updated
 RUBY
 fi
