@@ -132,6 +132,7 @@ dependencies {
     implementation(libs.cardlink.shared.android)
     implementation(libs.nfc.shared.android)
     implementation(libs.popp.shared.android)
+    implementation(libs.popp.sdk.shared.android)
 
     // AndroidX core
     implementation(libs.androidx.appcompat)

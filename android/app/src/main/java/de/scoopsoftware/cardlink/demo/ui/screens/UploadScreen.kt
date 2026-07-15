@@ -60,7 +60,7 @@ import de.scoopsoftware.cardlink.demo.ui.components.TraceLogSheet
 import de.scoopsoftware.cardlink.fhir.ErezeptBundleInfo
 import de.scoopsoftware.cardlink.fhir.ErezeptBundles
 import de.scoopsoftware.cardlink.fhir.ErezeptType
-import de.scoopsoftware.cardlink.flow.AndroidNfcTransceiverProvider
+import de.scoopsoftware.nfc.session.AndroidNfcTransceiverProvider
 import de.scoopsoftware.cardlink.flow.CardlinkFlowConfig
 import de.scoopsoftware.cardlink.flow.ErezeptUploadFlow
 import de.scoopsoftware.cardlink.flow.ErezeptUploadState

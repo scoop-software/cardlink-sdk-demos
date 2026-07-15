@@ -59,6 +59,7 @@ if (isDevBuild) {
         Triple("../../cardlink-sdk",       "de.scoopsoftware.cardlink:shared-android", ":packages:sdk:shared"),
         Triple("../../scoop-nfc-sdk",      "de.scoopsoftware.nfc:shared-android",      ":packages:sdk:shared"),
         Triple("../../scoop-popp-module",  "de.scoopsoftware.popp:shared-android",     ":packages:sdk:shared"),
+        Triple("../../scoop-popp-sdk",     "de.scoopsoftware.popp.sdk:shared-android", ":packages:sdk:shared"),
     )
 
     siblings.forEach { (relativePath, moduleCoord, projectPath) ->

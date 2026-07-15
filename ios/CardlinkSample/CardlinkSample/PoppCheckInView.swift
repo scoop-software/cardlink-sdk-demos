@@ -1,6 +1,7 @@
 import SwiftUI
 import Lottie
 import ScoopCardlink
+import ScoopPoppSDK
 import ScoopNfcUI
 
 private let TELEMATIK_ID = "3-SMC-B-Testkarte--883110000153556"
@@ -358,7 +359,7 @@ struct PoppCheckInView: View {
 
     // MARK: - CAN Input
 
-    private func canInputView(knownCards: [KnownCard], errorMessage: String?) -> some View {
+    private func canInputView(knownCards: [ScoopPoppSDK.KnownCard], errorMessage: String?) -> some View {
         PoppCanInputView(
             knownCards: knownCards,
             errorMessage: errorMessage,
@@ -815,10 +816,10 @@ private struct VzdSearchInputView: View {
 // MARK: - CAN Input View (reuses CanInputView + KnownCardsPicker from Cardlink demo)
 
 private struct PoppCanInputView: View {
-    let knownCards: [KnownCard]
+    let knownCards: [ScoopPoppSDK.KnownCard]
     var errorMessage: String? = nil
     let onSubmitCan: (String) -> Void
-    let onSubmitKnownCard: (KnownCard) -> Void
+    let onSubmitKnownCard: (ScoopPoppSDK.KnownCard) -> Void
     let onCancel: () -> Void
     @State private var can = ""
 
@@ -860,7 +861,7 @@ private struct PoppCanInputView: View {
                 .disabled(can.count != 6)
 
                 // Reuse existing KnownCardsPicker
-                KnownCardsPicker(cards: knownCards) { cardCan, iccsn in
+                KnownCardsPicker(cards: knownCards.map { KnownCardDisplay(iccsn: $0.iccsn, can: $0.can, displayName: $0.displayName, insuranceId: $0.insuranceId, insurerId: $0.insurerId, insurerName: $0.insurerName) }) { cardCan, iccsn in
                     onSubmitCan(cardCan)
                 }
 
@@ -885,7 +886,7 @@ class PoppViewModel: ObservableObject {
         case needsFavoriteSelection(favorites: [PoppFavorite])
         case needsConsent(lei: PoppLeiInfo)
         case needsAuthMethod(gidAvailable: Bool)
-        case needsCan(knownCards: [KnownCard], errorMessage: String?)
+        case needsCan(knownCards: [ScoopPoppSDK.KnownCard], errorMessage: String?)
         case waitingForCard
         case authenticatingEgk
         case authenticatingGid
@@ -917,7 +918,7 @@ class PoppViewModel: ObservableObject {
 
     @Published var state: State = .idle
     @Published var traceLog: [String] = []
-    @Published var knownCards: [KnownCard] = []
+    @Published var knownCards: [ScoopPoppSDK.KnownCard] = []
     var useFakeErezept = false
     var useFileCache = false
     var useRisePoppService = false
@@ -929,17 +930,17 @@ class PoppViewModel: ObservableObject {
     private var stateTask: Task<Void, Never>?
     private var traceTask: Task<Void, Never>?
 
-    private var cacheProvider: SharedFileCacheProvider {
-        SharedFileCacheProvider(
+    private var cacheProvider: ScoopPoppSDK.SharedFileCacheProvider {
+        ScoopPoppSDK.SharedFileCacheProvider(
             appGroupId: "group.de.scoopsoftware.nfc",
             securityLevel: .encrypted,
-            fileOps: DefaultFileOperations.shared,
-            cryptoOps: DefaultCryptoOperations.shared
+            fileOps: ScoopPoppSDK.DefaultFileOperations.shared,
+            cryptoOps: ScoopPoppSDK.DefaultCryptoOperations.shared
         )
     }
 
     func loadKnownCards() async {
-        knownCards = (try? await CacheProviderKt.getKnownCards(cacheProvider)) ?? []
+        knownCards = (try? await ScoopPoppSDK.CacheProviderKt.getKnownCards(cacheProvider)) ?? []
     }
 
     func startCheckIn(username: String, password: String, telematikId: String? = TELEMATIK_ID, themeColor: UIColor? = nil) {
@@ -947,7 +948,7 @@ class PoppViewModel: ObservableObject {
 
         // Turnkey: the SDK provider owns the NFCTagReaderSession and drives the
         // system NFC sheet from PoPP progress — no app-side session management.
-        let nfcProvider = IosNfcTransceiverProvider()
+        let nfcProvider = ScoopPoppSDK.IosNfcTransceiverProvider()
 
         let config = PoppFlowConfig(
             zetaClient: { [weak self] () -> MockVzdRealPoppClient in
@@ -1074,7 +1075,7 @@ class PoppViewModel: ObservableObject {
         poppFlow?.submitCan(can: can)
     }
 
-    func submitKnownCard(_ card: KnownCard) {
+    func submitKnownCard(_ card: ScoopPoppSDK.KnownCard) {
         poppFlow?.submitKnownCard(knownCard: card)
     }
 

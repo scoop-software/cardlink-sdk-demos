@@ -6,9 +6,10 @@ kotlinx-coroutines = "1.10.2"
 
 # SDK pins — update with scripts/update-sdk-pin.sh after publishing a release.
 # Verify against latest published versions in Step 2 before committing.
-cardlink-sdk = "2.6.2"
-nfc-sdk = "2.3.2"
+cardlink-sdk = "3.0.0"
+nfc-sdk = "2.5.0"
 popp-module = "0.20.2"
+popp-sdk = "1.0.0"
 
 [libraries]
 # AndroidX core
@@ -58,6 +59,7 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 cardlink-shared-android = { module = "de.scoopsoftware.cardlink:shared-android", version.ref = "cardlink-sdk" }
 nfc-shared-android = { module = "de.scoopsoftware.nfc:shared-android", version.ref = "nfc-sdk" }
 popp-shared-android = { module = "de.scoopsoftware.popp:shared-android", version.ref = "popp-module" }
+popp-sdk-shared-android = { module = "de.scoopsoftware.popp.sdk:shared-android", version.ref = "popp-sdk" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		37CC00737DB0917784F76E8C /* ScoopCardlink in Frameworks */ = {isa = PBXBuildFile; productRef = 32E41B719C31C21D826ADD57 /* ScoopCardlink */; };
+		PP000000000000000000BLD1 /* ScoopPoppSDK in Frameworks */ = {isa = PBXBuildFile; productRef = PP000000000000000000PRD1 /* ScoopPoppSDK */; };
 		586024164B6D91D8FAAEF9F5 /* ScoopNfcUI in Frameworks */ = {isa = PBXBuildFile; productRef = 8BC2B12514CE5C13BAE20C0F /* ScoopNfcUI */; };
 		69286C34512FE20609617D2E /* ScanRecord+Demo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89C746ABF408AB3B4C2AA72A /* ScanRecord+Demo.swift */; };
 		FF0000000000000000000A01 /* ScanRecordWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0000000000000000000A02 /* ScanRecordWire.swift */; };
@@ -102,6 +103,7 @@
 			files = (
 				CC0000000000000000000002 /* Lottie in Frameworks */,
 				37CC00737DB0917784F76E8C /* ScoopCardlink in Frameworks */,
+				PP000000000000000000BLD1 /* ScoopPoppSDK in Frameworks */,
 				AA49D09916E7CC47AB231762 /* ScoopNfc in Frameworks */,
 				586024164B6D91D8FAAEF9F5 /* ScoopNfcUI in Frameworks */,
 			);
@@ -239,6 +241,7 @@
 			packageProductDependencies = (
 				CC0000000000000000000003 /* Lottie */,
 				32E41B719C31C21D826ADD57 /* ScoopCardlink */,
+				PP000000000000000000PRD1 /* ScoopPoppSDK */,
 				DD95475E8EB3DDEC0729F1E8 /* ScoopNfc */,
 				8BC2B12514CE5C13BAE20C0F /* ScoopNfcUI */,
 			);
@@ -290,6 +293,7 @@
 			packageReferences = (
 				CC0000000000000000000001 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				22D9EB4F68FECA4BFC78624D /* XCLocalSwiftPackageReference "cardlink-dev-spm" */,
+				PP000000000000000000DEV1 /* XCLocalSwiftPackageReference "popp-dev-spm" */,
 				9397D00F8892FC7355CB75D1 /* XCLocalSwiftPackageReference "nfc-dev-spm" */,
 			);
 			productRefGroup = AA6000000000000000000004 /* Products */;
@@ -621,6 +625,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		PP000000000000000000DEV1 /* XCLocalSwiftPackageReference "popp-dev-spm" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../scoop-popp-sdk/tools/popp-dev-spm";
+		};
 		22D9EB4F68FECA4BFC78624D /* XCLocalSwiftPackageReference "cardlink-dev-spm" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../../cardlink-sdk/tools/cardlink-dev-spm";
@@ -647,6 +655,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 22D9EB4F68FECA4BFC78624D /* XCLocalSwiftPackageReference "cardlink-dev-spm" */;
 			productName = ScoopCardlink;
+		};
+		PP000000000000000000PRD1 /* ScoopPoppSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = PP000000000000000000DEV1 /* XCLocalSwiftPackageReference "popp-dev-spm" */;
+			productName = ScoopPoppSDK;
 		};
 		8BC2B12514CE5C13BAE20C0F /* ScoopNfcUI */ = {
 			isa = XCSwiftPackageProductDependency;

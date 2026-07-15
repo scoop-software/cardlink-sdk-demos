@@ -639,7 +639,7 @@ struct ScanView: View {
 
             // Known cards
             if enableCache {
-                KnownCardsPicker(cards: knownCards) { cardCan, iccsn in
+                KnownCardsPicker(cards: knownCards.map { KnownCardDisplay(iccsn: $0.iccsn, can: $0.can, displayName: $0.displayName, insuranceId: $0.insuranceId, insurerId: $0.insurerId, insurerName: $0.insurerName) }) { cardCan, iccsn in
                     can = cardCan
                     viewModel.submitKnownCard(can: cardCan, iccsn: iccsn)
                 }
@@ -694,8 +694,20 @@ struct ScanView: View {
 
 // MARK: - Known Cards Picker
 
+/// Framework-agnostic view model for a known card, so KnownCardsPicker works
+/// with either ScoopCardlink.KnownCard or ScoopPoppSDK.KnownCard (the same
+/// Kotlin type surfaces as two distinct Swift types across the two frameworks).
+struct KnownCardDisplay {
+    let iccsn: String
+    let can: String
+    let displayName: String?
+    let insuranceId: String?
+    let insurerId: String?
+    let insurerName: String?
+}
+
 struct KnownCardsPicker: View {
-    let cards: [KnownCard]
+    let cards: [KnownCardDisplay]
     let onSubmit: (String, String) -> Void
 
     var body: some View {
