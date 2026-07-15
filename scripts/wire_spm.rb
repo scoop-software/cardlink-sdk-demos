@@ -5,10 +5,10 @@
 #   ruby scripts/wire_spm.rb <project.xcodeproj> --remote
 #   ruby scripts/wire_spm.rb <project.xcodeproj> --local <cardlink-dev-spm-path> [<nfc-dev-spm-path>]
 #
-# In --remote mode, both Cardlink and NFC products are wired from cardlink-packages as
-# XCRemoteSwiftPackageReference. In --local mode, cardlink is wired as a
+# In --remote mode, Cardlink and NFC products use separate Gitea registry
+# identities. In --local mode, cardlink is wired as a
 # local path-based package; nfc is also wired locally if a second path is
-# supplied, otherwise it falls back to the remote mirror.
+# supplied, otherwise it falls back to the remote registry package.
 #
 # Idempotent: running twice produces no second commit.
 require 'xcodeproj'
@@ -23,14 +23,14 @@ abort "--local needs a cardlink path" if mode == '--local' && cardlink_local_pat
 PACKAGES = [
   {
     target_product_names: ['ScoopCardlink'],
-    remote_repo_url:      'https://github.com/scoop-software/cardlink-packages.git',
-    remote_min_version:   '2.2.0',
+    remote_repo_url:      'ti-cardlink.cardlink',
+    remote_min_version:   '2.6.2',
     local_path_marker:    'cardlink-sdk',
   },
   {
     target_product_names: ['ScoopNfc', 'ScoopNfcUI'],
-    remote_repo_url:      'https://github.com/scoop-software/cardlink-packages.git',
-    remote_min_version:   '2.2.0',
+    remote_repo_url:      'ti-common.nfc',
+    remote_min_version:   '2.3.2',
     local_path_marker:    'scoop-nfc-sdk',
   },
 ].freeze
@@ -120,9 +120,14 @@ def wire_package(project, target, package, mode, local_path)
     unless package_ref
       package_ref = project.new(Xcodeproj::Project::Object::XCRemoteSwiftPackageReference)
       package_ref.repositoryURL = remote_repo
-      package_ref.requirement = { 'kind' => 'upToNextMajorVersion', 'minimumVersion' => package[:remote_min_version] }
+      package_ref.requirement = { 'kind' => 'exactVersion', 'version' => package[:remote_min_version] }
       project.root_object.package_references << package_ref
       puts "  added remote package: #{package_ref.repositoryURL}"
+    end
+    desired_requirement = { 'kind' => 'exactVersion', 'version' => package[:remote_min_version] }
+    if package_ref.requirement != desired_requirement
+      package_ref.requirement = desired_requirement
+      puts "  pinned #{package_ref.repositoryURL} at #{package[:remote_min_version]}"
     end
   end
 
@@ -156,6 +161,22 @@ end
 
 wire_package(project, target, PACKAGES[0], mode, cardlink_local_path)
 wire_package(project, target, PACKAGES[1], mode, nfc_local_path)
+
+# The former umbrella package can remain as an unused root reference after its
+# products are rebound to the separate Cardlink and NFC registry packages.
+used_package_refs = project.targets
+  .flat_map(&:package_product_dependencies)
+  .map(&:package)
+  .compact
+project.root_object.package_references.dup.each do |ref|
+  next unless ref.is_a?(Xcodeproj::Project::Object::XCRemoteSwiftPackageReference)
+  next unless ref.repositoryURL.to_s.include?('cardlink-packages')
+  next if used_package_refs.include?(ref)
+
+  puts "  removing unused legacy package reference: #{ref.repositoryURL}"
+  ref.remove_from_project
+  project.root_object.package_references.delete(ref)
+end
 
 project.save
 puts "Saved #{project_path}"

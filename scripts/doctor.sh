@@ -112,17 +112,15 @@ else
 fi
 
 print_section "Maven credentials"
-if [ -n "${GITHUB_TOKEN:-}" ] && [ -n "${GITHUB_ACTOR:-}" ]; then
-    echo "  ✓ GITHUB_ACTOR + GITHUB_TOKEN set in env"
-elif grep -q '^gpr.key=' ~/.gradle/gradle.properties 2>/dev/null; then
-    echo "  ✓ gpr.user + gpr.key set in ~/.gradle/gradle.properties"
-elif command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
-    echo "  ✓ gh CLI authenticated (use 'gh auth token' to bridge to Gradle)"
+if [ -n "${GITEA_TOKEN:-}" ] && [ -n "${GITEA_USERNAME:-}" ]; then
+    echo "  GITEA_USERNAME + GITEA_TOKEN set in env"
+elif grep -q '^giteaPackageToken=' ~/.gradle/gradle.properties 2>/dev/null && \
+     grep -q '^giteaPackageUser=' ~/.gradle/gradle.properties 2>/dev/null; then
+    echo "  giteaPackageUser + giteaPackageToken set in ~/.gradle/gradle.properties"
 else
     echo "  ✗ no Maven credentials found — published-mode builds will fail."
-    echo "    Options: set GITHUB_ACTOR + GITHUB_TOKEN env vars,"
-    echo "             add gpr.user/gpr.key to ~/.gradle/gradle.properties,"
-    echo "             or install gh CLI and run 'gh auth login'."
+    echo "    Set GITEA_USERNAME + GITEA_TOKEN or add"
+    echo "    giteaPackageUser/giteaPackageToken to ~/.gradle/gradle.properties."
 fi
 
 echo

@@ -1,6 +1,6 @@
 # Cardlink SDK Demos
 
-Reference demo applications for the [Cardlink SDK](https://github.com/scoop-software/cardlink-packages).
+Reference demo applications for the privately distributed Cardlink SDK.
 
 These demos are intended for 3rd-party developers as ready-to-build examples of how to consume the SDK. Each platform is a standalone project — clone this repository, change into the platform directory, and build with the platform's native toolchain.
 
@@ -24,24 +24,29 @@ cd android
 ./gradlew installDebug   # build and install on a connected device or running emulator
 ```
 
-The Cardlink SDK is pulled from a public Maven repo (`https://scoop-software.github.io/cardlink-packages/maven`) — no credentials needed. The **NFC** and **PoPP** SDKs are still on GitHub Packages, which needs a GitHub personal access token with `read:packages` scope. Place it in `~/.gradle/gradle.properties`:
+The SDKs are pulled from private Gitea Maven registries. Place the customer
+credentials in `~/.gradle/gradle.properties`:
 
 ```
-gpr.user=<your-github-username>
-gpr.key=<your-github-PAT>
+giteaPackageUser=<customer-user>
+giteaPackageToken=<read-package-token>
+# Optional override; the project defaults to this production URL:
+giteaPackageUrl=https://ti-gitea.scoop-gmbh.de
 ```
 
 ## iOS — Quick start
 
-Requirements: Xcode 15+, an Apple developer account for signing.
+Requirements: Xcode 26.0+, an Apple developer account for signing.
 
 ```bash
 open ios/CardlinkDemo.xcodeproj
 ```
 
-The project pulls `ScoopCardlink`, `ScoopNfc`, and `ScoopNfcUI` from the single
-[cardlink-packages](https://github.com/scoop-software/cardlink-packages) Swift package
-automatically on first build. Xcode handles the SPM resolution.
+The project pulls `ti-cardlink.cardlink` 2.6.2 and `ti-common.nfc` 2.3.2 from
+the configured Gitea Swift registries. Add the customer credentials for
+`ti-gitea.scoop-gmbh.de` to the macOS Keychain via
+`swift package-registry login` and to `.netrc` for protected XCFramework
+downloads before opening Xcode.
 
 ## SDK Developer Mode
 
