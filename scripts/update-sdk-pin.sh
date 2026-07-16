@@ -47,7 +47,8 @@ case "$SDK" in
     cardlink) TOML_KEY=cardlink-sdk ;;
     nfc)      TOML_KEY=nfc-sdk ;;
     popp)     TOML_KEY=popp-module ;;
-    *)        echo "ERROR: unknown sdk '$SDK' (expected cardlink|nfc|popp)"; exit 1 ;;
+    popp-sdk) TOML_KEY=popp-sdk ;;
+    *)        echo "ERROR: unknown sdk '$SDK' (expected cardlink|nfc|popp|popp-sdk)"; exit 1 ;;
 esac
 
 # ── Android: libs.versions.toml ──
