@@ -36,6 +36,7 @@ dependencyResolutionManagement {
         scoopRegistry("ti-cardlink", "de.scoopsoftware.cardlink")
         scoopRegistry("ti-common", "de.scoopsoftware.nfc")
         scoopRegistry("ti-popp", "de.scoopsoftware.popp")
+        scoopRegistry("ti-popp-sdk", "de.scoopsoftware.popp.sdk")
     }
 }
 
