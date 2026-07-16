@@ -1,15 +1,15 @@
 [versions]
-agp = "8.7.2"
+agp = "8.13.0"
 kotlin = "2.3.10"
 compose-bom = "2025.03.01"
 kotlinx-coroutines = "1.10.2"
 
 # SDK pins — update with scripts/update-sdk-pin.sh after publishing a release.
 # Verify against latest published versions in Step 2 before committing.
-cardlink-sdk = "3.0.0"
-nfc-sdk = "2.5.0"
+cardlink-sdk = "3.0.2"
+nfc-sdk = "2.5.3"
 popp-module = "0.20.2"
-popp-sdk = "1.0.0"
+popp-sdk = "1.0.2"
 
 [libraries]
 # AndroidX core
