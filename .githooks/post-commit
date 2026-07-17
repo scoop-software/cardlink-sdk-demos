@@ -55,7 +55,7 @@ changed_files() {
 
 has_changes_in() {
     local path="$1"
-    changed_files | grep "^${path}/" | grep -v "version.properties" > /dev/null 2>&1
+    changed_files | grep -E "^${path}(/|$)" | grep -v "version.properties" > /dev/null 2>&1
 }
 
 bump_version() {
