@@ -19,12 +19,12 @@
 		AA0000000000000000000014 /* BreakdownChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000014 /* BreakdownChart.swift */; };
 		AA0000000000000000000015 /* ApduTimelineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000015 /* ApduTimelineChart.swift */; };
 		AA0000000000000000000016 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000016 /* SettingsView.swift */; };
-		AA0000000000000000000042 /* KeychainCredentialStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000042 /* KeychainCredentialStorage.swift */; };
 		AA0000000000000000000017 /* UploadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000017 /* UploadView.swift */; };
 		AA0000000000000000000020 /* NfcTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000020 /* NfcTypeAliases.swift */; };
 		AA0000000000000000000021 /* SVGWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000021 /* SVGWebView.swift */; };
 		AA0000000000000000000023 /* PoppCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000022 /* PoppCheckInView.swift */; };
 		AA0000000000000000000030 /* RocketChatHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000030 /* RocketChatHelper.swift */; };
+		AA0000000000000000000042 /* KeychainCredentialStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000042 /* KeychainCredentialStorage.swift */; };
 		AA0000000000000000000096 /* PrescriptionDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000096 /* PrescriptionDelete.swift */; };
 		AA0000000000000000000097 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000097 /* Fonts */; };
 		AA0000000000000000000098 /* BrandTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000098 /* BrandTheme.swift */; };
@@ -79,12 +79,12 @@
 		AA1000000000000000000014 /* BreakdownChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakdownChart.swift; sourceTree = "<group>"; };
 		AA1000000000000000000015 /* ApduTimelineChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApduTimelineChart.swift; sourceTree = "<group>"; };
 		AA1000000000000000000016 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		AA1000000000000000000042 /* KeychainCredentialStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainCredentialStorage.swift; sourceTree = "<group>"; };
 		AA1000000000000000000017 /* UploadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadView.swift; sourceTree = "<group>"; };
 		AA1000000000000000000020 /* NfcTypeAliases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NfcTypeAliases.swift; sourceTree = "<group>"; };
 		AA1000000000000000000021 /* SVGWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SVGWebView.swift; sourceTree = "<group>"; };
 		AA1000000000000000000022 /* PoppCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PoppCheckInView.swift; sourceTree = "<group>"; };
 		AA1000000000000000000030 /* RocketChatHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RocketChatHelper.swift; sourceTree = "<group>"; };
+		AA1000000000000000000042 /* KeychainCredentialStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainCredentialStorage.swift; sourceTree = "<group>"; };
 		AA1000000000000000000096 /* PrescriptionDelete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrescriptionDelete.swift; sourceTree = "<group>"; };
 		AA1000000000000000000097 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fonts; sourceTree = "<group>"; };
 		AA1000000000000000000098 /* BrandTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandTheme.swift; sourceTree = "<group>"; };
@@ -630,7 +630,7 @@
 			repositoryURL = "ti-cardlink.cardlink";
 			requirement = {
 				kind = exactVersion;
-				version = 3.1.0;
+				version = 3.2.0;
 			};
 		};
 		5B5AD2334F3A07E28DFC070D /* XCRemoteSwiftPackageReference "ti-common.nfc" */ = {
