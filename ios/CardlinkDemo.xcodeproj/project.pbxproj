@@ -626,7 +626,7 @@
 			repositoryURL = "ti-cardlink.cardlink";
 			requirement = {
 				kind = exactVersion;
-				version = 3.0.2;
+				version = 3.0.3;
 			};
 		};
 		5B5AD2334F3A07E28DFC070D /* XCRemoteSwiftPackageReference "ti-common.nfc" */ = {
@@ -634,7 +634,7 @@
 			repositoryURL = "ti-common.nfc";
 			requirement = {
 				kind = exactVersion;
-				version = 2.5.3;
+				version = 2.5.4;
 			};
 		};
 		CC0000000000000000000001 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
