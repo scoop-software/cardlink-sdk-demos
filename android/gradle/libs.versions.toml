@@ -6,10 +6,10 @@ kotlinx-coroutines = "1.10.2"
 
 # SDK pins — update with scripts/update-sdk-pin.sh after publishing a release.
 # Verify against latest published versions in Step 2 before committing.
-cardlink-sdk = "3.5.0"
-nfc-sdk = "2.9.0"
+cardlink-sdk = "3.5.2"
+nfc-sdk = "2.9.2"
 popp-module = "0.21.0"
-popp-sdk = "1.4.0"
+popp-sdk = "1.4.2"
 
 [libraries]
 # AndroidX core
