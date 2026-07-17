@@ -19,6 +19,7 @@
 		AA0000000000000000000014 /* BreakdownChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000014 /* BreakdownChart.swift */; };
 		AA0000000000000000000015 /* ApduTimelineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000015 /* ApduTimelineChart.swift */; };
 		AA0000000000000000000016 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000016 /* SettingsView.swift */; };
+		AA0000000000000000000042 /* KeychainCredentialStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000042 /* KeychainCredentialStorage.swift */; };
 		AA0000000000000000000017 /* UploadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000017 /* UploadView.swift */; };
 		AA0000000000000000000020 /* NfcTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000020 /* NfcTypeAliases.swift */; };
 		AA0000000000000000000021 /* SVGWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000021 /* SVGWebView.swift */; };
@@ -78,6 +79,7 @@
 		AA1000000000000000000014 /* BreakdownChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakdownChart.swift; sourceTree = "<group>"; };
 		AA1000000000000000000015 /* ApduTimelineChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApduTimelineChart.swift; sourceTree = "<group>"; };
 		AA1000000000000000000016 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		AA1000000000000000000042 /* KeychainCredentialStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainCredentialStorage.swift; sourceTree = "<group>"; };
 		AA1000000000000000000017 /* UploadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadView.swift; sourceTree = "<group>"; };
 		AA1000000000000000000020 /* NfcTypeAliases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NfcTypeAliases.swift; sourceTree = "<group>"; };
 		AA1000000000000000000021 /* SVGWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SVGWebView.swift; sourceTree = "<group>"; };
@@ -160,6 +162,7 @@
 				AA1000000000000000000001 /* CardlinkSampleApp.swift */,
 				AA1000000000000000000002 /* ContentView.swift */,
 				AA1000000000000000000016 /* SettingsView.swift */,
+				AA1000000000000000000042 /* KeychainCredentialStorage.swift */,
 				AA1000000000000000000017 /* UploadView.swift */,
 				AA1000000000000000000022 /* PoppCheckInView.swift */,
 				CC0000000000000000000005 /* confetti.json */,
@@ -321,6 +324,7 @@
 				AA0000000000000000000001 /* CardlinkSampleApp.swift in Sources */,
 				AA0000000000000000000002 /* ContentView.swift in Sources */,
 				AA0000000000000000000016 /* SettingsView.swift in Sources */,
+				AA0000000000000000000042 /* KeychainCredentialStorage.swift in Sources */,
 				AA0000000000000000000017 /* UploadView.swift in Sources */,
 				AA0000000000000000000023 /* PoppCheckInView.swift in Sources */,
 				AA0000000000000000000020 /* NfcTypeAliases.swift in Sources */,
@@ -488,7 +492,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = CardlinkSample/CardlinkSample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10300;
+				CURRENT_PROJECT_VERSION = 10400;
 				DEVELOPMENT_TEAM = 845RN736HR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -503,7 +507,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.4.0;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -520,7 +524,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = CardlinkSample/CardlinkSample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10300;
+				CURRENT_PROJECT_VERSION = 10400;
 				DEVELOPMENT_TEAM = 845RN736HR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -535,7 +539,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.4.0;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;

@@ -24,7 +24,7 @@ class UploadViewModel: ObservableObject {
         cancelFlow()
 
         let environment: CardlinkEnvironment = CardlinkEnvironment.Default.shared
-        let storage = CredentialStorageFactory.shared.create(context: nil)
+        let storage = KeychainCredentialStorage()
         let cache = SharedFileCacheProvider(
             appGroupId: "group.de.scoopsoftware.nfc",
             securityLevel: .encrypted,

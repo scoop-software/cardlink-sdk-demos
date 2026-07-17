@@ -34,7 +34,7 @@ FIRST_LINE="$(echo "$COMMIT_MSG" | head -1)"
 BUMP_TYPE=""
 if echo "$COMMIT_MSG" | grep -qE '^BREAKING[ -]CHANGE:'; then
     BUMP_TYPE="major"
-elif echo "$FIRST_LINE" | grep -qE '^[a-z]+!(\(.+\))?:'; then
+elif echo "$FIRST_LINE" | grep -qE '^[a-z]+(\(.+\))?!:'; then
     BUMP_TYPE="major"
 elif echo "$FIRST_LINE" | grep -qE '^feat(\(.+\))?:'; then
     BUMP_TYPE="minor"

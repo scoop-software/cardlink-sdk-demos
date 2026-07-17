@@ -34,7 +34,7 @@ import de.scoopsoftware.nfc.nfc.NfcSession
 import de.scoopsoftware.nfc.nfc.NfcResult
 import de.scoopsoftware.nfc.nfc.NfcMessage
 import de.scoopsoftware.nfc.vsd.VsdXmlParser
-import de.scoopsoftware.cardlink.sms.SmsReceiver
+import de.scoopsoftware.cardlink.sms.SmsCodeRetriever
 
 class MainActivity : AppCompatActivity() {
 
@@ -116,8 +116,8 @@ class MainActivity : AppCompatActivity() {
             startReading()
         }
 
-        // Request SMS permission and listen for CAN codes (SDK handles everything)
-        SmsReceiver.requestPermissionAndListen(this) { can ->
+        // Arm the SMS Retriever for CAN codes (no SMS permission needed)
+        SmsCodeRetriever.start(this) { can ->
             runOnUiThread {
                 canInput.setText(can)
                 Toast.makeText(this, "CAN received via SMS: $can", Toast.LENGTH_SHORT).show()
@@ -416,7 +416,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        SmsReceiver.clearListener()
+        SmsCodeRetriever.stop()
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {

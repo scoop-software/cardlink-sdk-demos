@@ -204,7 +204,7 @@ class FlowViewModel: ObservableObject {
         cancelFlow()
 
         let environment = CardlinkEnvironment.Default.shared
-        let storage = CredentialStorageFactory.shared.create(context: nil)
+        let storage = KeychainCredentialStorage()
 
         let cache: (any CacheProvider)? = enableCache ? SharedFileCacheProvider(
             appGroupId: "group.de.scoopsoftware.nfc",

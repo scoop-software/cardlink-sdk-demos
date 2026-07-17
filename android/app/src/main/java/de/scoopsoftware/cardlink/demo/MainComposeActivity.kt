@@ -12,7 +12,7 @@ import de.scoopsoftware.cardlink.demo.ui.model.ScanHistory
 import de.scoopsoftware.cardlink.demo.ui.theme.BrandTheme
 import de.scoopsoftware.cardlink.demo.ui.theme.CardlinkDemoTheme
 import de.scoopsoftware.cardlink.demo.ui.theme.LocalBrandTheme
-import de.scoopsoftware.cardlink.sms.SmsReceiver
+import de.scoopsoftware.cardlink.sms.SmsCodeRetriever
 
 /**
  * Main activity with Jetpack Compose UI featuring bottom navigation tabs.
@@ -32,7 +32,7 @@ class MainComposeActivity : ComponentActivity() {
             runCatching { BrandTheme.valueOf(it) }.getOrNull()
         } ?: BrandTheme.SYSTEM
 
-        SmsReceiver.requestPermissionAndListen(this) { can ->
+        SmsCodeRetriever.start(this) { can ->
             runOnUiThread {
                 Toast.makeText(this, "CAN received via SMS: $can", Toast.LENGTH_SHORT).show()
             }
@@ -59,6 +59,6 @@ class MainComposeActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        SmsReceiver.clearListener()
+        SmsCodeRetriever.stop()
     }
 }

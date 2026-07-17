@@ -51,7 +51,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import de.scoopsoftware.cardlink.auth.CredentialStorageFactory
+import de.scoopsoftware.cardlink.demo.auth.DemoCredentialStorage
 import de.scoopsoftware.nfc.cache.FileCacheProvider
 import de.scoopsoftware.nfc.cache.KnownCard
 import de.scoopsoftware.nfc.can.CanInputField
@@ -101,7 +101,7 @@ fun UploadScreen(
         uploadFlow?.cancel()
 
         val nfcProvider = AndroidNfcTransceiverProvider(activity)
-        val credentialStorage = CredentialStorageFactory.create(context)
+        val credentialStorage = DemoCredentialStorage(context)
         val cacheProvider = FileCacheProvider()
 
         val config = CardlinkFlowConfig(

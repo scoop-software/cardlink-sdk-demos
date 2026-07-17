@@ -63,7 +63,7 @@ import de.scoopsoftware.cardlink.demo.ui.components.KnownCardsList
 import de.scoopsoftware.cardlink.demo.ui.components.TraceLogSheet
 import de.scoopsoftware.cardlink.demo.ui.components.parsePrescriptionMetadata
 import de.scoopsoftware.cardlink.demo.ui.components.rememberPrescriptionDeleteController
-import de.scoopsoftware.cardlink.auth.CredentialStorageFactory
+import de.scoopsoftware.cardlink.demo.auth.DemoCredentialStorage
 import de.scoopsoftware.nfc.cache.FileCacheProvider
 import de.scoopsoftware.nfc.cache.KnownCard
 import de.scoopsoftware.nfc.cache.getKnownCards
@@ -222,7 +222,7 @@ fun ScanScreen(
 
     fun startFlow(knownCardCan: String? = null, knownCardIccsn: String? = null) {
         if (activity == null) return
-        val credentialStorage = CredentialStorageFactory.create(context)
+        val credentialStorage = DemoCredentialStorage(context)
         val cacheProvider = if (enableCache) FileCacheProvider() else null
 
         val config = CardlinkFlowConfig(

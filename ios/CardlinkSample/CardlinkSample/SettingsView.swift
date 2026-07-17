@@ -20,7 +20,7 @@ struct SettingsView: View {
 
     // Credential storage for reading stored tokens
     private var credentialStorage: any CredentialStorage {
-        CredentialStorageFactory.shared.create(context: nil)
+        KeychainCredentialStorage()
     }
 
     // Cache provider for known cards
