@@ -143,7 +143,7 @@ fi
 # expansion under `set -u` when the array is empty.
 if [ ${#tags[@]} -gt 0 ]; then
     for tag in "${tags[@]}"; do
-        git tag -f "$tag"
+        git tag -sf -m "$tag" "$tag"
         echo "post-commit: tagged $tag"
     done
 fi
