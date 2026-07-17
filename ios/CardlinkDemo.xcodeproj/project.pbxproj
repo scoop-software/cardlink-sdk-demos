@@ -488,7 +488,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = CardlinkSample/CardlinkSample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10203;
+				CURRENT_PROJECT_VERSION = 10300;
 				DEVELOPMENT_TEAM = 845RN736HR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -503,7 +503,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.3;
+				MARKETING_VERSION = 1.3.0;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -520,7 +520,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = CardlinkSample/CardlinkSample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10203;
+				CURRENT_PROJECT_VERSION = 10300;
 				DEVELOPMENT_TEAM = 845RN736HR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -535,7 +535,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.3;
+				MARKETING_VERSION = 1.3.0;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -626,7 +626,7 @@
 			repositoryURL = "ti-cardlink.cardlink";
 			requirement = {
 				kind = exactVersion;
-				version = 3.0.3;
+				version = 3.1.0;
 			};
 		};
 		5B5AD2334F3A07E28DFC070D /* XCRemoteSwiftPackageReference "ti-common.nfc" */ = {
@@ -634,7 +634,7 @@
 			repositoryURL = "ti-common.nfc";
 			requirement = {
 				kind = exactVersion;
-				version = 2.5.4;
+				version = 2.6.0;
 			};
 		};
 		CC0000000000000000000001 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {

@@ -57,10 +57,10 @@ val isDevBuild = startParameter.taskNames.any { it.contains("Dev", ignoreCase = 
 
 if (isDevBuild) {
     val siblings = listOf(
-        Triple("../../cardlink-sdk",       "de.scoopsoftware.cardlink:shared-android", ":packages:sdk:shared"),
-        Triple("../../scoop-nfc-sdk",      "de.scoopsoftware.nfc:shared-android",      ":packages:sdk:shared"),
-        Triple("../../scoop-popp-module",  "de.scoopsoftware.popp:shared-android",     ":packages:sdk:shared"),
-        Triple("../../scoop-popp-sdk",     "de.scoopsoftware.popp.sdk:shared-android", ":packages:sdk:shared"),
+        Triple("../../cardlink-sdk",       "de.scoopsoftware.cardlink:cardlink-android", ":packages:sdk:shared"),
+        Triple("../../scoop-nfc-sdk",      "de.scoopsoftware.nfc:nfc-android",      ":packages:sdk:shared"),
+        Triple("../../scoop-popp-module",  "de.scoopsoftware.popp:popp-module-android",     ":packages:sdk:shared"),
+        Triple("../../scoop-popp-sdk",     "de.scoopsoftware.popp.sdk:popp-sdk-android", ":packages:sdk:shared"),
     )
 
     siblings.forEach { (relativePath, moduleCoord, projectPath) ->

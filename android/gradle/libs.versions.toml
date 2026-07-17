@@ -6,10 +6,10 @@ kotlinx-coroutines = "1.10.2"
 
 # SDK pins — update with scripts/update-sdk-pin.sh after publishing a release.
 # Verify against latest published versions in Step 2 before committing.
-cardlink-sdk = "3.0.3"
-nfc-sdk = "2.5.4"
-popp-module = "0.20.3"
-popp-sdk = "1.0.4"
+cardlink-sdk = "3.1.0"
+nfc-sdk = "2.6.0"
+popp-module = "0.21.0"
+popp-sdk = "1.1.0"
 
 [libraries]
 # AndroidX core
@@ -56,10 +56,10 @@ credentials-play-services-auth = { module = "androidx.credentials:credentials-pl
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 
 # Scoop SDKs — published artifacts (Maven coordinates)
-cardlink-shared-android = { module = "de.scoopsoftware.cardlink:shared-android", version.ref = "cardlink-sdk" }
-nfc-shared-android = { module = "de.scoopsoftware.nfc:shared-android", version.ref = "nfc-sdk" }
-popp-shared-android = { module = "de.scoopsoftware.popp:shared-android", version.ref = "popp-module" }
-popp-sdk-shared-android = { module = "de.scoopsoftware.popp.sdk:shared-android", version.ref = "popp-sdk" }
+cardlink-shared-android = { module = "de.scoopsoftware.cardlink:cardlink-android", version.ref = "cardlink-sdk" }
+nfc-shared-android = { module = "de.scoopsoftware.nfc:nfc-android", version.ref = "nfc-sdk" }
+popp-shared-android = { module = "de.scoopsoftware.popp:popp-module-android", version.ref = "popp-module" }
+popp-sdk-shared-android = { module = "de.scoopsoftware.popp.sdk:popp-sdk-android", version.ref = "popp-sdk" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
