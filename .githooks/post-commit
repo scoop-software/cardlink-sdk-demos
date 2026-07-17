@@ -79,6 +79,12 @@ update_version_file() {
     fi
     local current_version
     current_version=$(grep "^version=" "$version_file" | cut -d'=' -f2)
+    # Guard: version files are repo content — only strict semver may reach
+    # bash arithmetic and sed interpolation below (injection hardening).
+    if ! [[ "$current_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo "post-commit: refusing to bump — malformed version '$current_version' in $version_file" >&2
+        exit 1
+    fi
     if [ -z "$current_version" ]; then
         return 1
     fi
@@ -143,7 +149,7 @@ fi
 # expansion under `set -u` when the array is empty.
 if [ ${#tags[@]} -gt 0 ]; then
     for tag in "${tags[@]}"; do
-        git tag -sf -m "$tag" "$tag"
+        git tag -sf -m "$tag" -- "$tag"
         echo "post-commit: tagged $tag"
     done
 fi
