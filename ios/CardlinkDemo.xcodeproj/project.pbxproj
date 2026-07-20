@@ -498,7 +498,7 @@
 				SCOOP_APP_GROUP_ID = "group.de.scoopsoftware.nfc";
 				SCOOP_KEYCHAIN_ACCESS_GROUP = "$(AppIdentifierPrefix)group.de.scoopsoftware.nfc";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10401;
+				CURRENT_PROJECT_VERSION = 10402;
 				DEVELOPMENT_TEAM = 845RN736HR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -513,7 +513,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.1;
+				MARKETING_VERSION = 1.4.2;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -532,7 +532,7 @@
 				SCOOP_APP_GROUP_ID = "group.de.scoopsoftware.nfc";
 				SCOOP_KEYCHAIN_ACCESS_GROUP = "$(AppIdentifierPrefix)group.de.scoopsoftware.nfc";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10401;
+				CURRENT_PROJECT_VERSION = 10402;
 				DEVELOPMENT_TEAM = 845RN736HR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -547,7 +547,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.1;
+				MARKETING_VERSION = 1.4.2;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;

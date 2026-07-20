@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>ScoopAppGroupId</key>
+	<string>$(SCOOP_APP_GROUP_ID)</string>
+	<key>ScoopKeychainAccessGroup</key>
+	<string>$(SCOOP_KEYCHAIN_ACCESS_GROUP)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

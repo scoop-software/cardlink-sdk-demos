@@ -206,12 +206,13 @@ class FlowViewModel: ObservableObject {
         let environment = CardlinkEnvironment.Default.shared
         let storage = KeychainCredentialStorage()
 
-        let cache: (any CacheProvider)? = enableCache ? SharedFileCacheProvider(
-            appGroupId: "group.de.scoopsoftware.nfc",
+        let cache: (any CacheProvider)? = enableCache ? (try? SharedFileCacheProvider(
+            appGroupId: DemoCacheConfig.appGroupId,
+            keychainAccessGroup: DemoCacheConfig.keychainAccessGroup,
             securityLevel: .encrypted,
             fileOps: DefaultFileOperations.shared,
             cryptoOps: DefaultCryptoOperations.shared
-        ) : nil
+        )) : nil
         cacheProvider = cache
 
         let config = CardlinkFlowConfig(
@@ -403,12 +404,16 @@ struct ScanView: View {
     }
 
     private func loadKnownCards() async {
-        let cache = SharedFileCacheProvider(
-            appGroupId: "group.de.scoopsoftware.nfc",
+        guard let cache = try? SharedFileCacheProvider(
+            appGroupId: DemoCacheConfig.appGroupId,
+            keychainAccessGroup: DemoCacheConfig.keychainAccessGroup,
             securityLevel: .encrypted,
             fileOps: DefaultFileOperations.shared,
             cryptoOps: DefaultCryptoOperations.shared
-        )
+        ) else {
+            knownCards = []
+            return
+        }
         knownCards = (try? await CacheProviderKt.getKnownCards(cache)) ?? []
     }
 

@@ -488,7 +488,6 @@ private fun CardSelector(
         can = can,
         onCanChange = onCanChange,
         activity = activity,
-        persistKey = "lastCan",
         onScan = { if (it.length == 6) onNewCard() },
     )
 

@@ -24,9 +24,10 @@ struct SettingsView: View {
     }
 
     // Cache provider for known cards
-    private var cacheProvider: SharedFileCacheProvider {
-        SharedFileCacheProvider(
-            appGroupId: "group.de.scoopsoftware.nfc",
+    private var cacheProvider: SharedFileCacheProvider? {
+        try? SharedFileCacheProvider(
+            appGroupId: DemoCacheConfig.appGroupId,
+            keychainAccessGroup: DemoCacheConfig.keychainAccessGroup,
             securityLevel: .encrypted,
             fileOps: DefaultFileOperations.shared,
             cryptoOps: DefaultCryptoOperations.shared
@@ -100,7 +101,7 @@ struct SettingsView: View {
                             action: {
                                 Button("Remove All") {
                                     Task {
-                                        try? await cacheProvider.clear()
+                                        try? await cacheProvider?.clear()
                                         knownCards = []
                                     }
                                 }
@@ -121,11 +122,11 @@ struct SettingsView: View {
                                         // Cancel previous undo timer and commit that deletion
                                         if let prev = undoCard {
                                             undoWorkItem?.cancel()
-                                            Task { try? await cacheProvider.remove(iccsn: prev.card.iccsn) }
+                                            Task { try? await cacheProvider?.remove(iccsn: prev.card.iccsn) }
                                         }
                                         undoCard = (card, index)
                                         let work = DispatchWorkItem {
-                                            Task { try? await cacheProvider.remove(iccsn: card.iccsn) }
+                                            Task { try? await cacheProvider?.remove(iccsn: card.iccsn) }
                                             undoCard = nil
                                         }
                                         undoWorkItem = work
@@ -199,7 +200,9 @@ struct SettingsView: View {
             .navigationTitle("Settings")
             .id(refreshTrigger) // Force refresh when triggered
             .task {
-                knownCards = (try? await CacheProviderKt.getKnownCards(cacheProvider)) ?? []
+                if let cacheProvider {
+                    knownCards = (try? await CacheProviderKt.getKnownCards(cacheProvider)) ?? []
+                }
             }
             .overlay(alignment: .bottom) {
                 if let undo = undoCard {
@@ -922,4 +925,15 @@ enum RocketChatKeychain {
 
 #Preview {
     SettingsView()
+}
+
+/// Cache configuration shared by every SharedFileCacheProvider call site in the demo.
+/// Values are injected from build settings via Info.plist (NFC 3.0.0 requires a
+/// fully qualified Keychain access group alongside the App Group).
+enum DemoCacheConfig {
+    static let appGroupId =
+        Bundle.main.object(forInfoDictionaryKey: "ScoopAppGroupId") as? String
+            ?? "group.de.scoopsoftware.nfc"
+    static let keychainAccessGroup =
+        Bundle.main.object(forInfoDictionaryKey: "ScoopKeychainAccessGroup") as? String ?? ""
 }

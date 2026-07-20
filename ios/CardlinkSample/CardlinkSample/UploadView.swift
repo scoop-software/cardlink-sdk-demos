@@ -25,8 +25,9 @@ class UploadViewModel: ObservableObject {
 
         let environment: CardlinkEnvironment = CardlinkEnvironment.Default.shared
         let storage = KeychainCredentialStorage()
-        let cache = SharedFileCacheProvider(
-            appGroupId: "group.de.scoopsoftware.nfc",
+        let cache = try? SharedFileCacheProvider(
+            appGroupId: DemoCacheConfig.appGroupId,
+            keychainAccessGroup: DemoCacheConfig.keychainAccessGroup,
             securityLevel: .encrypted,
             fileOps: DefaultFileOperations.shared,
             cryptoOps: DefaultCryptoOperations.shared

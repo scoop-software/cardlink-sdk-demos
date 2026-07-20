@@ -752,7 +752,7 @@ private fun CanScreen(knownCards: List<KnownCard>, errorMessage: String?, flow: 
                 )
             }
         }
-        CanInputField(can = can, onCanChange = { can = it }, activity = activity, persistKey = "lastCan")
+        CanInputField(can = can, onCanChange = { can = it }, activity = activity)
         Button(
             onClick = { flow?.submitCan(can.trim()) },
             enabled = can.length == 6,

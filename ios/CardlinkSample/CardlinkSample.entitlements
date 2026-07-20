@@ -10,6 +10,10 @@
 	<array>
 		<string>webcredentials:cardlink.scoopsoftware.de</string>
 	</array>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)group.de.scoopsoftware.nfc</string>
+	</array>
 	<key>com.apple.security.application-groups</key>
 	<array>
 		<string>group.de.scoopsoftware.nfc</string>

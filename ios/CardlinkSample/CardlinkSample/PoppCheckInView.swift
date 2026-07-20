@@ -930,9 +930,10 @@ class PoppViewModel: ObservableObject {
     private var stateTask: Task<Void, Never>?
     private var traceTask: Task<Void, Never>?
 
-    private var cacheProvider: ScoopPoppSDK.SharedFileCacheProvider {
-        ScoopPoppSDK.SharedFileCacheProvider(
-            appGroupId: "group.de.scoopsoftware.nfc",
+    private var cacheProvider: ScoopPoppSDK.SharedFileCacheProvider? {
+        try? ScoopPoppSDK.SharedFileCacheProvider(
+            appGroupId: DemoCacheConfig.appGroupId,
+            keychainAccessGroup: DemoCacheConfig.keychainAccessGroup,
             securityLevel: .encrypted,
             fileOps: ScoopPoppSDK.DefaultFileOperations.shared,
             cryptoOps: ScoopPoppSDK.DefaultCryptoOperations.shared
@@ -940,7 +941,9 @@ class PoppViewModel: ObservableObject {
     }
 
     func loadKnownCards() async {
-        knownCards = (try? await ScoopPoppSDK.CacheProviderKt.getKnownCards(cacheProvider)) ?? []
+        if let cacheProvider {
+            knownCards = (try? await ScoopPoppSDK.CacheProviderKt.getKnownCards(cacheProvider)) ?? []
+        }
     }
 
     func startCheckIn(username: String, password: String, telematikId: String? = TELEMATIK_ID, themeColor: UIColor? = nil) {

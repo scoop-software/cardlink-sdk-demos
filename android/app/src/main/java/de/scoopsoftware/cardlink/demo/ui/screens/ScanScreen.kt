@@ -696,7 +696,6 @@ private fun CanInput(
             can = can,
             onCanChange = onCanChange,
             activity = activity,
-            persistKey = "lastCan",
             onScan = { if (it.length == 6) onSubmitCan() },
         )
 
