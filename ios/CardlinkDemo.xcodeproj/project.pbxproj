@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		37CC00737DB0917784F76E8C /* ScoopCardlink in Frameworks */ = {isa = PBXBuildFile; productRef = 32E41B719C31C21D826ADD57 /* ScoopCardlink */; };
+		3A0F00737DB0917784F76F01 /* ScoopPoppSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 5C0F2334F3A07E28DFC0F001 /* ScoopPoppSDK */; };
 		4A83844C19BB022E5E4B60B9 /* ScanRecord+Demo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFFFD4AB47C48ADCF2F486C /* ScanRecord+Demo.swift */; };
 		586024164B6D91D8FAAEF9F5 /* ScoopNfcUI in Frameworks */ = {isa = PBXBuildFile; productRef = 8BC2B12514CE5C13BAE20C0F /* ScoopNfcUI */; };
 		76AB57E616A761E86F391813 /* ScanHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDE8D2B8150C7EB07D62C8D /* ScanHistory.swift */; };
@@ -105,6 +106,7 @@
 				37CC00737DB0917784F76E8C /* ScoopCardlink in Frameworks */,
 				AA49D09916E7CC47AB231762 /* ScoopNfc in Frameworks */,
 				586024164B6D91D8FAAEF9F5 /* ScoopNfcUI in Frameworks */,
+				3A0F00737DB0917784F76F01 /* ScoopPoppSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,6 +244,7 @@
 				32E41B719C31C21D826ADD57 /* ScoopCardlink */,
 				DD95475E8EB3DDEC0729F1E8 /* ScoopNfc */,
 				8BC2B12514CE5C13BAE20C0F /* ScoopNfcUI */,
+				5C0F2334F3A07E28DFC0F001 /* ScoopPoppSDK */,
 			);
 			productName = CardlinkDemo;
 			productReference = AA4000000000000000000001 /* CardlinkSample.app */;
@@ -292,6 +295,7 @@
 				CC0000000000000000000001 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				5B5AD2334F3A07E28DFC070C /* XCRemoteSwiftPackageReference "ti-cardlink.cardlink" */,
 				5B5AD2334F3A07E28DFC070D /* XCRemoteSwiftPackageReference "ti-common.nfc" */,
+				5B5AD2334F3A07E28DFC070E /* XCRemoteSwiftPackageReference "ti-popp.popp-sdk" */,
 			);
 			productRefGroup = AA6000000000000000000004 /* Products */;
 			projectDirPath = "";
@@ -491,8 +495,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = CardlinkSample/CardlinkSample.entitlements;
+				SCOOP_APP_GROUP_ID = "group.de.scoopsoftware.nfc";
+				SCOOP_KEYCHAIN_ACCESS_GROUP = "$(AppIdentifierPrefix)group.de.scoopsoftware.nfc";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10400;
+				CURRENT_PROJECT_VERSION = 10401;
 				DEVELOPMENT_TEAM = 845RN736HR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -507,7 +513,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.0;
+				MARKETING_VERSION = 1.4.1;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -523,8 +529,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = CardlinkSample/CardlinkSample.entitlements;
+				SCOOP_APP_GROUP_ID = "group.de.scoopsoftware.nfc";
+				SCOOP_KEYCHAIN_ACCESS_GROUP = "$(AppIdentifierPrefix)group.de.scoopsoftware.nfc";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10400;
+				CURRENT_PROJECT_VERSION = 10401;
 				DEVELOPMENT_TEAM = 845RN736HR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -539,7 +547,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.0;
+				MARKETING_VERSION = 1.4.1;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -630,7 +638,7 @@
 			repositoryURL = "ti-cardlink.cardlink";
 			requirement = {
 				kind = exactVersion;
-				version = 3.5.2;
+				version = 4.0.0;
 			};
 		};
 		5B5AD2334F3A07E28DFC070D /* XCRemoteSwiftPackageReference "ti-common.nfc" */ = {
@@ -638,19 +646,27 @@
 			repositoryURL = "ti-common.nfc";
 			requirement = {
 				kind = exactVersion;
-				version = 2.9.2;
+				version = 3.0.0;
 			};
 		};
 		CC0000000000000000000001 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.4.0;
+				kind = exactVersion;
+				version = 4.4.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
+		5B5AD2334F3A07E28DFC070E /* XCRemoteSwiftPackageReference "ti-popp.popp-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "ti-popp.popp-sdk";
+			requirement = {
+				kind = exactVersion;
+				version = 2.0.0;
+			};
+		};
 /* Begin XCSwiftPackageProductDependency section */
 		32E41B719C31C21D826ADD57 /* ScoopCardlink */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -666,6 +682,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CC0000000000000000000001 /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
+		};
+		5C0F2334F3A07E28DFC0F001 /* ScoopPoppSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5B5AD2334F3A07E28DFC070E /* XCRemoteSwiftPackageReference "ti-popp.popp-sdk" */;
+			productName = ScoopPoppSDK;
 		};
 		DD95475E8EB3DDEC0729F1E8 /* ScoopNfc */ = {
 			isa = XCSwiftPackageProductDependency;

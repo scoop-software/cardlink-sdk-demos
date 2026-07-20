@@ -1,14 +1,18 @@
 {
-  "authentication" : {},
-  "registries" : {
-    "ti-cardlink" : {
-      "supportsAvailability" : false,
-      "url" : "https://ti-gitea.scoop-gmbh.de/api/packages/ti-cardlink/swift"
+  "authentication": {},
+  "registries": {
+    "ti-cardlink": {
+      "supportsAvailability": false,
+      "url": "https://ti-gitea.scoop-gmbh.de/api/packages/ti-cardlink/swift"
     },
-    "ti-common" : {
-      "supportsAvailability" : false,
-      "url" : "https://ti-gitea.scoop-gmbh.de/api/packages/ti-common/swift"
+    "ti-common": {
+      "supportsAvailability": false,
+      "url": "https://ti-gitea.scoop-gmbh.de/api/packages/ti-common/swift"
+    },
+    "ti-popp": {
+      "supportsAvailability": false,
+      "url": "https://ti-gitea.scoop-gmbh.de/api/packages/ti-popp/swift"
     }
   },
-  "version" : 1
+  "version": 1
 }

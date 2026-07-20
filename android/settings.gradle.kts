@@ -21,7 +21,7 @@ dependencyResolutionManagement {
         val giteaToken = providers.gradleProperty("giteaPackageToken")
             .orElse(providers.environmentVariable("GITEA_TOKEN"))
 
-        fun scoopRegistry(owner: String, group: String) = maven {
+        fun scoopRegistry(owner: String, vararg groups: String) = maven {
             name = "scoop-$owner"
             url = uri("$giteaUrl/api/packages/$owner/maven")
             credentials {
@@ -29,14 +29,14 @@ dependencyResolutionManagement {
                 password = giteaToken.orNull.orEmpty()
             }
             content {
-                includeGroup(group)
+                groups.forEach { includeGroup(it) }
             }
         }
 
         scoopRegistry("ti-cardlink", "de.scoopsoftware.cardlink")
         scoopRegistry("ti-common", "de.scoopsoftware.nfc")
-        scoopRegistry("ti-popp", "de.scoopsoftware.popp")
-        scoopRegistry("ti-popp-sdk", "de.scoopsoftware.popp.sdk")
+        // popp-sdk shares the ti-popp namespace since the 2026-07-20 registry reset
+        scoopRegistry("ti-popp", "de.scoopsoftware.popp", "de.scoopsoftware.popp.sdk")
     }
 }
 

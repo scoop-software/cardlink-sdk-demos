@@ -22,7 +22,7 @@ set -euo pipefail
 #       nfc      → key 'nfc-sdk'
 #       popp     → key 'popp-module'
 #
-#   iOS (when sdk == cardlink or nfc)
+#   iOS (when sdk == cardlink, nfc, or popp-sdk)
 #     ios/CardlinkDemo.xcodeproj/project.pbxproj
 #       Cardlink and NFC use independent Gitea registry package versions.
 #       Edited via the `xcodeproj` Ruby gem (proper tooling — the previous
@@ -72,7 +72,7 @@ else
 fi
 
 # ── iOS: pbxproj via the xcodeproj Ruby gem ──
-if [[ "$SDK" == "cardlink" || "$SDK" == "nfc" ]]; then
+if [[ "$SDK" == "cardlink" || "$SDK" == "nfc" || "$SDK" == "popp-sdk" ]]; then
     PBX_DIR="$REPO_ROOT/ios/CardlinkDemo.xcodeproj"
     if [[ ! -d "$PBX_DIR" ]]; then
         echo "  ⚠️ $PBX_DIR not found — skipping iOS bump"
@@ -108,7 +108,7 @@ require 'xcodeproj'
 
 project_path, sdk, ver = ARGV
 project = Xcodeproj::Project.open(project_path)
-identity = sdk == 'cardlink' ? 'ti-cardlink.cardlink' : 'ti-common.nfc'
+identity = { 'cardlink' => 'ti-cardlink.cardlink', 'nfc' => 'ti-common.nfc', 'popp-sdk' => 'ti-popp.popp-sdk' }.fetch(sdk)
 
 found = false
 updated = false
