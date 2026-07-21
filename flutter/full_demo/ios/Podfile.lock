@@ -1,0 +1,42 @@
+PODS:
+  - Flutter (1.0.0)
+  - OpenSSL-Universal (3.2.2000)
+  - scoop_cardlink (0.1.0):
+    - Flutter
+    - OpenSSL-Universal (~> 3.2.100)
+  - scoop_nfc (1.0.0):
+    - Flutter
+  - scoop_popp (0.1.0):
+    - Flutter
+    - OpenSSL-Universal (~> 3.2.100)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - scoop_cardlink (from `.symlinks/plugins/scoop_cardlink/ios`)
+  - scoop_nfc (from `.symlinks/plugins/scoop_nfc/ios`)
+  - scoop_popp (from `.symlinks/plugins/scoop_popp/ios`)
+
+SPEC REPOS:
+  trunk:
+    - OpenSSL-Universal
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  scoop_cardlink:
+    :path: ".symlinks/plugins/scoop_cardlink/ios"
+  scoop_nfc:
+    :path: ".symlinks/plugins/scoop_nfc/ios"
+  scoop_popp:
+    :path: ".symlinks/plugins/scoop_popp/ios"
+
+SPEC CHECKSUMS:
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  OpenSSL-Universal: f8a9c4fdab7e21cb70bda471c269e86e9212439c
+  scoop_cardlink: 0746e7f42a0f9157cee9a0ae8f43aa6cbeee6401
+  scoop_nfc: 0032c76457c8cfb3d9dcb3e2e579f1a33882b819
+  scoop_popp: 17304a78dd27ad4bb74a1e653c887e5342671fb8
+
+PODFILE CHECKSUM: 53a6aebc29ccee84c41f92f409fc20cd4ca011f1
+
+COCOAPODS: 1.16.2
