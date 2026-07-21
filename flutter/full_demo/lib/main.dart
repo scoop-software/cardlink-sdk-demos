@@ -7,17 +7,23 @@ import 'package:flutter/material.dart';
 
 import 'screens/popp_screen.dart';
 
-void main() => runApp(const FullDemoApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final settings = await DemoSettings.load();
+  runApp(FullDemoApp(settings: settings));
+}
 
 class FullDemoApp extends StatefulWidget {
-  const FullDemoApp({super.key});
+  final DemoSettings settings;
+
+  const FullDemoApp({super.key, required this.settings});
 
   @override
   State<FullDemoApp> createState() => _FullDemoAppState();
 }
 
 class _FullDemoAppState extends State<FullDemoApp> {
-  final _settings = DemoSettings();
+  DemoSettings get _settings => widget.settings;
   int _tab = 0;
 
   @override

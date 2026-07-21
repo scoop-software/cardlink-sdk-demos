@@ -24,6 +24,8 @@ class _PoppScreenState extends State<PoppScreen> {
   PoppFlowState _state = const PoppIdleState();
   StreamSubscription<PoppFlowState>? _stateSub;
   StreamSubscription<String>? _nfcSub;
+  StreamSubscription<String>? _traceSub;
+  final ValueNotifier<List<String>> _traceLog = ValueNotifier([]);
   final List<String> _history = [];
   String _telematikId = '';
   String _qrPayload = '';
@@ -45,12 +47,17 @@ class _PoppScreenState extends State<PoppScreen> {
     );
     _nfcSub =
         _flow.nfcMessageStream.listen((m) => setState(() => _nfcMessage = m));
+    _traceSub = _flow.traceStream.listen(
+      (line) => _traceLog.value = [..._traceLog.value, line],
+    );
   }
 
   @override
   void dispose() {
     _stateSub?.cancel();
     _nfcSub?.cancel();
+    _traceSub?.cancel();
+    _traceLog.dispose();
     super.dispose();
   }
 
@@ -80,6 +87,7 @@ class _PoppScreenState extends State<PoppScreen> {
       case PoppIdleState() || PoppCancelledState():
         return _centered([
           TextField(
+            key: const ValueKey('telematikField'),
             decoration: const InputDecoration(
               labelText: 'Telematik-ID (optional)',
               helperText: 'Leave empty for interactive LEI selection',
@@ -121,6 +129,7 @@ class _PoppScreenState extends State<PoppScreen> {
       case PoppScanningQrState():
         return _centered([
           TextField(
+            key: const ValueKey('qrField'),
             decoration: const InputDecoration(
               labelText: 'QR payload',
               helperText: 'Paste the popp:// payload from the practice QR',
@@ -140,6 +149,7 @@ class _PoppScreenState extends State<PoppScreen> {
       case PoppNeedsVzdSearchState():
         return _centered([
           TextField(
+            key: const ValueKey('vzdField'),
             decoration: const InputDecoration(
                 labelText: 'Practice name', border: OutlineInputBorder()),
             onChanged: (v) => _vzdQuery = v,
@@ -296,7 +306,7 @@ class _PoppScreenState extends State<PoppScreen> {
           IconButton(
             icon: const Icon(Icons.article_outlined),
             tooltip: 'Trace log',
-            onPressed: () => TraceLogSheet.show(context, _flow.traceStream),
+            onPressed: () => TraceLogSheet.show(context, _traceLog),
           ),
           IconButton(
             icon: const Icon(Icons.close),

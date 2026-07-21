@@ -11,6 +11,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  shared_preferences: ^2.3.0
+  # For the iOS App Group UserDefaults suite (cross-app credential sharing).
+  shared_preferences_foundation: ^2.5.0
 
 dev_dependencies:
   flutter_test:

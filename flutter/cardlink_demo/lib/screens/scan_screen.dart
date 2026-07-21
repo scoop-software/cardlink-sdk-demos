@@ -30,6 +30,12 @@ class _ScanScreenState extends State<ScanScreen> {
   String _smsCode = '';
   String _can = '';
   bool _progressSheetOpen = false;
+  final _smsController = TextEditingController();
+  // Accumulated for the whole session so the trace log is populated whenever
+  // the sheet is opened (the flow's trace SharedFlow does not replay). Keeping
+  // this subscription alive also keeps the bridge's trace collection bound.
+  final ValueNotifier<List<String>> _traceLog = ValueNotifier([]);
+  StreamSubscription<CardlinkTraceEvent>? _traceSub;
 
   @override
   void initState() {
@@ -37,11 +43,17 @@ class _ScanScreenState extends State<ScanScreen> {
     _sub = _flow.stateStream.listen(_onState, onError: (Object e) {
       _snack('$e');
     });
+    _traceSub = _flow.traceStream.listen(
+      (e) => _traceLog.value = [..._traceLog.value, e.toString()],
+    );
   }
 
   @override
   void dispose() {
     _sub?.cancel();
+    _traceSub?.cancel();
+    _traceLog.dispose();
+    _smsController.dispose();
     super.dispose();
   }
 
@@ -54,6 +66,11 @@ class _ScanScreenState extends State<ScanScreen> {
   Future<void> _onState(CardlinkFlowState state) async {
     setState(() => _state = state);
     switch (state) {
+      case NeedsSmsCodeState(:final debugSmsCode):
+        // In dev/test the server echoes the code back — prefill it so the
+        // tester can just tap Verify. Clear otherwise (no stale code).
+        _smsCode = debugSmsCode ?? '';
+        _smsController.text = debugSmsCode ?? '';
       case NeedsCanState():
         _knownCards = await _flow.getKnownCards();
         if (mounted) setState(() {});
@@ -135,6 +152,7 @@ class _ScanScreenState extends State<ScanScreen> {
       case NeedsPhoneNumberState():
         return _centered([
           TextField(
+            key: const ValueKey('phoneField'),
             keyboardType: TextInputType.phone,
             decoration: const InputDecoration(
                 labelText: 'Phone number', border: OutlineInputBorder()),
@@ -152,6 +170,8 @@ class _ScanScreenState extends State<ScanScreen> {
           Text('Code sent to $phoneNumber'
               '${debugSmsCode != null ? ' (debug: $debugSmsCode)' : ''}'),
           TextField(
+            key: const ValueKey('smsField'),
+            controller: _smsController,
             keyboardType: TextInputType.number,
             decoration: const InputDecoration(
                 labelText: 'SMS code', border: OutlineInputBorder()),
@@ -265,8 +285,7 @@ class _ScanScreenState extends State<ScanScreen> {
           IconButton(
             icon: const Icon(Icons.article_outlined),
             tooltip: 'Trace log',
-            onPressed: () => TraceLogSheet.show(
-                context, _flow.traceStream.map((e) => e.toString())),
+            onPressed: () => TraceLogSheet.show(context, _traceLog),
           ),
           IconButton(
             icon: const Icon(Icons.close),

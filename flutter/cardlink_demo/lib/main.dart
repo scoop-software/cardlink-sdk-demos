@@ -6,17 +6,23 @@ import 'screens/settings_screen.dart';
 import 'screens/timing_screen.dart';
 import 'screens/upload_screen.dart';
 
-void main() => runApp(CardlinkDemoApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final settings = await DemoSettings.load();
+  runApp(CardlinkDemoApp(settings: settings));
+}
 
 class CardlinkDemoApp extends StatefulWidget {
-  const CardlinkDemoApp({super.key});
+  final DemoSettings settings;
+
+  const CardlinkDemoApp({super.key, required this.settings});
 
   @override
   State<CardlinkDemoApp> createState() => _CardlinkDemoAppState();
 }
 
 class _CardlinkDemoAppState extends State<CardlinkDemoApp> {
-  final _settings = DemoSettings();
+  DemoSettings get _settings => widget.settings;
   int _tab = 0;
 
   @override

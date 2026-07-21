@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>ScoopAppGroupId</key>
+	<string>group.de.scoopsoftware.cardlink.demo</string>
+	<key>ScoopKeychainAccessGroup</key>
+	<string>$(AppIdentifierPrefix)group.de.scoopsoftware.cardlink.demo</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
