@@ -25,13 +25,13 @@ class UploadViewModel: ObservableObject {
 
         let environment: CardlinkEnvironment = CardlinkEnvironment.Default.shared
         let storage = KeychainCredentialStorage()
-        let cache = try? SharedFileCacheProvider(
+        let cache: any CacheProvider = (try? SharedFileCacheProvider(
             appGroupId: DemoCacheConfig.appGroupId,
             keychainAccessGroup: DemoCacheConfig.keychainAccessGroup,
             securityLevel: .encrypted,
             fileOps: DefaultFileOperations.shared,
             cryptoOps: DefaultCryptoOperations.shared
-        )
+        )) ?? FileCacheProvider(securityLevel: .encrypted)   // F3: per-app persistent fallback
 
         let config = CardlinkFlowConfig(
             environment: environment,

@@ -24,14 +24,14 @@ struct SettingsView: View {
     }
 
     // Cache provider for known cards
-    private var cacheProvider: SharedFileCacheProvider? {
-        try? SharedFileCacheProvider(
+    private var cacheProvider: (any CacheProvider)? {
+        (try? SharedFileCacheProvider(
             appGroupId: DemoCacheConfig.appGroupId,
             keychainAccessGroup: DemoCacheConfig.keychainAccessGroup,
             securityLevel: .encrypted,
             fileOps: DefaultFileOperations.shared,
             cryptoOps: DefaultCryptoOperations.shared
-        )
+        )) ?? FileCacheProvider(securityLevel: .encrypted)   // F3: per-app persistent fallback
     }
 
     var body: some View {

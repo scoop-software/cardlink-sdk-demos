@@ -930,14 +930,14 @@ class PoppViewModel: ObservableObject {
     private var stateTask: Task<Void, Never>?
     private var traceTask: Task<Void, Never>?
 
-    private var cacheProvider: ScoopPoppSDK.SharedFileCacheProvider? {
-        try? ScoopPoppSDK.SharedFileCacheProvider(
+    private var cacheProvider: (any ScoopPoppSDK.CacheProvider)? {
+        (try? ScoopPoppSDK.SharedFileCacheProvider(
             appGroupId: DemoCacheConfig.appGroupId,
             keychainAccessGroup: DemoCacheConfig.keychainAccessGroup,
             securityLevel: .encrypted,
             fileOps: ScoopPoppSDK.DefaultFileOperations.shared,
             cryptoOps: ScoopPoppSDK.DefaultCryptoOperations.shared
-        )
+        )) ?? ScoopPoppSDK.FileCacheProvider(securityLevel: .encrypted)   // F3: per-app persistent fallback
     }
 
     func loadKnownCards() async {

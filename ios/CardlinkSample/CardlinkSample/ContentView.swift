@@ -206,13 +206,19 @@ class FlowViewModel: ObservableObject {
         let environment = CardlinkEnvironment.Default.shared
         let storage = KeychainCredentialStorage()
 
-        let cache: (any CacheProvider)? = enableCache ? (try? SharedFileCacheProvider(
-            appGroupId: DemoCacheConfig.appGroupId,
-            keychainAccessGroup: DemoCacheConfig.keychainAccessGroup,
-            securityLevel: .encrypted,
-            fileOps: DefaultFileOperations.shared,
-            cryptoOps: DefaultCryptoOperations.shared
-        )) : nil
+        // F3: SharedFileCacheProvider requires a provisioned App Group; the DevSDK
+        // build has none (empty SCOOP_APP_GROUP_ID), so it throws and the cache was
+        // silently nil — no caching and nothing persisted. Fall back to a per-app
+        // persistent FileCacheProvider so cache + known-cards survive an app restart.
+        let cache: (any CacheProvider)? = enableCache
+            ? ((try? SharedFileCacheProvider(
+                appGroupId: DemoCacheConfig.appGroupId,
+                keychainAccessGroup: DemoCacheConfig.keychainAccessGroup,
+                securityLevel: .encrypted,
+                fileOps: DefaultFileOperations.shared,
+                cryptoOps: DefaultCryptoOperations.shared
+            )) ?? FileCacheProvider(securityLevel: .encrypted))
+            : nil
         cacheProvider = cache
 
         let config = CardlinkFlowConfig(
@@ -404,16 +410,13 @@ struct ScanView: View {
     }
 
     private func loadKnownCards() async {
-        guard let cache = try? SharedFileCacheProvider(
+        let cache: any CacheProvider = (try? SharedFileCacheProvider(
             appGroupId: DemoCacheConfig.appGroupId,
             keychainAccessGroup: DemoCacheConfig.keychainAccessGroup,
             securityLevel: .encrypted,
             fileOps: DefaultFileOperations.shared,
             cryptoOps: DefaultCryptoOperations.shared
-        ) else {
-            knownCards = []
-            return
-        }
+        )) ?? FileCacheProvider(securityLevel: .encrypted)   // F3: per-app persistent fallback
         knownCards = (try? await CacheProviderKt.getKnownCards(cache)) ?? []
     }
 
