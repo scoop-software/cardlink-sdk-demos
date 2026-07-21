@@ -49,9 +49,9 @@ class UploadViewModel: ObservableObject {
             uploadTargetEnv: "dev"
         )
 
-        // Turnkey: the SDK provider owns the NFCTagReaderSession and drives the
-        // system NFC sheet from flow state — no app-side session management.
-        let nfcProvider = IosNfcTransceiverProvider()
+        // App-owned NFC session (Swift owns the NFCTagReaderSession) — the turnkey
+        // provider's Kotlin/Native delegate doesn't deliver didDetect on current builds.
+        let nfcProvider = DemoCardlinkNfcProvider()
 
         let uploadFlow = ErezeptUploadFlow(config: config, nfcProvider: nfcProvider)
         self.flow = uploadFlow

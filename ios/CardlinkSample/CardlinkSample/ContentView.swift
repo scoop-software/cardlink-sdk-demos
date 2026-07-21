@@ -231,15 +231,15 @@ class FlowViewModel: ObservableObject {
             uploadTargetEnv: "dev"
         )
 
-        // No nfcProvider argument needed on iOS — the SDK supplies a turnkey
-        // IosNfcTransceiverProvider by default. It owns the NFCTagReaderSession
-        // and drives the system NFC sheet from flow state with no app-side
-        // session management.
+        // App-owned NFC session: the turnkey IosNfcTransceiverProvider's
+        // Kotlin/Native delegate doesn't deliver didDetect on current builds, so
+        // we own the NFCTagReaderSession in Swift (the proven NfcDemo pattern).
+        let nfcProvider = DemoCardlinkNfcProvider()
         let handle: FlowHandle
         if useServerFlow {
-            handle = FlowHandle(serverFlow: ServerDrivenFlow(config: config))
+            handle = FlowHandle(serverFlow: ServerDrivenFlow(config: config, nfcProvider: nfcProvider))
         } else {
-            handle = FlowHandle(clientFlow: CardlinkFlow(config: config))
+            handle = FlowHandle(clientFlow: CardlinkFlow(config: config, nfcProvider: nfcProvider))
         }
         self.flow = handle
 

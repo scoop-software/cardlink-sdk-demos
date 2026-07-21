@@ -949,9 +949,9 @@ class PoppViewModel: ObservableObject {
     func startCheckIn(username: String, password: String, telematikId: String? = TELEMATIK_ID, themeColor: UIColor? = nil) {
         traceLog.removeAll()
 
-        // Turnkey: the SDK provider owns the NFCTagReaderSession and drives the
-        // system NFC sheet from PoPP progress — no app-side session management.
-        let nfcProvider = ScoopPoppSDK.IosNfcTransceiverProvider()
+        // App-owned NFC session (Swift owns the NFCTagReaderSession) — the turnkey
+        // provider's Kotlin/Native delegate doesn't deliver didDetect on current builds.
+        let nfcProvider = DemoPoppNfcProvider()
 
         let config = PoppFlowConfig(
             zetaClient: { [weak self] () -> MockVzdRealPoppClient in
@@ -965,7 +965,8 @@ class PoppViewModel: ObservableObject {
             moduleConfig: PoppConfig(
                 poppServiceBaseUrl: "https://popp-sample-server-dev.demo.scoop-gmbh.de",
                 vzdBaseUrl: "https://popp-sample-server-dev.demo.scoop-gmbh.de",
-                clientId: "scoop-cardlink-demo"
+                clientId: "scoop-cardlink-demo",
+                developmentTransportPolicy: .secureOnly
             ),
             nfcProvider: nfcProvider,
             knownCards: knownCards,
@@ -987,7 +988,9 @@ class PoppViewModel: ObservableObject {
                 var vc = rootVC
                 while let presented = vc.presentedViewController { vc = presented }
                 return PoppUiContext(viewController: vc, tintColor: themeColor)
-            }()
+            }(),
+            // GID (GesundheitsID) auth is not wired in this demo — eGK only.
+            gidProvider: nil
         )
         let flow = PoppFlow(flowConfig: config)
         self.poppFlow = flow
