@@ -14,13 +14,7 @@ This document is for developers of the Cardlink SDK who want to iterate on the d
    └── scoop-popp-module/
    ```
 
-2. Install the version-bump git hook:
-
-   ```
-   ./scripts/setup-hooks.sh
-   ```
-
-3. Verify your environment with the doctor script:
+2. Verify your environment with the doctor script:
 
    ```
    ./scripts/doctor.sh
@@ -107,15 +101,9 @@ and optionally `GITEA_URL`, or Gradle properties in
 
 ## Versioning
 
-Each platform has its own `version.properties` (e.g. `android/version.properties`). The git post-commit hook auto-bumps based on the conventional commit message:
-
-| Commit prefix                            | Bump  |
-|------------------------------------------|-------|
-| `feat:`                                  | minor |
-| `fix:` / `perf:`                         | patch |
-| `BREAKING CHANGE:` or `feat!:` / `fix!:` | major |
-| `chore:` / `docs:` / `refactor:` / `test:` | no bump |
-
-Only platforms with changes in the commit get bumped — a `feat(android):` commit that only touches `android/` bumps only `android/version.properties`.
-
-SDK pin updates (when the SDK release pipeline pushes a new pin to this repo) use the `chore:` prefix and don't bump demo versions.
+Each platform has its own `version.properties` (for example,
+`android/version.properties`). Version changes are prepared explicitly and are
+included in the same reviewed commit as their synchronized project metadata.
+A conventional commit does not change versions or create tags automatically.
+Release tags are created explicitly only after the candidate has passed its
+release gates.
