@@ -1,5 +1,4 @@
 import SwiftUI
-import CoreNFC
 import ScoopCardlink
 import UIKit
 import Security
@@ -237,15 +236,11 @@ class FlowViewModel: ObservableObject {
             uploadTargetEnv: "dev"
         )
 
-        // App-owned NFC session: the turnkey IosNfcTransceiverProvider's
-        // Kotlin/Native delegate doesn't deliver didDetect on current builds, so
-        // we own the NFCTagReaderSession in Swift (the proven NfcDemo pattern).
-        let nfcProvider = DemoCardlinkNfcProvider()
         let handle: FlowHandle
         if useServerFlow {
-            handle = FlowHandle(serverFlow: ServerDrivenFlow(config: config, nfcProvider: nfcProvider))
+            handle = FlowHandle(serverFlow: ServerDrivenFlow(config: config))
         } else {
-            handle = FlowHandle(clientFlow: CardlinkFlow(config: config, nfcProvider: nfcProvider))
+            handle = FlowHandle(clientFlow: CardlinkFlow(config: config))
         }
         self.flow = handle
 
@@ -522,6 +517,9 @@ struct ScanView: View {
                 switch viewModel.flowState {
                 case is CardlinkFlowState.Idle:
                     statusCard(title: "Idle", subtitle: "Waiting to start...")
+
+                case is CardlinkFlowState.Cancelled:
+                    statusCard(title: "Cancelled", subtitle: "The flow was cancelled.")
 
                 case is CardlinkFlowState.Connecting:
                     statusCard(title: "Connecting", subtitle: "Authenticating...", loading: true)

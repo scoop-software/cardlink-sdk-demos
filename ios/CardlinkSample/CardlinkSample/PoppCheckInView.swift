@@ -949,10 +949,6 @@ class PoppViewModel: ObservableObject {
     func startCheckIn(username: String, password: String, telematikId: String? = TELEMATIK_ID, themeColor: UIColor? = nil) {
         traceLog.removeAll()
 
-        // App-owned NFC session (Swift owns the NFCTagReaderSession) — the turnkey
-        // provider's Kotlin/Native delegate doesn't deliver didDetect on current builds.
-        let nfcProvider = DemoPoppNfcProvider()
-
         let config = PoppFlowConfig(
             zetaClient: { [weak self] () -> MockVzdRealPoppClient in
                 let client = MockVzdRealPoppClient(username: username, password: password, trace: { msg in
@@ -968,7 +964,7 @@ class PoppViewModel: ObservableObject {
                 clientId: "scoop-cardlink-demo",
                 developmentTransportPolicy: .secureOnly
             ),
-            nfcProvider: nfcProvider,
+            nfcProvider: ScoopPoppSDK.IosNfcTransceiverProvider(),
             knownCards: knownCards,
             cacheProvider: useFileCache ? cacheProvider : nil,
             // Turnkey: the SDK provider drives the system NFC sheet, so the app needs

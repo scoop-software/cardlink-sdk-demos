@@ -26,8 +26,6 @@
 		AA0000000000000000000023 /* PoppCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000022 /* PoppCheckInView.swift */; };
 		AA0000000000000000000030 /* RocketChatHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000030 /* RocketChatHelper.swift */; };
 		AA0000000000000000000042 /* KeychainCredentialStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000042 /* KeychainCredentialStorage.swift */; };
-		AAFF0000000000000000EE04 /* DemoPoppNfcProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFF0000000000000000EE03 /* DemoPoppNfcProvider.swift */; };
-		AAFF0000000000000000EE02 /* DemoCardlinkNfcProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFF0000000000000000EE01 /* DemoCardlinkNfcProvider.swift */; };
 		AA0000000000000000000096 /* PrescriptionDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000096 /* PrescriptionDelete.swift */; };
 		AA0000000000000000000097 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000097 /* Fonts */; };
 		AA0000000000000000000098 /* BrandTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000098 /* BrandTheme.swift */; };
@@ -88,8 +86,6 @@
 		AA1000000000000000000022 /* PoppCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PoppCheckInView.swift; sourceTree = "<group>"; };
 		AA1000000000000000000030 /* RocketChatHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RocketChatHelper.swift; sourceTree = "<group>"; };
 		AA1000000000000000000042 /* KeychainCredentialStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainCredentialStorage.swift; sourceTree = "<group>"; };
-		AAFF0000000000000000EE03 /* DemoPoppNfcProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoPoppNfcProvider.swift; sourceTree = "<group>"; };
-		AAFF0000000000000000EE01 /* DemoCardlinkNfcProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoCardlinkNfcProvider.swift; sourceTree = "<group>"; };
 		AA1000000000000000000096 /* PrescriptionDelete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrescriptionDelete.swift; sourceTree = "<group>"; };
 		AA1000000000000000000097 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fonts; sourceTree = "<group>"; };
 		AA1000000000000000000098 /* BrandTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandTheme.swift; sourceTree = "<group>"; };
@@ -167,8 +163,6 @@
 			children = (
 				AA1000000000000000000001 /* CardlinkSampleApp.swift */,
 				AA1000000000000000000002 /* ContentView.swift */,
-				AAFF0000000000000000EE03 /* DemoPoppNfcProvider.swift */,
-				AAFF0000000000000000EE01 /* DemoCardlinkNfcProvider.swift */,
 				AA1000000000000000000016 /* SettingsView.swift */,
 				AA1000000000000000000042 /* KeychainCredentialStorage.swift */,
 				AA1000000000000000000017 /* UploadView.swift */,
@@ -333,8 +327,6 @@
 			files = (
 				AA0000000000000000000001 /* CardlinkSampleApp.swift in Sources */,
 				AA0000000000000000000002 /* ContentView.swift in Sources */,
-				AAFF0000000000000000EE04 /* DemoPoppNfcProvider.swift in Sources */,
-				AAFF0000000000000000EE02 /* DemoCardlinkNfcProvider.swift in Sources */,
 				AA0000000000000000000016 /* SettingsView.swift in Sources */,
 				AA0000000000000000000042 /* KeychainCredentialStorage.swift in Sources */,
 				AA0000000000000000000017 /* UploadView.swift in Sources */,
@@ -506,7 +498,7 @@
 				SCOOP_APP_GROUP_ID = "group.de.scoopsoftware.nfc";
 				SCOOP_KEYCHAIN_ACCESS_GROUP = "$(AppIdentifierPrefix)group.de.scoopsoftware.nfc";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10404;
+				CURRENT_PROJECT_VERSION = 10405;
 				DEVELOPMENT_TEAM = 845RN736HR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -521,7 +513,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.4;
+				MARKETING_VERSION = 1.4.5;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -540,7 +532,7 @@
 				SCOOP_APP_GROUP_ID = "group.de.scoopsoftware.nfc";
 				SCOOP_KEYCHAIN_ACCESS_GROUP = "$(AppIdentifierPrefix)group.de.scoopsoftware.nfc";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10404;
+				CURRENT_PROJECT_VERSION = 10405;
 				DEVELOPMENT_TEAM = 845RN736HR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -555,7 +547,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.4;
+				MARKETING_VERSION = 1.4.5;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;

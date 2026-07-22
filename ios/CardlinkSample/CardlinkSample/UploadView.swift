@@ -1,5 +1,4 @@
 import SwiftUI
-import CoreNFC
 import Combine
 import ScoopNfcUI
 @preconcurrency import ScoopCardlink
@@ -49,11 +48,7 @@ class UploadViewModel: ObservableObject {
             uploadTargetEnv: "dev"
         )
 
-        // App-owned NFC session (Swift owns the NFCTagReaderSession) — the turnkey
-        // provider's Kotlin/Native delegate doesn't deliver didDetect on current builds.
-        let nfcProvider = DemoCardlinkNfcProvider()
-
-        let uploadFlow = ErezeptUploadFlow(config: config, nfcProvider: nfcProvider)
+        let uploadFlow = ErezeptUploadFlow(config: config)
         self.flow = uploadFlow
 
         traceLog.removeAll()
