@@ -15,7 +15,7 @@
       "kind" : "registry",
       "location" : "",
       "state" : {
-        "version" : "4.0.0"
+        "version" : "5.2.0"
       }
     },
     {
@@ -23,7 +23,15 @@
       "kind" : "registry",
       "location" : "",
       "state" : {
-        "version" : "3.0.0"
+        "version" : "4.0.3"
+      }
+    },
+    {
+      "identity" : "ti-popp.popp-module",
+      "kind" : "registry",
+      "location" : "",
+      "state" : {
+        "version" : "0.23.1"
       }
     },
     {
@@ -31,7 +39,7 @@
       "kind" : "registry",
       "location" : "",
       "state" : {
-        "version" : "2.0.0"
+        "version" : "3.2.2"
       }
     }
   ],

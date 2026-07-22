@@ -10,12 +10,13 @@ enum RocketChatHelper {
         let defaults = UserDefaults.standard
         guard defaults.bool(forKey: "rcEnabled") else { return }
 
-        let serverUrl = defaults.string(forKey: "rcServerUrl").flatMap({ $0.isEmpty ? nil : $0 }) ?? "https://rocketchat.scoop-gmbh.de"
+        let serverUrl = defaults.string(forKey: "rcServerUrl") ?? ""
         let username = RocketChatKeychain.load(key: "rcUsername") ?? ""
         let password = RocketChatKeychain.load(key: "rcPassword") ?? ""
-        let channel = defaults.string(forKey: "rcChannel").flatMap({ $0.isEmpty ? nil : $0 }) ?? "PoPP-Demo"
+        let channel = defaults.string(forKey: "rcChannel") ?? ""
 
-        guard !serverUrl.isEmpty, !username.isEmpty else { return }
+        guard !serverUrl.isEmpty, !username.isEmpty, !password.isEmpty, !channel.isEmpty else { return }
+        let traceToUpload = defaults.bool(forKey: "rcIncludeTrace") ? traceLog : []
 
         Task {
             try? await RocketChatReporter.report(
@@ -25,7 +26,7 @@ enum RocketChatHelper {
                 channel: channel,
                 record: record,
                 success: success,
-                traceLog: traceLog
+                traceLog: traceToUpload
             )
         }
     }
@@ -38,9 +39,6 @@ enum RocketChatHelper {
 /// Uses URLSession only; consumes the SDK's public metrics types
 /// (`ScanRecord`, `MetricsFormatting`).
 enum RocketChatReporter {
-
-    /// Default RocketChat server URL for the demo.
-    static let defaultServerURL = "https://rocketchat.scoop-gmbh.de/"
 
     private struct AuthInfo { let userId: String; let authToken: String }
 

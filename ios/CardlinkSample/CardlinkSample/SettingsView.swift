@@ -145,12 +145,15 @@ struct SettingsView: View {
                             title: "Secure Storage",
                             expanded: false,
                             action: {
-                                Button("Copy") {
+                                Button("Copy sensitive token data") {
                                     copySecureStorageToClipboard()
                                 }
                                 .font(.subheadline)
                             }
                         ) {
+                            Text("Copies raw tokens/JWTs and decoded claims to the clipboard. Paste only into approved support channels.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                             SecureStorageContent(
                                 credentialStorage: credentialStorage,
                                 refreshTrigger: $refreshTrigger
@@ -289,6 +292,7 @@ struct AccountHeader: View {
     let accessToken: String
     @State private var showJwt = false
     @State private var svgString: String?
+    @State private var loadGravatar = false
 
     private var decodedJwt: DecodedJwt? {
         try? JwtDecoder.shared.decode(token: accessToken)
@@ -320,24 +324,16 @@ struct AccountHeader: View {
                 SVGWebView(svgString: svgString)
                     .frame(width: 64, height: 64)
                     .clipShape(Circle())
-            } else {
-                AsyncImage(url: pictureUrl ?? gravatarUrl) { phase in
+            } else if let avatarUrl = pictureUrl ?? (loadGravatar ? gravatarUrl : nil) {
+                AsyncImage(url: avatarUrl) { phase in
                     switch phase {
                     case .success(let image):
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                     case .failure:
-                        // picture URL failed (e.g. SVG not loaded yet), try Gravatar
-                        AsyncImage(url: gravatarUrl) { gravatarPhase in
-                            switch gravatarPhase {
-                            case .success(let image):
-                                image.resizable().aspectRatio(contentMode: .fill)
-                            default:
-                                Image(systemName: "person.circle.fill")
-                                    .resizable().foregroundColor(.gray)
-                            }
-                        }
+                        Image(systemName: "person.circle.fill")
+                            .resizable().foregroundColor(.gray)
                     case .empty:
                         ProgressView()
                     @unknown default:
@@ -348,6 +344,11 @@ struct AccountHeader: View {
                 }
                 .frame(width: 64, height: 64)
                 .clipShape(Circle())
+            } else {
+                Image(systemName: "person.circle.fill")
+                    .resizable()
+                    .foregroundColor(.gray)
+                    .frame(width: 64, height: 64)
             }
 
             VStack(alignment: .leading, spacing: 4) {
@@ -358,6 +359,13 @@ struct AccountHeader: View {
                 if let email = email {
                     Text(email)
                         .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                if pictureUrl == nil, gravatarUrl != nil, !loadGravatar {
+                    Button("Load Gravatar avatar") { loadGravatar = true }
+                        .font(.caption)
+                    Text("Gravatar is a third-party service. Loading it sends a hash derived from your email address.")
+                        .font(.caption2)
                         .foregroundColor(.secondary)
                 }
             }
@@ -784,18 +792,25 @@ extension String {
 struct RocketChatSettingsSection: View {
     @AppStorage("rcEnabled") private var enabled = false
     @AppStorage("rcServerUrl") private var serverUrl = ""
-    @AppStorage("rcChannel") private var channel = "PoPP-Demo"
+    @AppStorage("rcChannel") private var channel = ""
+    @AppStorage("rcIncludeTrace") private var includeTrace = false
     @State private var username = ""
     @State private var password = ""
     @State private var testResult: String?
     @State private var testing = false
 
-    private static let defaultServerUrl = "https://rocketchat.scoop-gmbh.de"
-
     var body: some View {
         CollapsibleSection(title: "RocketChat", expanded: false) {
             VStack(spacing: 12) {
                 Toggle("Post scan results", isOn: $enabled)
+                Text("Send scan metrics to the configured RocketChat server.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                Toggle("Include complete trace log", isOn: $includeTrace)
+                Text("Include the complete trace log with the upload.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
 
                 TextField("Server URL", text: $serverUrl)
                     .textContentType(.URL)
@@ -854,7 +869,7 @@ struct RocketChatSettingsSection: View {
                     .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
-                .disabled(testing || serverUrl.isEmpty || username.isEmpty)
+                .disabled(testing || serverUrl.isEmpty || username.isEmpty || password.isEmpty || channel.isEmpty)
 
                 if let result = testResult {
                     Text(result)
@@ -864,8 +879,6 @@ struct RocketChatSettingsSection: View {
             }
         }
         .onAppear {
-            if serverUrl.isEmpty { serverUrl = Self.defaultServerUrl }
-            if channel.isEmpty { channel = "PoPP-Demo" }
             username = RocketChatKeychain.load(key: "rcUsername") ?? ""
             password = RocketChatKeychain.load(key: "rcPassword") ?? ""
             // Migrate from UserDefaults if present

@@ -26,9 +26,11 @@ class LocalCredentialStorage(context: Context) {
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         )
-    } catch (_: Exception) {
-        // Fallback to plain SharedPreferences on devices without KeyStore (e.g. no Play Services)
-        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    } catch (cause: Exception) {
+        throw IllegalStateException(
+            "Credential storage is unavailable because encrypted storage could not be initialized.",
+            cause
+        )
     }
 
     /**

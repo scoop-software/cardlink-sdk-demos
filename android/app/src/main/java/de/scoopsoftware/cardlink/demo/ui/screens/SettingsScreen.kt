@@ -109,6 +109,7 @@ private enum class StorageCategory(val displayName: String, val order: Int) {
 private data class AccountData(
     val username: String,
     val pictureUrl: String?,
+    val gravatarUrl: String?,
     val tokens: List<StorageEntry>,
     val session: List<StorageEntry>,
     val rocketchat: List<StorageEntry> = emptyList()
@@ -291,13 +292,11 @@ fun SettingsScreen(
             )
         }
         var rcEnabled by remember { mutableStateOf(rcPrefs.getBoolean("enabled", false)) }
-        var rcServerUrl by remember {
-            val stored = rcPrefs.getString("serverUrl", "") ?: ""
-            mutableStateOf(stored.ifBlank { RocketChatReporter.DEFAULT_SERVER_URL })
-        }
+        var rcServerUrl by remember { mutableStateOf(rcPrefs.getString("serverUrl", "") ?: "") }
         var rcUsername by remember { mutableStateOf(rcSecurePrefs.getString("username", "") ?: "") }
         var rcPassword by remember { mutableStateOf(rcSecurePrefs.getString("password", "") ?: "") }
-        var rcChannel by remember { mutableStateOf(rcPrefs.getString("channel", "PoPP-Demo") ?: "PoPP-Demo") }
+        var rcChannel by remember { mutableStateOf(rcPrefs.getString("channel", "") ?: "") }
+        var rcIncludeTrace by remember { mutableStateOf(rcPrefs.getBoolean("includeTrace", false)) }
         var rcExpanded by rememberSaveable { mutableStateOf(false) }
 
         // Migrate credentials from plain prefs to secure storage
@@ -317,6 +316,7 @@ fun SettingsScreen(
                 .putBoolean("enabled", rcEnabled)
                 .putString("serverUrl", rcServerUrl)
                 .putString("channel", rcChannel)
+                .putBoolean("includeTrace", rcIncludeTrace)
                 .apply()
             rcSecurePrefs.edit()
                 .putString("username", rcUsername)
@@ -341,6 +341,26 @@ fun SettingsScreen(
                         onCheckedChange = { rcEnabled = it; saveRcPrefs() }
                     )
                 }
+                Text(
+                    "Send scan metrics to the configured RocketChat server.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text("Include complete trace log", modifier = Modifier.weight(1f))
+                    androidx.compose.material3.Switch(
+                        checked = rcIncludeTrace,
+                        onCheckedChange = { rcIncludeTrace = it; saveRcPrefs() }
+                    )
+                }
+                Text(
+                    "Include the complete trace log with the upload.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 OutlinedTextField(
                     value = rcServerUrl,
                     onValueChange = { rcServerUrl = it; saveRcPrefs() },
@@ -383,7 +403,7 @@ fun SettingsScreen(
                             testing = false
                         }
                     },
-                    enabled = !testing && rcServerUrl.isNotBlank() && rcUsername.isNotBlank(),
+                    enabled = !testing && rcServerUrl.isNotBlank() && rcUsername.isNotBlank() && rcPassword.isNotBlank() && rcChannel.isNotBlank(),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     if (testing) {
@@ -484,11 +504,17 @@ fun SettingsScreen(
                             }
                         }
                     ) {
-                        Text("Copy")
+                        Text("Copy sensitive token data")
                     }
                 }
             } else null
         ) {
+            Text(
+                "Copies raw tokens/JWTs and decoded claims to the clipboard. Paste only into approved support channels.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
             SecureStorageContent(
                 activity = activity,
                 credentialHelper = credentialHelper,
@@ -788,7 +814,11 @@ private fun SecureStorageContent(
             accountData?.let { account ->
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     // Account header with username and avatar
-                    AccountHeader(username = account.username, pictureUrl = account.pictureUrl)
+                    AccountHeader(
+                        username = account.username,
+                        pictureUrl = account.pictureUrl,
+                        gravatarUrl = account.gravatarUrl
+                    )
 
                     // Tokens subsection
                     account.tokens.forEach { entry ->
@@ -826,8 +856,9 @@ private fun SecureStorageContent(
 }
 
 @Composable
-private fun AccountHeader(username: String, pictureUrl: String?) {
+private fun AccountHeader(username: String, pictureUrl: String?, gravatarUrl: String?) {
     val context = LocalContext.current
+    var showGravatar by remember { mutableStateOf(false) }
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -839,10 +870,11 @@ private fun AccountHeader(username: String, pictureUrl: String?) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Avatar image with white background for contrast with dark SVGs
-            if (pictureUrl != null) {
+            val avatarUrl = pictureUrl ?: if (showGravatar) gravatarUrl else null
+            if (avatarUrl != null) {
                 AsyncImage(
                     model = ImageRequest.Builder(context)
-                        .data(pictureUrl)
+                        .data(avatarUrl)
                         .crossfade(true)
                         .build(),
                     contentDescription = "User avatar",
@@ -865,6 +897,16 @@ private fun AccountHeader(username: String, pictureUrl: String?) {
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
+                if (pictureUrl == null && gravatarUrl != null && !showGravatar) {
+                    TextButton(onClick = { showGravatar = true }) {
+                        Text("Load Gravatar avatar")
+                    }
+                    Text(
+                        "Gravatar is a third-party service. Loading it sends a hash derived from your email address.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
+                    )
+                }
             }
         }
     }
@@ -1049,19 +1091,17 @@ private fun loadStorageEntries(context: Context): Pair<AccountData?, String?> {
             ?: (allEntries["session_user_id"] as? String)
             ?: if (tokens.isNotEmpty()) "(logged in)" else "(no account)"
 
-        // Get picture URL from id_token, with Gravatar fallback based on email
+        // A token-provided avatar can load normally. Gravatar is offered only by an explicit UI action.
         val idTokenPicture = (allEntries["id_token"] as? String)?.let { extractPictureFromJwt(it) }
         val email = (allEntries["id_token"] as? String)?.let { extractEmailFromJwt(it) }
             ?: (allEntries["access_token"] as? String)?.let { extractEmailFromJwt(it) }
-        val pictureUrl = if (!idTokenPicture.isNullOrBlank()) {
-            idTokenPicture
-        } else {
-            email?.let { "https://www.gravatar.com/avatar/${it.trim().lowercase().md5()}?s=96&d=identicon" }
-        }
+        val pictureUrl = idTokenPicture
+        val gravatarUrl = email?.let { "https://www.gravatar.com/avatar/${it.trim().lowercase().md5()}?s=96&d=identicon" }
 
         AccountData(
             username = username,
             pictureUrl = pictureUrl,
+            gravatarUrl = gravatarUrl,
             tokens = tokens,
             session = session,
             rocketchat = rcEntries

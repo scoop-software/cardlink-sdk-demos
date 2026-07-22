@@ -1,6 +1,8 @@
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Properties
+import org.gradle.api.Action
+import org.gradle.api.execution.TaskExecutionGraph
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -87,6 +89,22 @@ android {
     }
 
     val releaseSigningConfig = signingConfigs.findByName("release")
+    val releaseArtifactTasks = setOf(
+        "assembleRelease",
+        "bundleRelease",
+        "packageRelease",
+        "assembleReleaseOptimized",
+        "bundleReleaseOptimized",
+        "packageReleaseOptimized",
+    )
+    gradle.taskGraph.whenReady(Action<TaskExecutionGraph> {
+        val createsReleaseArtifact = allTasks.any { task ->
+            task.project.path == ":app" && task.name in releaseArtifactTasks
+        }
+        if (createsReleaseArtifact && releaseSigningConfig == null) {
+            error("Release signing configuration is required for release builds.")
+        }
+    })
 
     buildTypes {
         debug {
@@ -96,7 +114,7 @@ android {
         }
         release {
             isMinifyEnabled = false
-            signingConfig = releaseSigningConfig ?: signingConfigs.getByName("debug")
+            signingConfig = releaseSigningConfig
         }
         create("releaseOptimized") {
             isMinifyEnabled = true
@@ -106,7 +124,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = releaseSigningConfig ?: signingConfigs.getByName("debug")
+            signingConfig = releaseSigningConfig
         }
     }
 

@@ -20,9 +20,6 @@ import java.net.URL
  */
 object RocketChatReporter {
 
-    /** Default RocketChat server URL for the demo. */
-    const val DEFAULT_SERVER_URL: String = "https://rocketchat.scoop-gmbh.de/"
-
     private val gson = Gson()
 
     private data class AuthInfo(val userId: String, val authToken: String)

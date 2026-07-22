@@ -6,9 +6,5 @@
 	<array>
 		<string>TAG</string>
 	</array>
-	<key>com.apple.developer.associated-domains</key>
-	<array>
-		<string>webcredentials:rocketchat.scoop-gmbh.de</string>
-	</array>
 </dict>
 </plist>

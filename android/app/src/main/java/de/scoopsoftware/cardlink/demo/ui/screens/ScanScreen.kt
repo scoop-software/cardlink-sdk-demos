@@ -102,6 +102,7 @@ fun ScanScreen(
     var useServerFlow by remember { mutableStateOf(true) }
     var poppMode by remember { mutableStateOf(false) }
     var enableCache by remember { mutableStateOf(true) }
+    var enableApduTracing by rememberSaveable { mutableStateOf(false) }
     var started by remember { mutableStateOf(false) }
     var knownCardsRefreshKey by remember { mutableStateOf(0) }
 
@@ -173,7 +174,7 @@ fun ScanScreen(
             // Post to RocketChat (fire-and-forget)
             val rcPrefs = context.getSharedPreferences("rocketchat_settings", Context.MODE_PRIVATE)
             if (rcPrefs.getBoolean("enabled", false)) {
-                val serverUrl = (rcPrefs.getString("serverUrl", "") ?: "").ifBlank { RocketChatReporter.DEFAULT_SERVER_URL }
+                val serverUrl = rcPrefs.getString("serverUrl", "") ?: ""
                 val rcSecure = run {
                     val mk = androidx.security.crypto.MasterKey.Builder(context)
                         .setKeyScheme(androidx.security.crypto.MasterKey.KeyScheme.AES256_GCM)
@@ -186,10 +187,10 @@ fun ScanScreen(
                 }
                 val rcUser = rcSecure.getString("username", "") ?: ""
                 val rcPass = rcSecure.getString("password", "") ?: ""
-                val rcChannel = rcPrefs.getString("channel", "PoPP-Demo") ?: "PoPP-Demo"
-                if (serverUrl.isNotBlank() && rcUser.isNotBlank()) {
+                val rcChannel = rcPrefs.getString("channel", "") ?: ""
+                if (serverUrl.isNotBlank() && rcUser.isNotBlank() && rcPass.isNotBlank() && rcChannel.isNotBlank()) {
                     val success = flowState is CardlinkFlowState.Completed
-                    val log = traceLog.toList()
+                    val log = if (rcPrefs.getBoolean("includeTrace", false)) traceLog.toList() else emptyList()
                     launch {
                         RocketChatReporter.report(serverUrl, rcUser, rcPass, rcChannel, record, success, log)
                     }
@@ -232,6 +233,7 @@ fun ScanScreen(
             credentialStorage = credentialStorage,
             cacheProvider = cacheProvider,
             poppMode = poppMode,
+            enableApduTracing = enableApduTracing,
         )
 
         traceLog.clear()
@@ -322,6 +324,8 @@ fun ScanScreen(
                 onPoppModeChange = { poppMode = it },
                 enableCache = enableCache,
                 onEnableCacheChange = { enableCache = it },
+                enableApduTracing = enableApduTracing,
+                onEnableApduTracingChange = { enableApduTracing = it },
                 onLoadCredentials = {
                     scope.launch {
                         if (activity != null) {
@@ -398,6 +402,8 @@ private fun SetupScreen(
     onPoppModeChange: (Boolean) -> Unit,
     enableCache: Boolean,
     onEnableCacheChange: (Boolean) -> Unit,
+    enableApduTracing: Boolean,
+    onEnableApduTracingChange: (Boolean) -> Unit,
     onLoadCredentials: () -> Unit,
     onStart: () -> Unit,
     canStart: Boolean,
@@ -411,6 +417,7 @@ private fun SetupScreen(
     ) {
         // Toggles
         ToggleRow("File Cache", enableCache, onEnableCacheChange)
+        ToggleRow("Record APDU exchanges", enableApduTracing, onEnableApduTracingChange)
         ToggleRow("Server-Driven Flow", useServerFlow, onUseServerFlowChange)
         if (useServerFlow) {
             ToggleRow("PoPP Mode", poppMode, onPoppModeChange)
@@ -515,6 +522,9 @@ private fun FlowScreen(
     when (state) {
         is CardlinkFlowState.Idle ->
             StatusCard("Idle", "Waiting to start...")
+
+        is CardlinkFlowState.Cancelled ->
+            StatusCard("Cancelled", "The flow was cancelled.")
 
         is CardlinkFlowState.Connecting ->
             StatusCard("Connecting", "Authenticating and connecting to server...", loading = true)
