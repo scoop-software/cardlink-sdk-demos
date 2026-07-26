@@ -65,7 +65,28 @@ cleanup() {
         rm -f "$override_temp"
     fi
 }
+child_pid=""
+
+terminate() {
+    local signal="$1"
+    local status="$2"
+    trap - HUP INT TERM
+    if [[ -n "$child_pid" ]]; then
+        kill -"$signal" "$child_pid" 2>/dev/null || true
+        if [[ "$signal" != TERM ]]; then
+            kill -TERM "$child_pid" 2>/dev/null || true
+        fi
+        wait "$child_pid" 2>/dev/null || true
+        child_pid=""
+    fi
+    cleanup
+    exit "$status"
+}
+
 trap cleanup EXIT
+trap 'terminate HUP 129' HUP
+trap 'terminate INT 130' INT
+trap 'terminate TERM 143' TERM
 
 if ! override_temp="$(mktemp "$app_dir/.pubspec_overrides.XXXXXX")"; then
     echo "failed to create a temporary local override" >&2
@@ -85,5 +106,9 @@ if ! ln "$override_temp" "$override"; then
 fi
 
 cd "$app_dir"
-flutter "$@"
-exit "$?"
+flutter "$@" <&0 &
+child_pid=$!
+wait "$child_pid"
+command_status=$?
+child_pid=""
+exit "$command_status"
