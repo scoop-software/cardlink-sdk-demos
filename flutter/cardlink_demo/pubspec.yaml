@@ -30,12 +30,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # Released bridge packages (sibling clones; exact versions via each repo's
-  # native.version pin).
   scoop_cardlink:
-    path: ../../../scoop-cardlink-flutter
+    git:
+      url: https://ti-gitea.scoop-gmbh.de/ti-cardlink-src/scoop-cardlink-flutter.git
+      ref: 6f8d71b41354a19c3a2303309987924fef89577b
   scoop_nfc:
-    path: ../../../scoop-nfc-flutter
+    git:
+      url: https://ti-gitea.scoop-gmbh.de/ti-common-src/scoop-nfc-flutter.git
+      ref: b2d8cdee792b27fbf5c4f2e55a05829967bbe480
   demo_core:
     path: ../demo_core
 
