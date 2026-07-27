@@ -33,7 +33,7 @@ dependencies:
   scoop_cardlink:
     git:
       url: https://ti-gitea.scoop-gmbh.de/ti-cardlink-src/scoop-cardlink-flutter.git
-      ref: 6f8d71b41354a19c3a2303309987924fef89577b
+      ref: f9b90ac2dc173ac0166a516909ce18e65a3be017
   scoop_nfc:
     git:
       url: https://ti-gitea.scoop-gmbh.de/ti-common-src/scoop-nfc-flutter.git
