@@ -218,26 +218,26 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "f9b90ac2dc173ac0166a516909ce18e65a3be017"
-      resolved-ref: "f9b90ac2dc173ac0166a516909ce18e65a3be017"
+      ref: "073febb5a4eea24fa762a65ed990d8e54b0ab14c"
+      resolved-ref: "073febb5a4eea24fa762a65ed990d8e54b0ab14c"
       url: "https://ti-gitea.scoop-gmbh.de/ti-cardlink-src/scoop-cardlink-flutter.git"
     source: git
-    version: "1.0.1"
+    version: "1.0.2"
   scoop_nfc:
     dependency: "direct main"
     description:
       path: "."
-      ref: b2d8cdee792b27fbf5c4f2e55a05829967bbe480
-      resolved-ref: b2d8cdee792b27fbf5c4f2e55a05829967bbe480
+      ref: ef35e2e29d8c2b9c906816d04d0b575d6d078ebb
+      resolved-ref: ef35e2e29d8c2b9c906816d04d0b575d6d078ebb
       url: "https://ti-gitea.scoop-gmbh.de/ti-common-src/scoop-nfc-flutter.git"
     source: git
-    version: "2.0.1"
+    version: "2.0.2"
   scoop_popp:
     dependency: "direct main"
     description:
       path: "."
-      ref: a82b41b0548b4b503df79cb1c7c9d149545ba630
-      resolved-ref: a82b41b0548b4b503df79cb1c7c9d149545ba630
+      ref: e11a877ee800528c6226a192d71a0d4e610d1d02
+      resolved-ref: e11a877ee800528c6226a192d71a0d4e610d1d02
       url: "https://ti-gitea.scoop-gmbh.de/ti-popp-src/scoop-popp-flutter.git"
     source: git
     version: "1.0.1"
