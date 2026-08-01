@@ -14,6 +14,9 @@
 **/xcuserdata/
 **/*.xcworkspace/xcuserdata/
 
+# Local isolated feature worktrees
+.worktrees/
+
 # iOS pods (added in later phase)
 **/Pods/
 
