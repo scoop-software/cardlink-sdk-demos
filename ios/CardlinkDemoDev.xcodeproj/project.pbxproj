@@ -22,6 +22,7 @@
 		AA0000000000000000000015 /* ApduTimelineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000015 /* ApduTimelineChart.swift */; };
 		AA0000000000000000000016 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000016 /* SettingsView.swift */; };
 		AA0000000000000000000042 /* KeychainCredentialStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000042 /* KeychainCredentialStorage.swift */; };
+		AA0000000000000000000100 /* DemoSharedCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000100 /* DemoSharedCredentialStore.swift */; };
 		AA0000000000000000000017 /* UploadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000017 /* UploadView.swift */; };
 		AA0000000000000000000020 /* NfcTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000020 /* NfcTypeAliases.swift */; };
 		AA0000000000000000000021 /* SVGWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000021 /* SVGWebView.swift */; };
@@ -32,9 +33,7 @@
 		AA0000000000000000000098 /* BrandTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000098 /* BrandTheme.swift */; };
 		AA0000000000000000000099 /* QrScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000099 /* QrScannerView.swift */; };
 		AA49D09916E7CC47AB231762 /* ScoopNfc in Frameworks */ = {isa = PBXBuildFile; productRef = DD95475E8EB3DDEC0729F1E8 /* ScoopNfc */; };
-		BB0000000000000000000001 /* FileCacheProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1000000000000000000001 /* FileCacheProviderTests.swift */; };
-		BB0000000000000000000003 /* MemoryCacheProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1000000000000000000002 /* MemoryCacheProviderTests.swift */; };
-		BB0000000000000000000004 /* SettingsCacheProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1000000000000000000003 /* SettingsCacheProviderTests.swift */; };
+		BB0000000000000000000010 /* DemoSharedCredentialStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1000000000000000000010 /* DemoSharedCredentialStoreTests.swift */; };
 		CC0000000000000000000002 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = CC0000000000000000000003 /* Lottie */; };
 		CC0000000000000000000004 /* confetti.json in Resources */ = {isa = PBXBuildFile; fileRef = CC0000000000000000000005 /* confetti.json */; };
 /* End PBXBuildFile section */
@@ -82,6 +81,7 @@
 		AA1000000000000000000015 /* ApduTimelineChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApduTimelineChart.swift; sourceTree = "<group>"; };
 		AA1000000000000000000016 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		AA1000000000000000000042 /* KeychainCredentialStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainCredentialStorage.swift; sourceTree = "<group>"; };
+		AA1000000000000000000100 /* DemoSharedCredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSharedCredentialStore.swift; sourceTree = "<group>"; };
 		AA1000000000000000000017 /* UploadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadView.swift; sourceTree = "<group>"; };
 		AA1000000000000000000020 /* NfcTypeAliases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NfcTypeAliases.swift; sourceTree = "<group>"; };
 		AA1000000000000000000021 /* SVGWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SVGWebView.swift; sourceTree = "<group>"; };
@@ -92,9 +92,7 @@
 		AA1000000000000000000098 /* BrandTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandTheme.swift; sourceTree = "<group>"; };
 		AA1000000000000000000099 /* QrScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrScannerView.swift; sourceTree = "<group>"; };
 		AA4000000000000000000001 /* CardlinkSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CardlinkSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		BB1000000000000000000001 /* FileCacheProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCacheProviderTests.swift; sourceTree = "<group>"; };
-		BB1000000000000000000002 /* MemoryCacheProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryCacheProviderTests.swift; sourceTree = "<group>"; };
-		BB1000000000000000000003 /* SettingsCacheProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCacheProviderTests.swift; sourceTree = "<group>"; };
+		BB1000000000000000000010 /* DemoSharedCredentialStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSharedCredentialStoreTests.swift; sourceTree = "<group>"; };
 		CC0000000000000000000005 /* confetti.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = confetti.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -167,6 +165,7 @@
 				AA1000000000000000000002 /* ContentView.swift */,
 				AA1000000000000000000016 /* SettingsView.swift */,
 				AA1000000000000000000042 /* KeychainCredentialStorage.swift */,
+				AA1000000000000000000100 /* DemoSharedCredentialStore.swift */,
 				AA1000000000000000000017 /* UploadView.swift */,
 				AA1000000000000000000022 /* PoppCheckInView.swift */,
 				CC0000000000000000000005 /* confetti.json */,
@@ -209,9 +208,7 @@
 		BB6000000000000000000001 /* CardlinkDemoTests */ = {
 			isa = PBXGroup;
 			children = (
-				BB1000000000000000000001 /* FileCacheProviderTests.swift */,
-				BB1000000000000000000002 /* MemoryCacheProviderTests.swift */,
-				BB1000000000000000000003 /* SettingsCacheProviderTests.swift */,
+				BB1000000000000000000010 /* DemoSharedCredentialStoreTests.swift */,
 			);
 			path = CardlinkDemoTests;
 			sourceTree = "<group>";
@@ -331,6 +328,7 @@
 				AA0000000000000000000002 /* ContentView.swift in Sources */,
 				AA0000000000000000000016 /* SettingsView.swift in Sources */,
 				AA0000000000000000000042 /* KeychainCredentialStorage.swift in Sources */,
+				AA0000000000000000000100 /* DemoSharedCredentialStore.swift in Sources */,
 				AA0000000000000000000017 /* UploadView.swift in Sources */,
 				AA0000000000000000000023 /* PoppCheckInView.swift in Sources */,
 				AA0000000000000000000020 /* NfcTypeAliases.swift in Sources */,
@@ -353,9 +351,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB0000000000000000000001 /* FileCacheProviderTests.swift in Sources */,
-				BB0000000000000000000003 /* MemoryCacheProviderTests.swift in Sources */,
-				BB0000000000000000000004 /* SettingsCacheProviderTests.swift in Sources */,
+				BB0000000000000000000010 /* DemoSharedCredentialStoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -512,6 +508,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.4.6;
+				PRODUCT_MODULE_NAME = CardlinkDemo;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -544,6 +541,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.4.6;
+				PRODUCT_MODULE_NAME = CardlinkDemo;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -570,7 +568,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Cardlink Dev.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Cardlink Dev";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Cardlink DevSDK.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Cardlink DevSDK";
 			};
 			name = Debug;
 		};
