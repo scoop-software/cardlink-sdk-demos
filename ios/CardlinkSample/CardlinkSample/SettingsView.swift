@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import ScoopCardlink
 import CommonCrypto
 import ScoopNfcUI
@@ -791,13 +792,14 @@ extension String {
 
 struct RocketChatSettingsSection: View {
     @AppStorage("rcEnabled") private var enabled = false
-    @AppStorage("rcServerUrl") private var serverUrl = ""
+    @State private var serverUrl = ""
     @AppStorage("rcChannel") private var channel = ""
     @AppStorage("rcIncludeTrace") private var includeTrace = false
     @State private var username = ""
     @State private var password = ""
     @State private var testResult: String?
     @State private var testing = false
+    @State private var isReloadingCredentials = false
 
     var body: some View {
         CollapsibleSection(title: "RocketChat", expanded: false) {
@@ -818,6 +820,9 @@ struct RocketChatSettingsSection: View {
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
                     .textFieldStyle(.roundedBorder)
+                    .onChange(of: serverUrl) { _ in
+                        saveCredentials()
+                    }
 
                 TextField("Username", text: $username)
                     .textContentType(.username)
@@ -825,16 +830,14 @@ struct RocketChatSettingsSection: View {
                     .disableAutocorrection(true)
                     .textFieldStyle(.roundedBorder)
                     .onChange(of: username) { _ in
-                        RocketChatKeychain.save(key: "rcUsername", value: username)
-                        RocketChatReporter.clearAuth()
+                        saveCredentials()
                     }
 
                 SecureField("Password", text: $password)
                     .textContentType(.password)
                     .textFieldStyle(.roundedBorder)
                     .onChange(of: password) { _ in
-                        RocketChatKeychain.save(key: "rcPassword", value: password)
-                        RocketChatReporter.clearAuth()
+                        saveCredentials()
                     }
 
                 TextField("Channel", text: $channel)
@@ -878,61 +881,87 @@ struct RocketChatSettingsSection: View {
                 }
             }
         }
-        .onAppear {
-            username = RocketChatKeychain.load(key: "rcUsername") ?? ""
-            password = RocketChatKeychain.load(key: "rcPassword") ?? ""
-            // Migrate from UserDefaults if present
-            let defaults = UserDefaults.standard
-            if let oldUser = defaults.string(forKey: "rcUsername"), !oldUser.isEmpty {
-                username = oldUser
-                RocketChatKeychain.save(key: "rcUsername", value: oldUser)
-                defaults.removeObject(forKey: "rcUsername")
-            }
-            if let oldPass = defaults.string(forKey: "rcPassword"), !oldPass.isEmpty {
-                password = oldPass
-                RocketChatKeychain.save(key: "rcPassword", value: oldPass)
-                defaults.removeObject(forKey: "rcPassword")
-            }
+        .onAppear(perform: reloadCredentials)
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            reloadCredentials()
         }
-        .onChange(of: serverUrl) { _ in RocketChatReporter.clearAuth() }
+    }
+
+    private func saveCredentials() {
+        guard !isReloadingCredentials else {
+            return
+        }
+        if RocketChatKeychain.save(
+            baseURL: serverUrl,
+            username: username,
+            password: password
+        ) != nil {
+            RocketChatReporter.clearAuth()
+        }
+    }
+
+    private func reloadCredentials() {
+        let credential = RocketChatKeychain.loadCredential()
+        let newServerURL = credential?.baseURL.absoluteString ?? ""
+        let newUsername = credential?.username ?? ""
+        let newPassword = credential?.password ?? ""
+        guard serverUrl != newServerURL
+                || username != newUsername
+                || password != newPassword else {
+            return
+        }
+
+        isReloadingCredentials = true
+        serverUrl = newServerURL
+        username = newUsername
+        password = newPassword
+        RocketChatReporter.clearAuth()
+        DispatchQueue.main.async {
+            isReloadingCredentials = false
+        }
     }
 }
 
 // MARK: - RocketChat Keychain Helper
 
 enum RocketChatKeychain {
-    private static let service = "de.scoopsoftware.cardlink.rocketchat"
+    @discardableResult
+    static func save(
+        baseURL: String,
+        username: String,
+        password: String
+    ) -> DemoInternetCredential? {
+        guard let url = URL(string: baseURL.trimmingCharacters(in: .whitespacesAndNewlines)),
+              let credential = try? DemoInternetCredential(
+                baseURL: url,
+                username: username.trimmingCharacters(in: .whitespacesAndNewlines),
+                password: password
+              ).validated(),
+              DemoSharedCredentialAccess.write(credential, for: .rocketChat)
+        else {
+            return nil
+        }
+        return credential
+    }
 
-    static func save(key: String, value: String) {
-        let data = Data(value.utf8)
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecAttrAccount as String: key
-        ]
-        SecItemDelete(query as CFDictionary)
-        let attributes: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecAttrAccount as String: key,
-            kSecValueData as String: data,
-            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock
-        ]
-        SecItemAdd(attributes as CFDictionary, nil)
+    static func loadCredential() -> DemoInternetCredential? {
+        DemoSharedCredentialAccess.read(.rocketChat)
     }
 
     static func load(key: String) -> String? {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecAttrAccount as String: key,
-            kSecReturnData as String: true,
-            kSecMatchLimit as String: kSecMatchLimitOne
-        ]
-        var result: AnyObject?
-        let status = SecItemCopyMatching(query as CFDictionary, &result)
-        guard status == errSecSuccess, let data = result as? Data else { return nil }
-        return String(data: data, encoding: .utf8)
+        guard let credential = loadCredential() else {
+            return nil
+        }
+        let value: String
+        switch key {
+        case "rcUsername":
+            value = credential.username
+        case "rcPassword":
+            value = credential.password
+        default:
+            return nil
+        }
+        return value.isEmpty ? nil : value
     }
 }
 

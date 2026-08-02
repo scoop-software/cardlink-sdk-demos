@@ -11,6 +11,7 @@ private let TELEMATIK_ID = "3-SMC-B-Testkarte--883110000153556"
 /// OS-mandatory screens (consent, result, error) use native UIAlertController.
 /// App-replaceable screens are SwiftUI views below.
 struct PoppCheckInView: View {
+    @Binding var keycloakBaseURL: String
     @Binding var username: String
     @Binding var password: String
     @State private var passwordVisible: Bool = false
@@ -68,6 +69,7 @@ struct PoppCheckInView: View {
                         tokens: tokens,
                         hasPrescriptions: viewModel.hasPrescriptions,
                         showConfetti: viewModel.showConfetti,
+                        keycloakBaseURL: keycloakBaseURL,
                         username: username,
                         password: password,
                         onCancel: { viewModel.cancel() },
@@ -135,6 +137,12 @@ struct PoppCheckInView: View {
                 .padding(.horizontal, 32)
 
             VStack(spacing: 8) {
+                TextField("Keycloak URL", text: $keycloakBaseURL)
+                    .textContentType(.URL)
+                    .keyboardType(.URL)
+                    .textFieldStyle(.roundedBorder)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
                 TextField("Username", text: $username)
                     .textFieldStyle(.roundedBorder)
                     .autocapitalization(.none)
@@ -166,24 +174,57 @@ struct PoppCheckInView: View {
 
             Spacer()
             Button("Check-in starten") {
+                guard let credential = KeychainHelper.shared.save(
+                    baseURL: keycloakBaseURL,
+                    username: username,
+                    password: password
+                ) else {
+                    return
+                }
                 viewModel.useFakeErezept = useFakeErezept
                 viewModel.useFileCache = useFileCache
                 viewModel.useRisePoppService = useRisePoppService
-                viewModel.startCheckIn(username: username, password: password, themeColor: themeStore.current.uiColor)
+                viewModel.startCheckIn(
+                    keycloakBaseURL: credential.baseURL,
+                    username: credential.username,
+                    password: credential.password,
+                    themeColor: themeStore.current.uiColor
+                )
             }
-            .disabled(username.isEmpty || password.isEmpty)
+            .disabled(!KeychainHelper.shared.isValid(
+                baseURL: keycloakBaseURL,
+                username: username,
+                password: password
+            ))
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
 
             Button {
+                guard let credential = KeychainHelper.shared.save(
+                    baseURL: keycloakBaseURL,
+                    username: username,
+                    password: password
+                ) else {
+                    return
+                }
                 viewModel.useFakeErezept = useFakeErezept
                 viewModel.useFileCache = useFileCache
                 viewModel.useRisePoppService = useRisePoppService
-                viewModel.startCheckIn(username: username, password: password, telematikId: nil, themeColor: themeStore.current.uiColor)
+                viewModel.startCheckIn(
+                    keycloakBaseURL: credential.baseURL,
+                    username: credential.username,
+                    password: credential.password,
+                    telematikId: nil,
+                    themeColor: themeStore.current.uiColor
+                )
             } label: {
                 Label("QR-Code scannen", systemImage: "qrcode.viewfinder")
             }
-            .disabled(username.isEmpty || password.isEmpty)
+            .disabled(!KeychainHelper.shared.isValid(
+                baseURL: keycloakBaseURL,
+                username: username,
+                password: password
+            ))
             .buttonStyle(.bordered)
             .controlSize(.large)
 
@@ -523,6 +564,7 @@ private struct DeletableTokensView: View {
     let tokens: [PoppViewModel.PoppTokenEntry]
     let hasPrescriptions: Bool
     let showConfetti: Bool
+    let keycloakBaseURL: String
     let username: String
     let password: String
     let onCancel: () -> Void
@@ -547,6 +589,7 @@ private struct DeletableTokensView: View {
         tokens: [PoppViewModel.PoppTokenEntry],
         hasPrescriptions: Bool,
         showConfetti: Bool,
+        keycloakBaseURL: String,
         username: String,
         password: String,
         onCancel: @escaping () -> Void,
@@ -555,12 +598,15 @@ private struct DeletableTokensView: View {
         self.tokens = tokens
         self.hasPrescriptions = hasPrescriptions
         self.showConfetti = showConfetti
+        self.keycloakBaseURL = keycloakBaseURL
         self.username = username
         self.password = password
         self.onCancel = onCancel
         self.onTrace = onTrace
         _deleteVM = StateObject(wrappedValue: PrescriptionDeleteViewModel(
-            environment: CardlinkEnvironment.Default.shared,
+            environment: DemoCardlinkEnvironmentFactory.make(
+                oauthBaseURLString: keycloakBaseURL
+            ),
             username: username,
             password: password,
             onTrace: onTrace
@@ -946,14 +992,28 @@ class PoppViewModel: ObservableObject {
         }
     }
 
-    func startCheckIn(username: String, password: String, telematikId: String? = TELEMATIK_ID, themeColor: UIColor? = nil) {
+    func startCheckIn(
+        keycloakBaseURL: URL,
+        username: String,
+        password: String,
+        telematikId: String? = TELEMATIK_ID,
+        themeColor: UIColor? = nil
+    ) {
         traceLog.removeAll()
 
         let config = PoppFlowConfig(
             zetaClient: { [weak self] () -> MockVzdRealPoppClient in
-                let client = MockVzdRealPoppClient(username: username, password: password, trace: { msg in
+                let client = MockVzdRealPoppClient(
+                    oauthBaseURL: keycloakBaseURL,
+                    username: username,
+                    password: password,
+                    trace: { msg in
                     DispatchQueue.main.async { self?.traceLog.append(msg) }
-                }, extraHeaders: self?.useRisePoppService == true ? ["X-PoPP-Service": "RISE-DEV"] : [:])
+                },
+                    extraHeaders: self?.useRisePoppService == true
+                        ? ["X-PoPP-Service": "RISE-DEV"]
+                        : [:]
+                )
                 self?.poppClient = client
                 return client
             }(),
@@ -1000,7 +1060,7 @@ class PoppViewModel: ObservableObject {
         }
 
         // Also log Swift-side events into the same trace
-        addTrace("[Swift] OAuth login as \(username)...")
+        addTrace("[Swift] OAuth login…")
 
         flow.startCheckIn(telematikId: telematikId, workplaceId: nil, preferEgk: false)
     }
@@ -1269,13 +1329,21 @@ class PoppViewModel: ObservableObject {
 /// Hybrid client: mocks VZD (no auth available) but uses real HTTP for eGK check-in.
 /// The real PoPP-Service at the configured URL handles the APDU loop.
 private class MockVzdRealPoppClient: NSObject, PoppZetaClient {
+    private let oauthBaseURL: URL
     private let username: String
     private let password: String
     private var accessToken: String?
     private let trace: (String) -> Void
     private let extraHeaders: [String: String]
 
-    init(username: String, password: String, trace: @escaping (String) -> Void, extraHeaders: [String: String] = [:]) {
+    init(
+        oauthBaseURL: URL,
+        username: String,
+        password: String,
+        trace: @escaping (String) -> Void,
+        extraHeaders: [String: String] = [:]
+    ) {
+        self.oauthBaseURL = oauthBaseURL
         self.username = username
         self.password = password
         self.trace = trace
@@ -1287,15 +1355,21 @@ private class MockVzdRealPoppClient: NSObject, PoppZetaClient {
 
     func __doInit() async throws {
         // OAuth Resource Owner Password Credentials — same as Cardlink flow
-        trace("OAuth: Logging in as \(username)...")
-        let tokenUrl = "https://auth-cardlink-dev.demo.scoop-gmbh.de/realms/cardlinkdemo/protocol/openid-connect/token"
-        guard let url = URL(string: tokenUrl) else { return }
+        trace("OAuth: Logging in…")
+        let url = oauthBaseURL.appendingPathComponent("token")
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        let body = "grant_type=password&client_id=cardlink-app&username=\(username)&password=\(password)&scope=openid"
-        request.httpBody = body.data(using: .utf8)
+        var form = URLComponents()
+        form.queryItems = [
+            URLQueryItem(name: "grant_type", value: "password"),
+            URLQueryItem(name: "client_id", value: DemoSharedCredentialSchema.oauthClientId),
+            URLQueryItem(name: "username", value: username),
+            URLQueryItem(name: "password", value: password),
+            URLQueryItem(name: "scope", value: "openid"),
+        ]
+        request.httpBody = form.percentEncodedQuery?.data(using: .utf8)
 
         let (data, response) = try await URLSession.shared.data(for: request)
         let httpResponse = response as! HTTPURLResponse
@@ -1310,7 +1384,7 @@ private class MockVzdRealPoppClient: NSObject, PoppZetaClient {
             throw NSError(domain: "PoPP", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to parse access token"])
         }
         accessToken = token
-        trace("OAuth: Token acquired (\(token.prefix(20))...)")
+        trace("OAuth: Token acquired")
     }
 
     // Transform module's FHIR-VZD request into PoPP Service practitioner-information call.

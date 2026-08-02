@@ -103,7 +103,7 @@ require_text "$android_settings" 'rcPrefs.getString("channel", "")' 'Android Roc
 require_text "$android_settings" 'rcSecurePrefs.getString("username", "")' 'Android RocketChat username must default to an empty customer field.'
 require_text "$android_settings" 'rcSecurePrefs.getString("password", "")' 'Android RocketChat password must default to an empty customer field.'
 require_text "$ios_settings" '@AppStorage("rcEnabled") private var enabled = false' 'iOS RocketChat must default to disabled.'
-require_text "$ios_settings" '@AppStorage("rcServerUrl") private var serverUrl = ""' 'iOS RocketChat server must default to an empty customer field.'
+require_text "$ios_settings" '@State private var serverUrl = ""' 'iOS RocketChat server must default to an empty customer field.'
 require_text "$ios_settings" '@AppStorage("rcChannel") private var channel = ""' 'iOS RocketChat channel must default to an empty customer field.'
 require_text "$ios_settings" '@State private var username = ""' 'iOS RocketChat username must default to an empty customer field.'
 require_text "$ios_settings" '@State private var password = ""' 'iOS RocketChat password must default to an empty customer field.'

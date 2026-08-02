@@ -19,10 +19,17 @@ class UploadViewModel: ObservableObject {
     private var stateTask: Task<Void, Never>?
     private var traceTask: Task<Void, Never>?
 
-    func startFlow(username: String, password: String, useRU: Bool = false) {
+    func startFlow(
+        keycloakBaseURL: String,
+        username: String,
+        password: String,
+        useRU: Bool = false
+    ) {
         cancelFlow()
 
-        let environment: CardlinkEnvironment = CardlinkEnvironment.Default.shared
+        let environment = DemoCardlinkEnvironmentFactory.make(
+            oauthBaseURLString: keycloakBaseURL
+        )
         let storage = KeychainCredentialStorage()
         let cache: any CacheProvider = (try? SharedFileCacheProvider(
             appGroupId: DemoCacheConfig.appGroupId,
@@ -138,6 +145,7 @@ class UploadViewModel: ObservableObject {
 // MARK: - Upload View
 
 struct UploadView: View {
+    let keycloakBaseURL: String
     let username: String
     let password: String
 
@@ -145,6 +153,14 @@ struct UploadView: View {
     @State private var can: String = ""
     @State private var showTraceLog = false
     @State private var useRU = false
+
+    private var hasValidCredentials: Bool {
+        KeychainHelper.shared.isValid(
+            baseURL: keycloakBaseURL,
+            username: username,
+            password: password
+        )
+    }
 
     /// Whether the flow has progressed past bundle selection.
     private var pastBundleSelection: Bool {
@@ -205,8 +221,13 @@ struct UploadView: View {
                     .frame(width: 120)
                     .onChange(of: useRU) { _ in
                         viewModel.cancelFlow()
-                        if !username.isEmpty && !password.isEmpty {
-                            viewModel.startFlow(username: username, password: password, useRU: useRU)
+                        if hasValidCredentials {
+                            viewModel.startFlow(
+                                keycloakBaseURL: keycloakBaseURL,
+                                username: username,
+                                password: password,
+                                useRU: useRU
+                            )
                         }
                     }
                 }
@@ -216,8 +237,13 @@ struct UploadView: View {
                 }
             }
             .task {
-                if !username.isEmpty && !password.isEmpty {
-                    viewModel.startFlow(username: username, password: password, useRU: useRU)
+                if hasValidCredentials {
+                    viewModel.startFlow(
+                        keycloakBaseURL: keycloakBaseURL,
+                        username: username,
+                        password: password,
+                        useRU: useRU
+                    )
                 }
             }
         }
@@ -375,7 +401,12 @@ struct UploadView: View {
             statusRow("Sending prescription to server...", loading: true)
         } else if let completed = state as? ErezeptUploadState.Completed {
             CompletedContent(state: completed) {
-                viewModel.startFlow(username: username, password: password, useRU: useRU)
+                viewModel.startFlow(
+                    keycloakBaseURL: keycloakBaseURL,
+                    username: username,
+                    password: password,
+                    useRU: useRU
+                )
             }
         } else if let error = state as? ErezeptUploadState.Error {
             errorContent(state: error)
@@ -406,7 +437,12 @@ struct UploadView: View {
 
             HStack {
                 Button("Start Over") {
-                    viewModel.startFlow(username: username, password: password, useRU: useRU)
+                    viewModel.startFlow(
+                        keycloakBaseURL: keycloakBaseURL,
+                        username: username,
+                        password: password,
+                        useRU: useRU
+                    )
                 }
                 .buttonStyle(.bordered)
 

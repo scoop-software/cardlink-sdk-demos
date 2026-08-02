@@ -58,11 +58,13 @@ struct AppOverlay: View {
 
 /// Root view with tab navigation between Scan, Charts, and Settings.
 struct ContentView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var scanHistory = ScanHistory()
     @State private var selectedTab = 3  // Default to PoPP tab
     @State private var recordMetrics: Bool = true
 
     // Hoisted credentials — shared between Scan and Upload tabs
+    @State private var keycloakBaseURL = DemoSharedCredentialSchema.defaultKeycloakBaseURL.absoluteString
     @State private var username = ""
     @State private var password = ""
 
@@ -72,6 +74,7 @@ struct ContentView: View {
                 ScanView(
                     scanHistory: scanHistory,
                     recordMetrics: $recordMetrics,
+                    keycloakBaseURL: $keycloakBaseURL,
                     username: $username,
                     password: $password
                 )
@@ -86,13 +89,22 @@ struct ContentView: View {
                     }
                     .tag(1)
 
-                UploadView(username: username, password: password)
+                UploadView(
+                    keycloakBaseURL: keycloakBaseURL,
+                    username: username,
+                    password: password
+                )
                     .tabItem {
                         Label("Upload", systemImage: "paperplane")
                     }
                     .tag(2)
 
-                PoppCheckInView(username: $username, password: $password, scanHistory: scanHistory)
+                PoppCheckInView(
+                    keycloakBaseURL: $keycloakBaseURL,
+                    username: $username,
+                    password: $password,
+                    scanHistory: scanHistory
+                )
                     .tabItem {
                         Label("PoPP", systemImage: "mappin.and.ellipse")
                     }
@@ -108,12 +120,45 @@ struct ContentView: View {
             AppOverlay()
                 .allowsHitTesting(false)
         }
-        .onAppear {
-            if let creds = KeychainHelper.shared.load() {
-                username = creds.0
-                password = creds.1
+        .onAppear(perform: reloadCredentials)
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active {
+                reloadCredentials()
             }
         }
+    }
+
+    private func reloadCredentials() {
+        let credentials = KeychainHelper.shared.load()
+        keycloakBaseURL = credentials?.baseURL.absoluteString
+            ?? DemoSharedCredentialSchema.defaultKeycloakBaseURL.absoluteString
+        username = credentials?.username ?? ""
+        password = credentials?.password ?? ""
+    }
+}
+
+enum DemoCardlinkEnvironmentFactory {
+    static func make(oauthBaseURLString: String) -> CardlinkEnvironment {
+        let trimmed = oauthBaseURLString.trimmingCharacters(in: .whitespacesAndNewlines)
+        let baseURL = URL(string: trimmed)
+            .flatMap { try? DemoInternetCredential.validatedBaseURL($0) }
+            ?? DemoSharedCredentialSchema.defaultKeycloakBaseURL
+        return make(oauthBaseURL: baseURL)
+    }
+
+    static func make(oauthBaseURL: URL) -> CardlinkEnvironment {
+        let defaults = CardlinkEnvironment.Default.shared
+        return CardlinkEnvironment.Custom(
+            websocketUrl: defaults.websocketUrl,
+            oauthConfig: OAuthConfig(
+                baseUrl: oauthBaseURL.absoluteString,
+                clientId: DemoSharedCredentialSchema.oauthClientId,
+                clientSecret: nil,
+                scopes: ["openid"]
+            ),
+            restBaseUrl: defaults.restBaseUrl,
+            developmentTransportPolicy: .secureOnly
+        )
     }
 }
 
@@ -191,6 +236,7 @@ class FlowViewModel: ObservableObject {
     private var cacheProvider: (any CacheProvider)?
 
     func startFlow(
+        keycloakBaseURL: URL,
         username: String,
         password: String,
         useServerFlow: Bool,
@@ -202,7 +248,7 @@ class FlowViewModel: ObservableObject {
         // Cancel previous
         cancelFlow()
 
-        let environment = CardlinkEnvironment.Default.shared
+        let environment = DemoCardlinkEnvironmentFactory.make(oauthBaseURL: keycloakBaseURL)
         let storage = KeychainCredentialStorage()
 
         // F3: SharedFileCacheProvider requires a provisioned App Group; the DevSDK
@@ -319,6 +365,7 @@ class FlowViewModel: ObservableObject {
 struct ScanView: View {
     @ObservedObject var scanHistory: ScanHistory
     @Binding var recordMetrics: Bool
+    @Binding var keycloakBaseURL: String
     @Binding var username: String
     @Binding var password: String
 
@@ -378,8 +425,9 @@ struct ScanView: View {
         }
         .onAppear {
             if let creds = KeychainHelper.shared.load() {
-                username = creds.0
-                password = creds.1
+                keycloakBaseURL = creds.baseURL.absoluteString
+                username = creds.username
+                password = creds.password
             }
         }
         .task {
@@ -428,6 +476,12 @@ struct ScanView: View {
             }
 
             Section("OAuth Credentials") {
+                TextField("Keycloak URL", text: $keycloakBaseURL)
+                    .textContentType(.URL)
+                    .keyboardType(.URL)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+
                 TextField("Username", text: $username)
                     .textContentType(.username)
                     .autocapitalization(.none)
@@ -451,10 +505,17 @@ struct ScanView: View {
 
             Section {
                 Button(action: {
-                    KeychainHelper.shared.save(username: username, password: password)
+                    guard let credential = KeychainHelper.shared.save(
+                        baseURL: keycloakBaseURL,
+                        username: username,
+                        password: password
+                    ) else {
+                        return
+                    }
                     viewModel.startFlow(
-                        username: username.trimmingCharacters(in: .whitespaces),
-                        password: password.trimmingCharacters(in: .whitespaces),
+                        keycloakBaseURL: credential.baseURL,
+                        username: credential.username,
+                        password: credential.password,
                         useServerFlow: useServerFlow,
                         poppMode: poppMode,
                         enableCache: enableCache
@@ -467,7 +528,11 @@ struct ScanView: View {
                         Spacer()
                     }
                 }
-                .disabled(username.isEmpty || password.isEmpty)
+                .disabled(!KeychainHelper.shared.isValid(
+                    baseURL: keycloakBaseURL,
+                    username: username,
+                    password: password
+                ))
             }
 
             if enableCache && !knownCards.isEmpty {
@@ -476,10 +541,17 @@ struct ScanView: View {
                         ForEach(knownCards, id: \.iccsn) { card in
                             Button(action: {
                                 can = card.can
-                                KeychainHelper.shared.save(username: username, password: password)
+                                guard let credential = KeychainHelper.shared.save(
+                                    baseURL: keycloakBaseURL,
+                                    username: username,
+                                    password: password
+                                ) else {
+                                    return
+                                }
                                 viewModel.startFlow(
-                                    username: username.trimmingCharacters(in: .whitespaces),
-                                    password: password.trimmingCharacters(in: .whitespaces),
+                                    keycloakBaseURL: credential.baseURL,
+                                    username: credential.username,
+                                    password: credential.password,
                                     useServerFlow: useServerFlow,
                                     poppMode: poppMode,
                                     enableCache: enableCache,
@@ -555,6 +627,7 @@ struct ScanView: View {
                         tokensXml: state.tokensXml,
                         patientData: state.patientData,
                         useServerFlow: useServerFlow,
+                        keycloakBaseURL: keycloakBaseURL,
                         username: username,
                         password: password,
                         onScanAnother: { viewModel.startNewCardTap() },
@@ -881,6 +954,7 @@ struct CompletedContentView: View {
         tokensXml: String?,
         patientData: InsuredPersonData?,
         useServerFlow: Bool,
+        keycloakBaseURL: String,
         username: String,
         password: String,
         onScanAnother: @escaping () -> Void,
@@ -915,7 +989,9 @@ struct CompletedContentView: View {
         self.deletable = items
 
         _deleteVM = StateObject(wrappedValue: PrescriptionDeleteViewModel(
-            environment: CardlinkEnvironment.Default.shared,
+            environment: DemoCardlinkEnvironmentFactory.make(
+                oauthBaseURLString: keycloakBaseURL
+            ),
             username: username,
             password: password,
             onTrace: onTrace
@@ -1367,61 +1443,41 @@ struct PrescriptionResultView: View {
 final class KeychainHelper {
     static let shared = KeychainHelper()
 
-    private let server = "cardlink.scoopsoftware.de"
-    private let protocolType = kSecAttrProtocolHTTPS
-
     private init() {}
 
-    func save(username: String, password: String) {
-        guard let passwordData = password.data(using: .utf8) else { return }
-        delete()
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassInternetPassword,
-            kSecAttrServer as String: server,
-            kSecAttrProtocol as String: protocolType,
-            kSecAttrAccount as String: username,
-            kSecValueData as String: passwordData,
-            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock,
-            kSecAttrSynchronizable as String: true
-        ]
-        let status = SecItemAdd(query as CFDictionary, nil)
-        if status != errSecSuccess {
-            print("[Keychain] Save failed: \(status)")
-        }
-    }
-
-    func load() -> (String, String)? {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassInternetPassword,
-            kSecAttrServer as String: server,
-            kSecAttrProtocol as String: protocolType,
-            kSecAttrSynchronizable as String: kSecAttrSynchronizableAny,
-            kSecReturnAttributes as String: true,
-            kSecReturnData as String: true,
-            kSecMatchLimit as String: kSecMatchLimitOne
-        ]
-        var result: AnyObject?
-        let status = SecItemCopyMatching(query as CFDictionary, &result)
-        guard status == errSecSuccess,
-              let item = result as? [String: Any],
-              let username = item[kSecAttrAccount as String] as? String,
-              let passwordData = item[kSecValueData as String] as? Data,
-              let password = String(data: passwordData, encoding: .utf8) else {
+    @discardableResult
+    func save(baseURL: String, username: String, password: String) -> DemoInternetCredential? {
+        guard let credential = credential(
+            baseURL: baseURL,
+            username: username,
+            password: password
+        ), DemoSharedCredentialAccess.write(credential, for: .keycloak) else {
             return nil
         }
-        return (username, password)
+        return credential
     }
 
-    func clear() { delete() }
+    func load() -> DemoInternetCredential? {
+        DemoSharedCredentialAccess.read(.keycloak)
+    }
 
-    private func delete() {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassInternetPassword,
-            kSecAttrServer as String: server,
-            kSecAttrProtocol as String: protocolType,
-            kSecAttrSynchronizable as String: kSecAttrSynchronizableAny
-        ]
-        SecItemDelete(query as CFDictionary)
+    func isValid(baseURL: String, username: String, password: String) -> Bool {
+        credential(baseURL: baseURL, username: username, password: password) != nil
+    }
+
+    private func credential(
+        baseURL: String,
+        username: String,
+        password: String
+    ) -> DemoInternetCredential? {
+        guard let url = URL(string: baseURL.trimmingCharacters(in: .whitespacesAndNewlines)) else {
+            return nil
+        }
+        return try? DemoInternetCredential(
+            baseURL: url,
+            username: username.trimmingCharacters(in: .whitespacesAndNewlines),
+            password: password
+        ).validated()
     }
 }
 

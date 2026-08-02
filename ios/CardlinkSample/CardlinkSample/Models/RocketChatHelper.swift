@@ -10,9 +10,10 @@ enum RocketChatHelper {
         let defaults = UserDefaults.standard
         guard defaults.bool(forKey: "rcEnabled") else { return }
 
-        let serverUrl = defaults.string(forKey: "rcServerUrl") ?? ""
-        let username = RocketChatKeychain.load(key: "rcUsername") ?? ""
-        let password = RocketChatKeychain.load(key: "rcPassword") ?? ""
+        guard let credential = RocketChatKeychain.loadCredential() else { return }
+        let serverUrl = credential.baseURL.absoluteString
+        let username = credential.username
+        let password = credential.password
         let channel = defaults.string(forKey: "rcChannel") ?? ""
 
         guard !serverUrl.isEmpty, !username.isEmpty, !password.isEmpty, !channel.isEmpty else { return }
