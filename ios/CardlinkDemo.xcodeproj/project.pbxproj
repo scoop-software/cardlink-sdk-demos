@@ -27,12 +27,14 @@
 		AA0000000000000000000030 /* RocketChatHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000030 /* RocketChatHelper.swift */; };
 		AA0000000000000000000042 /* KeychainCredentialStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000042 /* KeychainCredentialStorage.swift */; };
 		AA0000000000000000000100 /* DemoSharedCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000100 /* DemoSharedCredentialStore.swift */; };
+		AA0000000000000000000101 /* HealthCardCacheMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000101 /* HealthCardCacheMigrator.swift */; };
 		AA0000000000000000000096 /* PrescriptionDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000096 /* PrescriptionDelete.swift */; };
 		AA0000000000000000000097 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000097 /* Fonts */; };
 		AA0000000000000000000098 /* BrandTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000098 /* BrandTheme.swift */; };
 		AA0000000000000000000099 /* QrScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000099 /* QrScannerView.swift */; };
 		AA49D09916E7CC47AB231762 /* ScoopNfc in Frameworks */ = {isa = PBXBuildFile; productRef = DD95475E8EB3DDEC0729F1E8 /* ScoopNfc */; };
 		BB0000000000000000000010 /* DemoSharedCredentialStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1000000000000000000010 /* DemoSharedCredentialStoreTests.swift */; };
+		BB0000000000000000000011 /* HealthCardCacheMigratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1000000000000000000011 /* HealthCardCacheMigratorTests.swift */; };
 		CC0000000000000000000002 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = CC0000000000000000000003 /* Lottie */; };
 		CC0000000000000000000004 /* confetti.json in Resources */ = {isa = PBXBuildFile; fileRef = CC0000000000000000000005 /* confetti.json */; };
 		E01A6186824FAA6C1277DD21 /* ScanRecordWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D13E95AF2A3459C4C08CB80 /* ScanRecordWire.swift */; };
@@ -86,12 +88,14 @@
 		AA1000000000000000000030 /* RocketChatHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RocketChatHelper.swift; sourceTree = "<group>"; };
 		AA1000000000000000000042 /* KeychainCredentialStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainCredentialStorage.swift; sourceTree = "<group>"; };
 		AA1000000000000000000100 /* DemoSharedCredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSharedCredentialStore.swift; sourceTree = "<group>"; };
+		AA1000000000000000000101 /* HealthCardCacheMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthCardCacheMigrator.swift; sourceTree = "<group>"; };
 		AA1000000000000000000096 /* PrescriptionDelete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrescriptionDelete.swift; sourceTree = "<group>"; };
 		AA1000000000000000000097 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fonts; sourceTree = "<group>"; };
 		AA1000000000000000000098 /* BrandTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandTheme.swift; sourceTree = "<group>"; };
 		AA1000000000000000000099 /* QrScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrScannerView.swift; sourceTree = "<group>"; };
 		AA4000000000000000000001 /* CardlinkSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CardlinkSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB1000000000000000000010 /* DemoSharedCredentialStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSharedCredentialStoreTests.swift; sourceTree = "<group>"; };
+		BB1000000000000000000011 /* HealthCardCacheMigratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthCardCacheMigratorTests.swift; sourceTree = "<group>"; };
 		CC0000000000000000000005 /* confetti.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = confetti.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -164,6 +168,7 @@
 				AA1000000000000000000016 /* SettingsView.swift */,
 				AA1000000000000000000042 /* KeychainCredentialStorage.swift */,
 				AA1000000000000000000100 /* DemoSharedCredentialStore.swift */,
+				AA1000000000000000000101 /* HealthCardCacheMigrator.swift */,
 				AA1000000000000000000017 /* UploadView.swift */,
 				AA1000000000000000000022 /* PoppCheckInView.swift */,
 				CC0000000000000000000005 /* confetti.json */,
@@ -207,6 +212,7 @@
 			isa = PBXGroup;
 			children = (
 				BB1000000000000000000010 /* DemoSharedCredentialStoreTests.swift */,
+				BB1000000000000000000011 /* HealthCardCacheMigratorTests.swift */,
 			);
 			path = CardlinkDemoTests;
 			sourceTree = "<group>";
@@ -327,6 +333,7 @@
 				AA0000000000000000000016 /* SettingsView.swift in Sources */,
 				AA0000000000000000000042 /* KeychainCredentialStorage.swift in Sources */,
 				AA0000000000000000000100 /* DemoSharedCredentialStore.swift in Sources */,
+				AA0000000000000000000101 /* HealthCardCacheMigrator.swift in Sources */,
 				AA0000000000000000000017 /* UploadView.swift in Sources */,
 				AA0000000000000000000023 /* PoppCheckInView.swift in Sources */,
 				AA0000000000000000000020 /* NfcTypeAliases.swift in Sources */,
@@ -350,6 +357,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BB0000000000000000000010 /* DemoSharedCredentialStoreTests.swift in Sources */,
+				BB0000000000000000000011 /* HealthCardCacheMigratorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
