@@ -3,18 +3,18 @@ import SwiftUI
 @main
 struct CardlinkSampleApp: App {
     @StateObject private var themeStore = BrandThemeStore()
-    @State private var credentialMigrationComplete = false
+    @State private var sharedStorageBootstrapComplete = false
 
     var body: some Scene {
         WindowGroup {
             Group {
-                if credentialMigrationComplete {
+                if sharedStorageBootstrapComplete {
                     ContentView()
                 } else {
                     ProgressView("Preparing secure storage…")
                         .task {
-                            DemoCredentialMigrationBootstrap.run()
-                            credentialMigrationComplete = true
+                            _ = await DemoSharedStorageBootstrap.run()
+                            sharedStorageBootstrapComplete = true
                         }
                 }
             }

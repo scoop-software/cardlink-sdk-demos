@@ -499,6 +499,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = CardlinkSample/CardlinkSample.entitlements;
+				SCOOP_APP_GROUP_ID = "group.de.scoopsoftware.nfc.healthcard";
+				SCOOP_KEYCHAIN_ACCESS_GROUP = "$(AppIdentifierPrefix)group.de.scoopsoftware.nfc.healthcard";
+				SCOOP_LEGACY_APP_GROUP_ID = "group.de.scoopsoftware.nfc";
+				SCOOP_LEGACY_KEYCHAIN_ACCESS_GROUP = "$(AppIdentifierPrefix)group.de.scoopsoftware.nfc";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 10406;
 				DEVELOPMENT_TEAM = 845RN736HR;
@@ -532,6 +536,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = CardlinkSample/CardlinkSample.entitlements;
+				SCOOP_APP_GROUP_ID = "group.de.scoopsoftware.nfc.healthcard";
+				SCOOP_KEYCHAIN_ACCESS_GROUP = "$(AppIdentifierPrefix)group.de.scoopsoftware.nfc.healthcard";
+				SCOOP_LEGACY_APP_GROUP_ID = "group.de.scoopsoftware.nfc";
+				SCOOP_LEGACY_KEYCHAIN_ACCESS_GROUP = "$(AppIdentifierPrefix)group.de.scoopsoftware.nfc";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 10406;
 				DEVELOPMENT_TEAM = 845RN736HR;

@@ -139,14 +139,14 @@ require_text "$ios_settings" 'Copies raw tokens/JWTs' 'iOS raw token copying mus
 
 # Candidate matrix must be pinned in distributable Android and iOS projects.
 require_text "$pins" 'cardlink-sdk = "5.2.0"' 'Android Cardlink candidate pin must be 5.2.0.'
-require_text "$pins" 'nfc-sdk = "4.0.3"' 'Android NFC candidate pin must be 4.0.3.'
+require_text "$pins" 'nfc-sdk = "4.0.4"' 'Android NFC candidate pin must be 4.0.4.'
 require_text "$pins" 'popp-module = "0.23.1"' 'Android PoPP module candidate pin must be 0.23.1.'
 require_text "$pins" 'popp-sdk = "3.2.2"' 'Android PoPP SDK candidate pin must be 3.2.2.'
 require_pbx_pin "$ios_project" 'ti-cardlink.cardlink' '5.2.0' 'iOS project must directly pin ti-cardlink.cardlink to 5.2.0.'
-require_pbx_pin "$ios_project" 'ti-common.nfc' '4.0.3' 'iOS project must directly pin ti-common.nfc to 4.0.3.'
+require_pbx_pin "$ios_project" 'ti-common.nfc' '4.0.4' 'iOS project must directly pin ti-common.nfc to 4.0.4.'
 require_pbx_pin "$ios_project" 'ti-popp.popp-sdk' '3.2.2' 'iOS project must directly pin ti-popp.popp-sdk to 3.2.2.'
 require_resolved_pin "$ios_pins" 'ti-cardlink.cardlink' '5.2.0' 'iOS resolved ti-cardlink.cardlink pin must be 5.2.0.'
-require_resolved_pin "$ios_pins" 'ti-common.nfc' '4.0.3' 'iOS resolved ti-common.nfc pin must be 4.0.3.'
+require_resolved_pin "$ios_pins" 'ti-common.nfc' '4.0.4' 'iOS resolved ti-common.nfc pin must be 4.0.4.'
 require_resolved_pin "$ios_pins" 'ti-popp.popp-module' '0.23.1' 'iOS resolved ti-popp.popp-module pin must be 0.23.1.'
 require_resolved_pin "$ios_pins" 'ti-popp.popp-sdk' '3.2.2' 'iOS resolved ti-popp.popp-sdk pin must be 3.2.2.'
 

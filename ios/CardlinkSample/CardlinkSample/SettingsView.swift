@@ -25,14 +25,8 @@ struct SettingsView: View {
     }
 
     // Cache provider for known cards
-    private var cacheProvider: (any CacheProvider)? {
-        (try? SharedFileCacheProvider(
-            appGroupId: DemoCacheConfig.appGroupId,
-            keychainAccessGroup: DemoCacheConfig.keychainAccessGroup,
-            securityLevel: .encrypted,
-            fileOps: DefaultFileOperations.shared,
-            cryptoOps: DefaultCryptoOperations.shared
-        )) ?? FileCacheProvider(securityLevel: .encrypted)   // F3: per-app persistent fallback
+    private var cacheProvider: (any ScoopCardlink.CacheProvider)? {
+        try? DemoCardlinkCacheProviderFactory.makeCanonical()
     }
 
     var body: some View {
@@ -967,15 +961,4 @@ enum RocketChatKeychain {
 
 #Preview {
     SettingsView()
-}
-
-/// Cache configuration shared by every SharedFileCacheProvider call site in the demo.
-/// Values are injected from build settings via Info.plist (NFC 3.0.0 requires a
-/// fully qualified Keychain access group alongside the App Group).
-enum DemoCacheConfig {
-    static let appGroupId =
-        Bundle.main.object(forInfoDictionaryKey: "ScoopAppGroupId") as? String
-            ?? "group.de.scoopsoftware.nfc"
-    static let keychainAccessGroup =
-        Bundle.main.object(forInfoDictionaryKey: "ScoopKeychainAccessGroup") as? String ?? ""
 }

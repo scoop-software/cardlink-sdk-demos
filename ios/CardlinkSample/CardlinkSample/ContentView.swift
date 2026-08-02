@@ -6,6 +6,19 @@ import CommonCrypto
 import Charts
 import ScoopNfcUI
 
+enum DemoCardlinkCacheProviderFactory {
+    static func makeCanonical(bundle: Bundle = .main) throws -> any ScoopCardlink.CacheProvider {
+        let configuration = try DemoCacheConfig(bundle: bundle)
+        return try ScoopCardlink.SharedFileCacheProvider(
+            appGroupId: configuration.appGroupId,
+            keychainAccessGroup: configuration.keychainAccessGroup,
+            securityLevel: .encrypted,
+            fileOps: ScoopCardlink.DefaultFileOperations.shared,
+            cryptoOps: ScoopCardlink.DefaultCryptoOperations.shared
+        )
+    }
+}
+
 /// Wrapper to hold certificate data for sheet presentation.
 struct CertificateItem: Identifiable {
     let id = UUID()
@@ -233,7 +246,7 @@ class FlowViewModel: ObservableObject {
     private var flowTask: Task<Void, Never>?
     private var stateTask: Task<Void, Never>?
     private var traceTask: Task<Void, Never>?
-    private var cacheProvider: (any CacheProvider)?
+    private var cacheProvider: (any ScoopCardlink.CacheProvider)?
 
     func startFlow(
         keycloakBaseURL: URL,
@@ -251,18 +264,8 @@ class FlowViewModel: ObservableObject {
         let environment = DemoCardlinkEnvironmentFactory.make(oauthBaseURL: keycloakBaseURL)
         let storage = KeychainCredentialStorage()
 
-        // F3: SharedFileCacheProvider requires a provisioned App Group; the DevSDK
-        // build has none (empty SCOOP_APP_GROUP_ID), so it throws and the cache was
-        // silently nil — no caching and nothing persisted. Fall back to a per-app
-        // persistent FileCacheProvider so cache + known-cards survive an app restart.
-        let cache: (any CacheProvider)? = enableCache
-            ? ((try? SharedFileCacheProvider(
-                appGroupId: DemoCacheConfig.appGroupId,
-                keychainAccessGroup: DemoCacheConfig.keychainAccessGroup,
-                securityLevel: .encrypted,
-                fileOps: DefaultFileOperations.shared,
-                cryptoOps: DefaultCryptoOperations.shared
-            )) ?? FileCacheProvider(securityLevel: .encrypted))
+        let cache: (any ScoopCardlink.CacheProvider)? = enableCache
+            ? (try? DemoCardlinkCacheProviderFactory.makeCanonical())
             : nil
         cacheProvider = cache
 
@@ -453,13 +456,10 @@ struct ScanView: View {
     }
 
     private func loadKnownCards() async {
-        let cache: any CacheProvider = (try? SharedFileCacheProvider(
-            appGroupId: DemoCacheConfig.appGroupId,
-            keychainAccessGroup: DemoCacheConfig.keychainAccessGroup,
-            securityLevel: .encrypted,
-            fileOps: DefaultFileOperations.shared,
-            cryptoOps: DefaultCryptoOperations.shared
-        )) ?? FileCacheProvider(securityLevel: .encrypted)   // F3: per-app persistent fallback
+        guard let cache = try? DemoCardlinkCacheProviderFactory.makeCanonical() else {
+            knownCards = []
+            return
+        }
         knownCards = (try? await CacheProviderKt.getKnownCards(cache)) ?? []
     }
 

@@ -1,9 +1,136 @@
 import Foundation
+import ScoopCardlink
 import ScoopNfc
 import XCTest
 @testable import CardlinkDemo
 
 final class HealthCardCacheMigratorTests: XCTestCase {
+    func testCacheConfigurationLoadsCanonicalAndLegacyGroups() throws {
+        let configuration = try DemoCacheConfig(infoDictionary: [
+            "ScoopAppGroupId": "group.de.scoopsoftware.nfc.healthcard",
+            "ScoopKeychainAccessGroup": "TESTTEAM.group.de.scoopsoftware.nfc.healthcard",
+            "ScoopLegacyAppGroupId": "group.de.scoopsoftware.nfc",
+            "ScoopLegacyKeychainAccessGroup": "TESTTEAM.group.de.scoopsoftware.nfc",
+        ])
+
+        XCTAssertEqual(configuration.appGroupId, "group.de.scoopsoftware.nfc.healthcard")
+        XCTAssertEqual(
+            configuration.keychainAccessGroup,
+            "TESTTEAM.group.de.scoopsoftware.nfc.healthcard"
+        )
+        XCTAssertEqual(configuration.legacyAppGroupId, "group.de.scoopsoftware.nfc")
+        XCTAssertEqual(
+            configuration.legacyKeychainAccessGroup,
+            "TESTTEAM.group.de.scoopsoftware.nfc"
+        )
+    }
+
+    func testCacheConfigurationRejectsMissingEmptyAndUnexpandedValues() {
+        let valid = [
+            "ScoopAppGroupId": "group.de.scoopsoftware.nfc.healthcard",
+            "ScoopKeychainAccessGroup": "TESTTEAM.group.de.scoopsoftware.nfc.healthcard",
+            "ScoopLegacyAppGroupId": "group.de.scoopsoftware.nfc",
+            "ScoopLegacyKeychainAccessGroup": "TESTTEAM.group.de.scoopsoftware.nfc",
+        ]
+
+        for key in valid.keys {
+            var missing = valid
+            missing.removeValue(forKey: key)
+            XCTAssertThrowsError(try DemoCacheConfig(infoDictionary: missing))
+
+            var empty = valid
+            empty[key] = "  "
+            XCTAssertThrowsError(try DemoCacheConfig(infoDictionary: empty))
+
+            var unresolved = valid
+            unresolved[key] = "$(UNRESOLVED_SETTING)"
+            XCTAssertThrowsError(try DemoCacheConfig(infoDictionary: unresolved))
+        }
+    }
+
+    func testSharedStorageBootstrapMigratesCredentialsBeforeCache() async {
+        let recorder = ThreadSafeStringRecorder()
+
+        let result = await DemoSharedStorageBootstrap.run(
+            migrateCredentials: { recorder.append("credentials") },
+            migrateCache: { recorder.append("cache") },
+            log: { recorder.append($0) }
+        )
+
+        XCTAssertEqual(result, .ready)
+        XCTAssertEqual(recorder.values, ["credentials", "cache"])
+    }
+
+    func testSharedStorageBootstrapContinuesWithCanonicalStorageAfterCacheFailure() async {
+        let recorder = ThreadSafeStringRecorder()
+
+        let result = await DemoSharedStorageBootstrap.run(
+            migrateCredentials: { recorder.append("credentials") },
+            migrateCache: {
+                recorder.append("cache")
+                throw TestCacheFailure()
+            },
+            log: { recorder.append($0) }
+        )
+
+        XCTAssertEqual(result, .cacheMigrationFailed)
+        XCTAssertEqual(
+            recorder.values,
+            ["credentials", "cache", "[SharedStorageMigration] cache-failed"]
+        )
+    }
+
+    func testCacheMigrationIncludesAppPrivateFallbackAfterSharedMigrationCompleted() async throws {
+        let legacyShared = FakeHealthCardCache()
+        let legacyAppPrivate = FakeHealthCardCache(
+            cards: ["fallback-card"],
+            cans: ["fallback-card": "123456"]
+        )
+        let destination = FakeHealthCardCache()
+        let sharedMarker = FakeCacheMigrationMarkerStore(isComplete: true)
+        let appPrivateMarker = FakeCacheMigrationMarkerStore()
+
+        try await DemoSharedStorageBootstrap.migrateCaches(
+            legacyShared: legacyShared,
+            legacyAppPrivate: legacyAppPrivate,
+            destination: destination,
+            legacySharedMarker: sharedMarker,
+            legacyAppPrivateMarker: appPrivateMarker
+        )
+
+        XCTAssertEqual(destination.cans, ["fallback-card": "123456"])
+        XCTAssertEqual(legacyShared.allCardsCallCount, 0)
+        XCTAssertEqual(legacyAppPrivate.allCardsCallCount, 1)
+        XCTAssertTrue(appPrivateMarker.isComplete)
+    }
+
+    func testAppPrivateMigrationStillRunsWhenLegacySharedMigrationFails() async {
+        let legacyShared = FakeHealthCardCache(cards: ["broken-shared-card"])
+        legacyShared.failure = TestCacheFailure()
+        let legacyAppPrivate = FakeHealthCardCache(
+            cards: ["fallback-card"],
+            cans: ["fallback-card": "123456"]
+        )
+        let destination = FakeHealthCardCache()
+        let sharedMarker = FakeCacheMigrationMarkerStore()
+        let appPrivateMarker = FakeCacheMigrationMarkerStore()
+
+        do {
+            try await DemoSharedStorageBootstrap.migrateCaches(
+                legacyShared: legacyShared,
+                legacyAppPrivate: legacyAppPrivate,
+                destination: destination,
+                legacySharedMarker: sharedMarker,
+                legacyAppPrivateMarker: appPrivateMarker
+            )
+            XCTFail("Expected a failed legacy source to keep the bootstrap retryable")
+        } catch {
+            XCTAssertEqual(destination.cans, ["fallback-card": "123456"])
+            XCTAssertFalse(sharedMarker.isComplete)
+            XCTAssertTrue(appPrivateMarker.isComplete)
+        }
+    }
+
     func testScoopNfcAdapterMapsThePublicCacheAPI() async throws {
         let adapter = ScoopNfcHealthCardCacheAdapter(provider: MemoryCacheProvider())
         let initiallyUncached = try await adapter.entry(
@@ -28,6 +155,30 @@ final class HealthCardCacheMigratorTests: XCTestCase {
         XCTAssertEqual(Set(cachedFiles), ["EF.VD", "EF.GVD"])
         XCTAssertEqual(found, .found(Data([0x00, 0x80, 0xFF])))
         XCTAssertEqual(notOnCard, .notOnCard)
+    }
+
+    func testAppPrivateCacheWrittenByCardlinkCanBeReadByNfcMigrationProvider() async throws {
+        let directory = NSTemporaryDirectory()
+            .appending("cache-provider-interop-")
+            .appending(UUID().uuidString)
+        let writer = ScoopCardlink.FileCacheProvider(
+            directory: directory,
+            securityLevel: ScoopCardlink.SecurityLevel.encrypted
+        )
+        let reader = ScoopNfc.FileCacheProvider(
+            directory: directory,
+            securityLevel: ScoopNfc.SecurityLevel.encrypted
+        )
+        addTeardownBlock {
+            try? await writer.clear()
+        }
+
+        try await writer.saveCan(iccsn: "interop-card", can: "123456")
+        let cards = try await reader.getAll()
+        let can = try await reader.getCan(iccsn: "interop-card")
+
+        XCTAssertEqual(cards, ["interop-card"])
+        XCTAssertEqual(can, "123456")
     }
 
     func testCopiesCanWhenDestinationCanIsAbsent() async throws {
@@ -300,6 +451,23 @@ final class HealthCardCacheMigratorTests: XCTestCase {
         } catch {
             XCTFail("Unexpected error type: \(type(of: error))")
         }
+    }
+}
+
+private final class ThreadSafeStringRecorder: @unchecked Sendable {
+    private let lock = NSLock()
+    private var storage: [String] = []
+
+    var values: [String] {
+        lock.lock()
+        defer { lock.unlock() }
+        return storage
+    }
+
+    func append(_ value: String) {
+        lock.lock()
+        storage.append(value)
+        lock.unlock()
     }
 }
 

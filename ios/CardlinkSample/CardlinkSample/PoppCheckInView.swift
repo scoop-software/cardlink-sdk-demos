@@ -977,13 +977,16 @@ class PoppViewModel: ObservableObject {
     private var traceTask: Task<Void, Never>?
 
     private var cacheProvider: (any ScoopPoppSDK.CacheProvider)? {
-        (try? ScoopPoppSDK.SharedFileCacheProvider(
-            appGroupId: DemoCacheConfig.appGroupId,
-            keychainAccessGroup: DemoCacheConfig.keychainAccessGroup,
+        guard let configuration = try? DemoCacheConfig() else {
+            return nil
+        }
+        return try? ScoopPoppSDK.SharedFileCacheProvider(
+            appGroupId: configuration.appGroupId,
+            keychainAccessGroup: configuration.keychainAccessGroup,
             securityLevel: .encrypted,
             fileOps: ScoopPoppSDK.DefaultFileOperations.shared,
             cryptoOps: ScoopPoppSDK.DefaultCryptoOperations.shared
-        )) ?? ScoopPoppSDK.FileCacheProvider(securityLevel: .encrypted)   // F3: per-app persistent fallback
+        )
     }
 
     func loadKnownCards() async {

@@ -12,10 +12,12 @@
 	</array>
 	<key>keychain-access-groups</key>
 	<array>
+		<string>$(AppIdentifierPrefix)group.de.scoopsoftware.nfc.healthcard</string>
 		<string>$(AppIdentifierPrefix)group.de.scoopsoftware.nfc</string>
 	</array>
 	<key>com.apple.security.application-groups</key>
 	<array>
+		<string>group.de.scoopsoftware.nfc.healthcard</string>
 		<string>group.de.scoopsoftware.nfc</string>
 	</array>
 </dict>

@@ -6,6 +6,10 @@
 	<string>$(SCOOP_APP_GROUP_ID)</string>
 	<key>ScoopKeychainAccessGroup</key>
 	<string>$(SCOOP_KEYCHAIN_ACCESS_GROUP)</string>
+	<key>ScoopLegacyAppGroupId</key>
+	<string>$(SCOOP_LEGACY_APP_GROUP_ID)</string>
+	<key>ScoopLegacyKeychainAccessGroup</key>
+	<string>$(SCOOP_LEGACY_KEYCHAIN_ACCESS_GROUP)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

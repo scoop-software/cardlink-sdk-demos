@@ -31,13 +31,12 @@ class UploadViewModel: ObservableObject {
             oauthBaseURLString: keycloakBaseURL
         )
         let storage = KeychainCredentialStorage()
-        let cache: any CacheProvider = (try? SharedFileCacheProvider(
-            appGroupId: DemoCacheConfig.appGroupId,
-            keychainAccessGroup: DemoCacheConfig.keychainAccessGroup,
-            securityLevel: .encrypted,
-            fileOps: DefaultFileOperations.shared,
-            cryptoOps: DefaultCryptoOperations.shared
-        )) ?? FileCacheProvider(securityLevel: .encrypted)   // F3: per-app persistent fallback
+        let cache: (any ScoopCardlink.CacheProvider)?
+        do {
+            cache = try DemoCardlinkCacheProviderFactory.makeCanonical()
+        } catch {
+            cache = nil
+        }
 
         let config = CardlinkFlowConfig(
             environment: environment,
