@@ -4,6 +4,18 @@ import ScoopNfc
 import XCTest
 @testable import CardlinkDemo
 
+final class FlowViewModelTests: XCTestCase {
+    func testCancelledSdkStateReturnsToSetup() {
+        let viewModel = FlowViewModel()
+        viewModel.started = true
+
+        viewModel.receiveFlowState(CardlinkFlowState.Cancelled.shared)
+
+        XCTAssertFalse(viewModel.started)
+        XCTAssertTrue(viewModel.flowState is CardlinkFlowState.Idle)
+    }
+}
+
 final class HealthCardCacheMigratorTests: XCTestCase {
     func testCacheConfigurationLoadsCanonicalAndLegacyGroups() throws {
         let configuration = try DemoCacheConfig(infoDictionary: [

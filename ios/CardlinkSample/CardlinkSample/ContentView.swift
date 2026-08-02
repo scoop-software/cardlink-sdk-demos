@@ -304,7 +304,7 @@ class FlowViewModel: ObservableObject {
         // Collect state
         stateTask = handle.collectStates { [weak self] state in
             DispatchQueue.main.async {
-                self?.flowState = state
+                self?.receiveFlowState(state)
             }
         }
 
@@ -334,8 +334,25 @@ class FlowViewModel: ObservableObject {
     func submitKnownCard(can: String, iccsn: String) { flow?.submitKnownCard(can: can, iccsn: iccsn) }
     func retry() { flow?.retry() }
 
+    func receiveFlowState(_ state: CardlinkFlowState) {
+        guard started else {
+            return
+        }
+        guard !(state is CardlinkFlowState.Cancelled) else {
+            resetFlow(cancelSDK: false)
+            return
+        }
+        flowState = state
+    }
+
     func cancelFlow() {
-        flow?.cancel()
+        resetFlow(cancelSDK: true)
+    }
+
+    private func resetFlow(cancelSDK: Bool) {
+        if cancelSDK {
+            flow?.cancel()
+        }
         flowTask?.cancel()
         stateTask?.cancel()
         traceTask?.cancel()
